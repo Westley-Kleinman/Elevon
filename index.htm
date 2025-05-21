@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elevon • Custom 3D Trail Maps</title>
+  <meta name="description" content="Bring your 2D maps to life with Elevon’s custom 3D-printed trail models—raised routes, personalized plates, and podium-style bases. Order instantly via our online form." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; font-family: 'Poppins', sans-serif; color: #333; }
+    header { text-align: center; background: #f8f5f0; }
+    .banner { width: 100%; max-width: 2000px; height: auto; }
+    nav { position: fixed; top: 0; width: 100%; background: rgba(248,245,240,0.9); backdrop-filter: blur(5px); display: flex; justify-content: center; padding: 1em 0; z-index: 10; }
+    nav a { margin: 0 1em; color: #3A6F7F; font-weight: 600; text-decoration: none; }
+    section { padding: 100px 20px; max-width: 800px; margin: auto; }
+    #home { padding-top: 160px; }
+    .btn { display: inline-block; margin-top: 1em; padding: 0.75em 1.5em; background: #3A6F7F; color: white; border: none; border-radius: 4px; text-decoration: none; font-weight: 600; }
+    #about img { max-width: 150px; border-radius: 50%; margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+  </nav>
+  <header id="home">
+    <!-- Replace src with your banner image path -->
+    <img src="images/Elevon Banner.png" alt="Elevon Custom 3D Trail Maps Banner" class="banner" />
+    <h1>Bring Your 2D Maps to Life</h1>
+    <p>Custom 3D-printed terrain models with raised routes, personalized engravings, and podium-style bases—delivered to your door.</p>
+    <a href="#order" class="btn">Order Now</a>
+  </header>
+
+  <section id="order">
+    <!-- Tally Embed -->
+    <iframe data-tally-src="https://tally.so/embed/npM1lV?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
+      loading="lazy" width="100%" height="600" frameborder="0" marginheight="0" marginwidth="0" 
+      title="Order Your Custom 3D Trail Map"></iframe>
+    <script src="https://tally.so/widgets/embed.js"></script>
+  </section>
+
+  <section id="about">
+    <img src="images/Elevon Logo.png" alt="Elevon Logo" />
+    <h2>About Elevon</h2>
+    <p>Elevon was founded by outdoor enthusiasts on a mission to make trail exploration tangible. With a background in mechanical engineering and a passion for mapping, our founder transforms flat trail data into stunning 3D sculptures you can hold in your hands.</p>
+    <p>Whether you’re commemorating a race victory, showcasing your favorite hike, or crafting a unique gift, Elevon delivers precision-made, display-ready models that bring your adventures to life.</p>
+  </section>
+</body>
+</html>
