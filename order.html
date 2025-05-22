@@ -6,14 +6,33 @@
   <title>Elevon • Order Custom Map</title>
   <meta name="description" content="Order your custom 3D trail map from Elevon. Upload your map, select options, and pay securely.">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>/* Shared nav + container styles from index.html */</style>
+  <style>
+    /* Shared nav + container + btn styles */
+    :root { --primary: #3A6F7F; --dark-primary: #335a67; --light-bg: #f8f9fa; --text: #333; --spacing: 1.5rem; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
+    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; }
+    nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
+    nav a:hover, nav a.active { text-decoration: underline; }
+    .container { max-width: 900px; margin: var(--spacing) auto; padding: var(--spacing); }
+    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
+  </style>
 </head>
 <body>
-  <nav>what</nav>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="order.html" class="active">Order</a>
+    <a href="about.html">About</a>
+  </nav>
+
   <main class="container">
     <h1>Order Your Custom 3D Trail Map</h1>
-    <iframe data-tally-src="https://tally.so/embed/npM1lV?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="700" title="Order Your Custom 3D Trail Map"></iframe>
+    <!-- Embedded Tally form for secure ordering -->
+    <iframe data-tally-src="https://tally.so/embed/npM1lV?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+            loading="lazy" width="100%" height="700" title="Order Your Custom 3D Trail Map"></iframe>
     <script src="https://tally.so/widgets/embed.js"></script>
   </main>
+
+  <footer>&copy; 2025 Elevon. All rights reserved.</footer>
 </body>
 </html>

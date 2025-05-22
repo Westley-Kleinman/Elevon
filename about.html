@@ -1,19 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>...
-  <style>/* Shared nav + container styles */</style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elevon • About</title>
+  <meta name="description" content="Learn more about Elevon, the custom 3D trail map company founded by outdoor enthusiasts and mechanical engineering students.">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Shared Styles + About-specific */
+    :root { --primary: #3A6F7F; --dark-primary: #335a67; --light-bg: #f8f9fa; --text: #333; --subtext: #555; --spacing: 1.5rem; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
+    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; }
+    nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
+    nav a:hover, nav a.active { text-decoration: underline; }
+    .container { max-width: 900px; margin: var(--spacing) auto; padding: var(--spacing); }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.5rem; font-weight: 400; color: var(--subtext); margin-bottom: 1.5rem; }
+    .bio { display: flex; align-items: center; gap: var(--spacing); margin-bottom: 2rem; }
+    .bio img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .bio-text p { margin-bottom: 1rem; color: var(--subtext); }
+    .about-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--spacing); align-items: center; margin-bottom: var(--spacing); }
+    .about-logos img { max-width: 100%; height: auto; display: block; margin: 0 auto; filter: grayscale(100%); transition: filter 0.3s ease; }
+    .about-logos img:hover { filter: none; }
+    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
+  </style>
 </head>
 <body>
-  <nav>what</nav>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="order.html">Order</a>
+    <a href="about.html" class="active">About</a>
+  </nav>
+
   <main class="container">
-    <img src="images/Elevon Logo.png" alt="Elevon Logo" class="main-logo">
-    <div class="about-logos">
-      <img src="images/headshot.png" alt="Headshot">
-      <img src="images/duke_logo.png" alt="Duke Logos">
-      <img src="images/nica_logo.png" alt="NICA Logos">
-    </div>
-    <h2>About Elevon</h2>
-    <p>Founded by outdoor enthusiasts...</p>
+    <img src="images/Elevon Logo.png" alt="Elevon Logo" style="display:block; margin:0 auto 2rem; max-width:200px;">
+    <h1>About Elevon</h1>
+    <h2>Turning topographical trails into custom 3D-printed models</h2>
+
+    <section class="bio">
+      <img src="images/headshot.png" alt="Westley Kleinman">
+      <div class="bio-text">
+        <p>Hello! I'm Westley Kleinman, a mechanical engineering student at Duke University with a passion for mapping and design. I founded Elevon to bring trail systems to life through detailed, custom 3D prints that capture every contour and peak.</p>
+        <p>When I'm not in the CAD lab, you'll find me mountain biking, exploring new trails, or collaborating with fellow cycling enthusiasts. Let's elevate your adventure with Elevon.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Featured In</h2>
+      <div class="about-logos">
+        <img src="images/duke_logo.png" alt="Duke University Logo">
+        <img src="images/nica_logo.png" alt="NICA Logo">
+        <img src="images/Elevon Logo.png" alt="Elevon Logo">
+      </div>
+    </section>
   </main>
+
+  <footer>&copy; 2025 Elevon. All rights reserved.</footer>
 </body>
 </html>
+'''
