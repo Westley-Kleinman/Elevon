@@ -1,3 +1,4 @@
+```html
 <!-- about.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +18,7 @@
       --subtext: #555;
       --highlight-border: #3A6F7F;
       --spacing: 1.5rem;
+      --logo-size: 120px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
@@ -31,20 +33,27 @@
     .bio-text p { margin-bottom: 1rem; color: var(--subtext); }
     .about-logos {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr));
       gap: var(--spacing);
-      align-items: center;
+      align-items: start;
       margin-bottom: var(--spacing);
     }
+    .about-logos .logo-card {
+      text-align: center;
+    }
     .about-logos img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
+      width: var(--logo-size);
+      height: var(--logo-size);
+      object-fit: contain;
       border: 3px solid var(--highlight-border);
       border-radius: 8px;
       padding: 0.5rem;
       background: #fff;
+    }
+    .logo-caption {
+      margin-top: 0.5rem;
+      color: var(--subtext);
+      font-size: 0.9rem;
     }
     footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
   </style>
@@ -59,33 +68,30 @@
   <main class="container">
     <img src="images/Elevon Logo.png" alt="Elevon Logo" style="display:block; margin:0 auto var(--spacing); max-width:200px;">
     <h1>About Elevon</h1>
-    <h2>Turning topographical trails into custom 3D-printed models</h2>
+    <h2>Turning Topographical Trails into 3D-Printed Masterpieces</h2>
 
     <section class="bio">
       <img src="images/headshot.png" alt="Westley Kleinman">
       <div class="bio-text">
-        <p>Hello! I'm Westley Kleinman, a mechanical engineering student at Duke University with a passion for mapping and design. I founded Elevon to bring trail systems to life through detailed, custom 3D prints that capture every contour and peak.</p>
-        <p>My journey started in high school as an alumni of the National Interscholastic Cycling Association (NICA), where I sold my first handful of models to fellow Arkansas NICA riders. That early feedback fueled my passion and led me to expand Elevon into the project it is today.</p>
+        <p>Hello! I'm Westley Kleinman, a freshman in Mechanical Engineering at Duke University, originally from Hot Springs, Arkansas. My fascination with 3D printing began at age 13 when I bought my first printer, which became my creative outlet during the COVID lockdowns.</p>
+        <p>Over the years, I refined my process, experimenting with terrain modeling until it evolved into Elevon’s current offerings. In my senior year of high school, I began selling professionally—crafting custom trophies for top teams in the Arkansas NICA State Championship. That early success, combined with ongoing feedback, drove me to launch Elevon full-time at Duke.</p>
       </div>
     </section>
 
     <section>
       <h2>Affiliations & Experience</h2>
       <div class="about-logos">
-        <!-- Duke Engineering: current student -->
-        <div>
+        <div class="logo-card">
           <img src="images/duke_logo.png" alt="Duke University Logo">
-          <p style="text-align:center; color:var(--subtext); font-size:0.9rem; margin-top:0.5rem;">Current Mechanical Engineering Student</p>
+          <p class="logo-caption"><strong>Current Student:</strong><br>Mechanical Engineering at Duke</p>
         </div>
-        <!-- NICA: alumni -->
-        <div>
+        <div class="logo-card">
           <img src="images/nica_logo.png" alt="NICA Logo">
-          <p style="text-align:center; color:var(--subtext); font-size:0.9rem; margin-top:0.5rem;">NICA Alumni & First Customers</p>
+          <p class="logo-caption"><strong>NICA Alumni:</strong><br>First Sales as High School Senior</p>
         </div>
-        <!-- Elevon Logo -->
-        <div>
+        <div class="logo-card">
           <img src="images/Elevon Logo.png" alt="Elevon Logo">
-          <p style="text-align:center; color:var(--subtext); font-size:0.9rem; margin-top:0.5rem;">Elevon Brand</p>
+          <p class="logo-caption"><strong>Elevon Brand</strong></p>
         </div>
       </div>
     </section>
