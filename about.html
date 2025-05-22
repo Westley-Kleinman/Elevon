@@ -10,47 +10,46 @@
   <style>
     :root {
       --primary: #3A6F7F;
-      --dark-primary: #335a67;
       --light-bg: #f8f9fa;
       --text: #333;
       --subtext: #555;
-      --highlight-border: #3A6F7F;
       --spacing: 1.5rem;
-      --logo-size: 120px;
+      --profile-size: 140px;
+      --logo-size: 140px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
-    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; position: sticky; top: 0; z-index: 10; }
+    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10; display: flex; justify-content: center; padding: var(--spacing) 0; }
     nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
     nav a:hover, nav a.active { text-decoration: underline; }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 var(--spacing) var(--spacing);  /* Removed top padding */
-    }
-    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary); text-align: center; }
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: var(--subtext);
-      margin: var(--spacing) 0;
-      text-align: center;
-    }
-    .bio { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing); margin-bottom: calc(var(--spacing)*2); }
-    .bio img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .container { max-width: 800px; margin: 0 auto; padding: var(--spacing); }
+    h1 { font-size: 2.5rem; color: var(--primary); text-align: center; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.5rem; color: var(--subtext); text-align: center; margin-bottom: var(--spacing); }
+    /* Bio Section */
+    .bio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--spacing); margin-bottom: calc(var(--spacing) * 2); }
+    .profile-logos { display: flex; gap: var(--spacing); justify-content: center; align-items: center; }
+    .profile-logos img { width: var(--profile-size); height: var(--profile-size); object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .profile-logos .duke-logo { width: var(--logo-size); height: var(--logo-size); border-radius: 8px; object-fit: contain; padding: 0.5rem; border: 3px solid var(--primary); background: #fff; }
+    .bio-text { max-width: 600px; }
     .bio-text p { margin-bottom: 1rem; color: var(--subtext); }
-    .about-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr)); gap: var(--spacing); align-items: start; margin-bottom: calc(var(--spacing)*2); }
-    .logo-card { text-align: center; }
-    .logo-card img { width: var(--logo-size); height: var(--logo-size); object-fit: contain; border: 3px solid var(--highlight-border); border-radius: 8px; padding: 0.5rem; background: #fff; }
-    .logo-caption { margin-top: 0.5rem; color: var(--subtext); font-size: 0.9rem; }
-    .moments { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--spacing); margin-bottom: calc(var(--spacing)*2); }
-    .moment-card { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-    .moment-card img { width: 100%; height: auto; border-radius: 4px; }
-    .moment-card p { margin-top: var(--spacing); color: var(--subtext); }
-    .contact { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: calc(var(--spacing)*2); }
-    .contact h2 { color: var(--primary); margin-bottom: 0.5rem; }
-    .contact p { color: var(--text); margin-bottom: var(--spacing); }
-    .contact ul { list-style: none; padding: 0; margin: 0; }
+    /* Moments Section */
+    .moments { margin-bottom: calc(var(--spacing) * 2); }
+    .moments h2 { margin-bottom: var(--spacing); text-align: center; }
+    .moments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--spacing); }
+    .moment-card { background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; }
+    .moment-card img { width: 100%; height: auto; display: block; }
+    .moment-card p { padding: var(--spacing); color: var(--subtext); }
+    /* Affiliations Section */
+    .affiliations { margin-bottom: calc(var(--spacing) * 2); }
+    .affiliations h2 { margin-bottom: var(--spacing); text-align: center; }
+    .affiliations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr)); gap: var(--spacing); justify-items: center; }
+    .affiliations-grid .logo-card img { width: var(--logo-size); height: var(--logo-size); object-fit: contain; border: 3px solid var(--primary); border-radius: 8px; padding: 0.5rem; background: #fff; }
+    .logo-caption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--subtext); text-align: center; }
+    /* Contact Section */
+    .contact { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: calc(var(--spacing) * 2); }
+    .contact h2 { color: var(--primary); margin-bottom: 0.5rem; text-align: center; }
+    .contact p { margin-bottom: var(--spacing); text-align: center; }
+    .contact ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; align-items: center; }
     .contact li { margin-bottom: 0.5rem; }
     .contact a { color: var(--primary); text-decoration: none; font-weight: 600; }
     footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
@@ -68,19 +67,19 @@
     <h2>Turning Topographical Trails into 3D-Printed Masterpieces</h2>
 
     <section class="bio">
-      <div style="display:flex; gap:var(--spacing); align-items:center;">
+      <div class="profile-logos">
         <img src="images/headshot.png" alt="Westley Kleinman">
-        <img src="images/duke_logo.png" alt="Duke University Logo" style="width:100px; height:100px; object-fit:contain; border-radius:8px; border:2px solid var(--highlight-border); padding:0.25rem; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        <img src="images/duke_logo.png" alt="Duke University Logo" class="duke-logo">
       </div>
       <div class="bio-text">
         <p><em>Hello!</em> I’m Westley Kleinman—a freshman studying Mechanical Engineering at Duke University and proud native of Hot Springs, Arkansas. My creative journey began at 13 when I bought my first 3D printer, turning it into a lifeline of innovation during the COVID lockdowns.</p>
-        <p>What started as playground experiments in terrain modeling quickly grew into Elevon’s signature 3D trail maps. By my senior year of high school, I was professionally crafting custom trophies for top teams at the Arkansas NICA State Championship—my very first customers in Varsity NICA. Today, I serve as President of Duke Club Cycling and proudly raced for the MaccabiUSA Pan American Team in Argentina.</p>
+        <p>What started as playground experiments in terrain modeling quickly grew into Elevon’s signature 3D trail maps. By my senior year of high school, I was professionally crafting custom trophies for top teams at the Arkansas NICA State Championship—my very first customers in Varsity NICA. Today, I serve as President of Duke Club Cycling and proudly raced for the MaccabiUSA Pan American team in Argentina.</p>
       </div>
     </section>
 
-    <section>
+    <section class="moments">
       <h2>Featured Moments</h2>
-      <div class="moments">
+      <div class="moments-grid">
         <div class="moment-card">
           <img src="images/wheelie.png" alt="Westley Wheelie in Cap and Gown">
           <p>Celebrating my high school graduation with a wheelie in cap & gown—where I first combined cycling and 3D printing.</p>
@@ -92,9 +91,9 @@
       </div>
     </section>
 
-    <section>
+    <section class="affiliations">
       <h2>Affiliations & Experience</h2>
-      <div class="about-logos">
+      <div class="affiliations-grid">
         <div class="logo-card">
           <img src="images/nica_logo.png" alt="NICA Logo">
           <p class="logo-caption"><strong>NICA Alumni</strong></p>
