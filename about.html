@@ -31,30 +31,10 @@
     .bio { display: flex; align-items: center; gap: var(--spacing); margin-bottom: 2rem; }
     .bio img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .bio-text p { margin-bottom: 1rem; color: var(--subtext); }
-    .about-logos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr));
-      gap: var(--spacing);
-      align-items: start;
-      margin-bottom: var(--spacing);
-    }
-    .about-logos .logo-card {
-      text-align: center;
-    }
-    .about-logos img {
-      width: var(--logo-size);
-      height: var(--logo-size);
-      object-fit: contain;
-      border: 3px solid var(--highlight-border);
-      border-radius: 8px;
-      padding: 0.5rem;
-      background: #fff;
-    }
-    .logo-caption {
-      margin-top: 0.5rem;
-      color: var(--subtext);
-      font-size: 0.9rem;
-    }
+    .about-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr)); gap: var(--spacing); align-items: start; margin-bottom: var(--spacing); }
+    .about-logos .logo-card { text-align: center; }
+    .about-logos img { width: var(--logo-size); height: var(--logo-size); object-fit: contain; border: 3px solid var(--highlight-border); border-radius: 8px; padding: 0.5rem; background: #fff; }
+    .logo-caption { margin-top: 0.5rem; color: var(--subtext); font-size: 0.9rem; }
     footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
   </style>
 </head>
@@ -73,8 +53,8 @@
     <section class="bio">
       <img src="images/headshot.png" alt="Westley Kleinman">
       <div class="bio-text">
-        <p>Hello! I'm Westley Kleinman, a Freshman studying Mechanical Engineering at Duke University. Originally from Hot Springs, Arkansas, my fascination with 3D printing began at age 13 when I bought my first printer, which became my creative outlet during the COVID lockdowns.</p>
-        <p>Over the years, I refined my process, experimenting with terrain modeling until it evolved into Elevon’s current offerings. In my senior year of high school, I began selling professionally—crafting custom trophies for top teams in the Arkansas NICA State Championship. That early success, combined with ongoing feedback, drove me to launch Elevon full-time at Duke.</p>
+        <p><em>Hello!</em> I’m Westley Kleinman—a freshman studying Mechanical Engineering at Duke University and proud native of Hot Springs, Arkansas. My creative journey began at 13 when I bought my first 3D printer, turning it into a lifeline of innovation during the COVID lockdowns.</p>
+        <p>What started as playground experiments in terrain modeling quickly grew into Elevon’s signature 3D trail maps. By my senior year of high school, I was professionally crafting custom trophies for top teams at the Arkansas NICA State Championship—my very first real-world customers. That early taste of entrepreneurship and every piece of feedback that followed inspired me to bring Elevon to campus and beyond.</p>
       </div>
     </section>
 
@@ -83,11 +63,11 @@
       <div class="about-logos">
         <div class="logo-card">
           <img src="images/duke_logo.png" alt="Duke University Logo">
-          <p class="logo-caption"><strong>Current Student:</strong><br>Mechanical Engineering at Duke</p>
+          <p class="logo-caption"><strong>Current Student</strong></p>
         </div>
         <div class="logo-card">
           <img src="images/nica_logo.png" alt="NICA Logo">
-          <p class="logo-caption"><strong>NICA Alumni:</strong><br>First Sales as High School Senior</p>
+          <p class="logo-caption"><strong>NICA Alumni</strong></p>
         </div>
         <div class="logo-card">
           <img src="images/Elevon Logo.png" alt="Elevon Logo">
