@@ -1,3 +1,4 @@
+```html
 <!-- about.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +55,11 @@
     <h2>Turning Topographical Trails into 3D-Printed Masterpieces</h2>
 
     <section class="bio">
-      <img src="images/headshot.png" alt="Westley Kleinman">
+      <!-- Profile images next to bio text -->
+      <div style="display:flex; gap:var(--spacing); align-items:center;">
+        <img src="images/headshot.png" alt="Westley Kleinman">
+        <img src="images/duke_logo.png" alt="Duke University Logo" style="width:100px; height:100px; object-fit:contain; border-radius:8px; border:2px solid var(--highlight-border); padding:0.25rem; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+      </div>
       <div class="bio-text">
         <p><em>Hello!</em> I’m Westley Kleinman—a freshman studying Mechanical Engineering at Duke University and proud native of Hot Springs, Arkansas. My creative journey began at 13 when I bought my first 3D printer, turning it into a lifeline of innovation during the COVID lockdowns.</p>
         <p>What started as playground experiments in terrain modeling quickly grew into Elevon’s signature 3D trail maps. By my senior year of high school, I was professionally crafting custom trophies for top teams at the Arkansas NICA State Championship—my very first real-world customers. That early taste of entrepreneurship and every piece of feedback that followed inspired me to bring Elevon to campus and beyond.</p>
