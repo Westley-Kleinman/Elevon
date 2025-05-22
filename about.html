@@ -8,7 +8,6 @@
   <meta name="description" content="Learn more about Elevon, the custom 3D trail map company founded by outdoor enthusiasts and mechanical engineering students.">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    /* Shared Styles + About-specific */
     :root {
       --primary: #3A6F7F;
       --dark-primary: #335a67;
@@ -21,20 +20,26 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
-    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; }
+    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; position: sticky; top: 0; z-index: 10; }
     nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
     nav a:hover, nav a.active { text-decoration: underline; }
-    .container { max-width: 900px; margin: var(--spacing) auto; padding: var(--spacing); }
-    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    h2 { font-size: 1.5rem; font-weight: 400; color: var(--subtext); margin-bottom: 1.5rem; }
-    .bio { display: flex; align-items: center; gap: var(--spacing); margin-bottom: 2rem; }
+    .container { max-width: 900px; margin: var(--spacing) auto; padding: 0 var(--spacing); }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary); }
+    h2 { font-size: 1.5rem; font-weight: 400; color: var(--subtext); margin-bottom: var(--spacing); }
+    .bio { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing); margin-bottom: calc(var(--spacing)*2); }
     .bio img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .bio-text p { margin-bottom: 1rem; color: var(--subtext); }
-    .about-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr)); gap: var(--spacing); align-items: start; margin-bottom: var(--spacing); }
-    .about-logos .logo-card { text-align: center; }
-    .about-logos img { width: var(--logo-size); height: var(--logo-size); object-fit: contain; border: 3px solid var(--highlight-border); border-radius: 8px; padding: 0.5rem; background: #fff; }
+    .about-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr)); gap: var(--spacing); align-items: start; margin-bottom: calc(var(--spacing)*2); }
+    .logo-card { text-align: center; }
+    .logo-card img { width: var(--logo-size); height: var(--logo-size); object-fit: contain; border: 3px solid var(--highlight-border); border-radius: 8px; padding: 0.5rem; background: #fff; }
     .logo-caption { margin-top: 0.5rem; color: var(--subtext); font-size: 0.9rem; }
-    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
+    .contact { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: calc(var(--spacing)*2); }
+    .contact h2 { color: var(--primary); margin-bottom: 0.5rem; }
+    .contact p { color: var(--text); margin-bottom: var(--spacing); }
+    .contact ul { list-style: none; padding: 0; margin: 0; }
+    .contact li { margin-bottom: 0.5rem; }
+    .contact a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
   </style>
 </head>
 <body>
@@ -44,7 +49,7 @@
     <a href="about.html" class="active">About</a>
   </nav>
 
-  <main class="container">
+  <div class="container">
     <img src="images/Elevon Logo.png" alt="Elevon Logo" style="display:block; margin:0 auto var(--spacing); max-width:200px;">
     <h1>About Elevon</h1>
     <h2>Turning Topographical Trails into 3D-Printed Masterpieces</h2>
@@ -74,9 +79,18 @@
         </div>
       </div>
     </section>
-  </main>
 
-  <footer>&copy; 2025 Elevon. All rights reserved.</footer>
+    <section class="contact">
+      <h2>Get in Touch</h2>
+      <p>If you’d like to learn more, place a custom order, or just say hello, you can reach me at:</p>
+      <ul>
+        <li>📧 <a href="mailto:Westley.Kleinman@Duke.edu">Westley.Kleinman@Duke.edu</a></li>
+        <li>📱 <a href="tel:+15017017973">(501) 701-7973</a></li>
+      </ul>
+    </section>
+
+    <footer>&copy; 2025 Elevon. All rights reserved.</footer>
+  </div>
 </body>
 </html>
 ```
