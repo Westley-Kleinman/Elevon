@@ -23,7 +23,11 @@
     nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; position: sticky; top: 0; z-index: 10; }
     nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
     nav a:hover, nav a.active { text-decoration: underline; }
-    .container { max-width: 900px; margin: var(--spacing) auto; padding: 0 var(--spacing); }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;              /* Remove top whitespace */
+      padding: var(--spacing) var(--spacing) var(--spacing);
+    }
     h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary); text-align: center; }
     h2 { font-size: 1.5rem; font-weight: 400; color: var(--subtext); margin-bottom: var(--spacing); text-align: center; }
     .bio { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing); margin-bottom: calc(var(--spacing)*2); }
@@ -109,3 +113,4 @@
   </div>
 </body>
 </html>
+```
