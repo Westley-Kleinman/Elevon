@@ -1,70 +1,51 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elevon • Custom 3D Trail Maps</title>
-  <meta name="description" content="Relive Every Ridge—Elevon transforms 2D trail maps into detailed 3D models perfect for display, planning, or gifting.">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #3A6F7F;
-      --dark-primary: #335a67;
-      --light-bg: #f8f9fa;
-      --text: #333;
-      --subtext: #555;
-      --spacing: 1.5rem;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
-    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; position: sticky; top: 0; z-index: 10; }
-    nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
-    nav a:hover, nav a.active { text-decoration: underline; }
-    header { text-align: center; background: #fff; padding: calc(var(--spacing)*2) var(--spacing) var(--spacing); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .container { max-width: 900px; margin: var(--spacing) auto; padding: 0 var(--spacing); }
-    .btn { display: inline-block; margin-top: var(--spacing); padding: 0.75em 1.5em; background: var(--primary); color: #fff; border-radius: 4px; text-decoration: none; font-weight: 600; transition: background 0.3s; }
-    .btn:hover { background: var(--dark-primary); }
-    .feature-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing); margin: calc(var(--spacing)*2) 0; }
-    .feature-card { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-    .feature-card img { width: 100%; height: auto; border-radius: 4px; }
-    .feature-card h3 { margin: var(--spacing) 0 0.5rem; color: var(--primary); }
-    .feature-card p { color: var(--subtext); }
-    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elevon</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <nav>
-    <a href="index.html" class="active">Home</a>
-    <a href="order.html">Order</a>
-    <a href="about.html">About</a>
-  </nav>
-
   <header>
-    <img src="images/Elevon Banner.png" alt="Elevon Banner" style="max-width:100%; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <h1 style="margin-top:var(--spacing); color: var(--primary);">Relive Every Ridge—3D Print Your Favorite Trails</h1>
-    <p style="max-width:600px; margin:var(--spacing) auto; color:#555;">Elevon transforms your 2D trail maps into detailed 3D models perfect for display, planning, or gifting.</p>
-    <a href="order.html" class="btn">Order Now</a>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="Elevon Logo.png" alt="Elevon logo">
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="order.html">Order</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <div class="container">
-    <!-- Example Product Gallery -->
-    <section class="feature-gallery">
-      <div class="feature-card">
-        <img src="images/map-system.jpg" alt="3D Trail System Map">
-        <h3>Complete Trail System</h3>
-        <p>Display an entire trail network in 3D for easy interpretation—ideal for bike shops or park organizations showcasing all available routes at a glance.</p>
-      </div>
+  <main class="hero">
+    <div class="hero-content">
+      <h1>Custom 3D Trail Maps</h1>
+      <p>Personalized topographic models with trail difficulty color-coded directly into the terrain.</p>
+      <a class="btn" href="order.html">Order Yours</a>
+    </div>
+  </main>
 
-      <div class="feature-card">
-        <img src="images/map-race.jpg" alt="3D Race Course Trophy">
-        <h3>Race Course Trophies</h3>
-        <p>Celebrate victories with custom race course trophies—award winners a physical model of the trail they conquered.</p>
-      </div>
-    </section>
-  </div>
+  <section class="features">
+    <div class="feature">
+      <h2>Race Course Models</h2>
+      <p>Perfect trophies for race organizers — clean, beautiful 3D maps of your race.</p>
+    </div>
+    <div class="feature">
+      <h2>Trail Promotion</h2>
+      <p>Custom maps for trail systems, bike shops, or city parks. Easy to read. Easy to love.</p>
+    </div>
+  </section>
 
-  <footer>&copy; 2025 Elevon. All rights reserved.</footer>
+  <section class="gallery">
+    <img src="start_line" alt="Start line at MaccabiUSA race" />
+    <img src="wheelie" alt="Rider doing a wheelie" />
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Elevon. All rights reserved.</p>
+  </footer>
 </body>
 </html>
-```

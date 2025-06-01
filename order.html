@@ -1,82 +1,95 @@
-<!-- order.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <title>Elevon • Order Custom 3D Trail Map</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <script async src="https://tally.so/widgets/embed.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elevon | Custom 3D Trail Maps</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    :root {
-      --primary: #3A6F7F;
-      --text: #333;
-      --light-bg: #f8f9fa;
-      --spacing: 1.5rem;
-    }
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
     }
-    body, html {
-      width: 100%;
-      height: 100%;
-      font-family: 'Poppins', sans-serif;
-      background: var(--light-bg);
-      color: var(--text);
-      overflow: hidden;
-    }
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    header {
+      background: #004d40;
+      color: white;
+      padding: 1rem 2rem;
       display: flex;
-      justify-content: center;
-      padding: var(--spacing) 0;
-      z-index: 100;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
     }
     nav a {
-      margin: 0 var(--spacing);
-      color: var(--primary);
-      font-weight: 600;
+      color: white;
       text-decoration: none;
+      margin-left: 1rem;
     }
-    nav a:hover, nav a.active {
+    nav a:hover {
       text-decoration: underline;
     }
-    /* Reserve space for nav */
-    .iframe-container {
-      position: absolute;
-      top:  calc( var(--spacing) * 2 + 1rem ); /* nav height + extra */
-      bottom: 0;
-      left: 0;
-      right: 0;
-      overflow: hidden;
+    .hero {
+      padding: 4rem 2rem;
+      text-align: center;
+      background: linear-gradient(to bottom right, #e3f2fd, #ffffff);
     }
-    .iframe-container iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cta {
+      margin-top: 2rem;
+    }
+    .cta a {
+      background: #ff6f00;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .cta a:hover {
+      background: #e65100;
+    }
+    footer {
+      background: #eee;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="order.html" class="active">Order</a>
-    <a href="about.html">About</a>
-  </nav>
+  <header>
+    <h1>Elevon</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="order.html">Order</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
 
-  <div class="iframe-container">
-    <iframe
-      data-tally-src="https://tally.so/r/npM1lV?transparentBackground=1"
-      title="Order Your Custom 3D Trail Map"
-      loading="lazy"
-    ></iframe>
-  </div>
+  <section class="hero">
+    <h2>Custom 3D Trail Maps</h2>
+    <p>
+      Celebrate your trails like never before with high-quality, custom 3D-printed models of your favorite trail systems or race courses.
+    </p>
+    <div class="cta">
+      <a href="order.html">Order Yours</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Elevon. All rights reserved.</p>
+  </footer>
 </body>
 </html>
