@@ -232,7 +232,68 @@ footer {
   margin-top: 3rem;
 }
 
-/* Responsive styles */
+/* Add to your style.css for the How It Works section */
+.how-it-works {
+  margin: 4rem 0 2rem 0;
+  padding: 0 2rem;
+}
+
+.how-it-works h2 {
+  text-align: center;
+  color: var(--green);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+}
+
+.how-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.how-step {
+  background: var(--white);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  padding: 2rem 1.5rem;
+  margin: 0 0.5rem;
+  min-width: 220px;
+  max-width: 260px;
+  text-align: center;
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.how-step img {
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(60,122,74,0.08);
+  background: var(--gray);
+}
+
+.how-step h3 {
+  color: var(--rust);
+  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+}
+
+.how-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.5rem;
+}
+
+.how-arrow svg {
+  display: block;
+}
+
 @media (max-width: 900px) {
   .hero {
     flex-direction: column;
@@ -249,6 +310,14 @@ footer {
   }
   .gallery {
     margin: 2rem 1rem;
+  }
+  .how-steps {
+    flex-direction: column;
+    gap: 0;
+  }
+  .how-arrow {
+    transform: rotate(90deg);
+    margin: 0.5rem 0;
   }
 }
 
