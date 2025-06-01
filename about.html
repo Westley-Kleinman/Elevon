@@ -8,6 +8,26 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="favicon.ico" />
   <style>
+    .about-photos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin: 2rem 0 2.5rem 0;
+      flex-wrap: wrap;
+    }
+    .about-photos img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(60,122,74,0.10);
+      background: #fff;
+    }
+    .about-photos .headshot {
+      border-radius: 50%;
+      object-fit: cover;
+    }
     .about-logos {
       display: flex;
       justify-content: center;
@@ -33,6 +53,37 @@
       font-size: 1rem;
       color: #555;
     }
+    .contact-box {
+      max-width: 400px;
+      margin: 3rem auto 2rem auto;
+      background: #fff;
+      border-radius: 1.25rem;
+      box-shadow: 0 4px 24px rgba(60,122,74,0.10);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      border: 1px solid #e5e5e5;
+    }
+    .contact-box h2 {
+      color: var(--green);
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+    }
+    .contact-box p {
+      margin-bottom: 1.2rem;
+      color: #444;
+    }
+    .contact-box a, .contact-box .phone {
+      display: block;
+      color: var(--rust);
+      font-weight: bold;
+      font-size: 1.08rem;
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }
+    .contact-box a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -46,6 +97,10 @@
   </header>
 
   <main>
+    <div class="about-photos">
+      <img src="images/headshot.png" alt="Westley Kleinman headshot" class="headshot" />
+      <img src="images/wheelie.png" alt="Westley doing a wheelie on a mountain bike" />
+    </div>
     <section class="about">
       <div class="about-text">
         <h1>My Story</h1>
@@ -71,6 +126,15 @@
         </figure>
       </div>
     </section>
+
+    <div class="contact-box">
+      <h2>Let's Connect</h2>
+      <p>
+        Want to chat about custom maps, have a question, or just want to talk trails? Reach out any time—I'd love to hear from you!
+      </p>
+      <a href="mailto:Westley.Kleinman@Duke.edu">Westley.Kleinman@Duke.edu</a>
+      <span class="phone">501-701-7973</span>
+    </div>
   </main>
 
   <footer>
