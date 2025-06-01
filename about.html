@@ -8,12 +8,15 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="favicon.ico" />
   <style>
+    body {
+      background: linear-gradient(135deg, #f8f9fa 60%, #e5e5e5 100%);
+    }
     .about-photos {
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: 2rem;
-      margin: 2rem 0 2.5rem 0;
+      align-items: flex-end;
+      gap: 2.5rem;
+      margin: 2.5rem 0 0.5rem 0;
       flex-wrap: wrap;
     }
     .about-photos img {
@@ -23,16 +26,42 @@
       border-radius: 1rem;
       box-shadow: 0 2px 8px rgba(60,122,74,0.10);
       background: #fff;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     .about-photos .headshot {
       border-radius: 50%;
       object-fit: cover;
+      border: 3px solid var(--green);
+    }
+    .about-photos img:hover {
+      transform: scale(1.05) translateY(-4px);
+      box-shadow: 0 8px 32px rgba(60,122,74,0.15);
+    }
+    .about-intro {
+      max-width: 540px;
+      margin: 0 auto 2.5rem auto;
+      text-align: center;
+      background: #fff;
+      border-radius: 1.25rem;
+      box-shadow: 0 2px 16px rgba(60,122,74,0.07);
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+    }
+    .about-intro h1 {
+      font-size: 2.2rem;
+      color: var(--green);
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+    .about-intro p {
+      font-size: 1.13rem;
+      color: #333;
+      margin-bottom: 0.7rem;
     }
     .about-logos {
       display: flex;
       justify-content: center;
       gap: 3rem;
-      margin-top: 2rem;
+      margin-top: 2.5rem;
       flex-wrap: wrap;
     }
     .about-logos figure {
@@ -47,6 +76,11 @@
       border-radius: 1rem;
       background: #fff;
       box-shadow: 0 2px 8px rgba(60,122,74,0.08);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .about-logos img:hover {
+      box-shadow: 0 8px 32px rgba(60,122,74,0.15);
+      transform: scale(1.06);
     }
     .about-logos figcaption {
       margin-top: 0.5rem;
@@ -84,6 +118,27 @@
     .contact-box a:hover {
       text-decoration: underline;
     }
+    .contact-box .linkedin {
+      color: var(--green);
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+      display: inline-block;
+    }
+    .contact-box .linkedin:hover {
+      text-decoration: underline;
+      color: var(--rust);
+    }
+    @media (max-width: 700px) {
+      .about-photos {
+        gap: 1.2rem;
+        margin-bottom: 1rem;
+      }
+      .about-logos {
+        gap: 1.2rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -101,31 +156,29 @@
       <img src="images/headshot.png" alt="Westley Kleinman headshot" class="headshot" />
       <img src="images/wheelie.png" alt="Westley doing a wheelie on a mountain bike" />
     </div>
-    <section class="about">
-      <div class="about-text">
-        <h1>My Story</h1>
-        <p>
-          Hi, I'm Westley Kleinman, the founder, designer, and maker behind Elevon. I'm a sophomore mechanical engineering student at Duke University, a MaccabiUSA Pan American Games athlete, and a lifelong trail rider.
-        </p>
-        <p>
-          I started Elevon because I wanted to bring the trails and courses I love to life in a way you can hold, display, and celebrate. My very first customer was the <strong>NICA Arkansas League</strong>—the same league where I began racing. Since then, I've helped race directors, shops, and riders across the country bring their favorite trails to life, one map at a time.
-        </p>
-      </div>
-      <div class="about-logos">
-        <figure>
-          <img src="images/nica_logo.png" alt="NICA Arkansas League logo" />
-          <figcaption>NICA Arkansas League</figcaption>
-        </figure>
-        <figure>
-          <img src="images/start_line.png" alt="Start line photo" />
-          <figcaption>MaccabiUSA Pan American Games</figcaption>
-        </figure>
-        <figure>
-          <img src="images/duke_logo.png" alt="Duke University logo" />
-          <figcaption>Duke University</figcaption>
-        </figure>
-      </div>
-    </section>
+    <div class="about-intro">
+      <h1>My Story</h1>
+      <p>
+        Hi, I'm Westley Kleinman, the founder, designer, and maker behind Elevon. I'm a sophomore mechanical engineering student at Duke University, a MaccabiUSA Pan American Games athlete, and a lifelong trail rider.
+      </p>
+      <p>
+        I started Elevon because I wanted to bring the trails and courses I love to life in a way you can hold, display, and celebrate. My very first customer was the <strong>NICA Arkansas League</strong>—the same league where I began racing. Since then, I've helped race directors, shops, and riders across the country bring their favorite trails to life, one map at a time.
+      </p>
+    </div>
+    <div class="about-logos">
+      <figure>
+        <img src="images/nica_logo.png" alt="NICA Arkansas League logo" />
+        <figcaption>NICA Arkansas League</figcaption>
+      </figure>
+      <figure>
+        <img src="images/start_line.png" alt="Start line photo" />
+        <figcaption>MaccabiUSA Pan American Games</figcaption>
+      </figure>
+      <figure>
+        <img src="images/duke_logo.png" alt="Duke University logo" />
+        <figcaption>Duke University</figcaption>
+      </figure>
+    </div>
 
     <div class="contact-box">
       <h2>Let's Connect</h2>
@@ -134,6 +187,7 @@
       </p>
       <a href="mailto:Westley.Kleinman@Duke.edu">Westley.Kleinman@Duke.edu</a>
       <span class="phone">501-701-7973</span>
+      <a class="linkedin" href="https://www.linkedin.com/in/westley-kleinman-154048332" target="_blank" rel="noopener">Connect on LinkedIn</a>
     </div>
   </main>
 
