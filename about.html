@@ -1,134 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UT<!DOCTYPE html>
-<html lang="en">
-<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About Elevon</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" />
+  <meta name="description" content="Learn about Elevon's founder, story, and mission to bring custom 3D-printed trail maps to riders everywhere." />
+  <meta property="og:title" content="About Elevon" />
+  <meta property="og:description" content="Learn about Elevon's founder, story, and mission to bring custom 3D-printed trail maps to riders everywhere." />
+  <meta property="og:image" content="https://westley-kleinman.github.io/Elevon/og-image.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 </head>
 <body>
   <header>
     <img src="Elevon Logo.png" alt="Elevon logo" class="logo" />
-    <nav>
+    <nav role="navigation" aria-label="Main navigation">
       <a href="index.html">Home</a>
       <a href="order.html">Order</a>
-      <a href="about.html">About</a>
+      <a href="about.html" aria-current="page">About</a>
+      <a href="gallery.html">Gallery</a>
     </nav>
   </header>
 
-  <section class="about">
-    <div class="about-text">
-      <h1>About Elevon</h1>
-      <p>Founded by a Duke University mechanical engineering student and Club Cycling president, Elevon was born out of a passion for trail design, racing, and 3D modeling.</p>
-      <p>We started by selling to the Arkansas NICA League and have grown to support race organizers and shops across the country.</p>
-    </div>
-    <div class="about-images">
-      <img src="headshot.png" alt="Founder headshot" />
-      <img src="start_line.png" alt="MaccabiUSA start line" />
-      <img src="duke_logo.png" alt="Duke University logo" />
-      <img src="nica_logo.png" alt="NICA logo" />
-    </div>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 Elevon. All rights reserved.</p>
-  </footer>
-</body>
-</html>
-F-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About | Elevon</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fefefe;
-    }
-    header {
-      background: #004d40;
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 1rem;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    .content {
-      padding: 2rem;
-      max-width: 900px;
-      margin: auto;
-    }
-    .bio-section {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-    .bio-section img {
-      max-width: 200px;
-      border-radius: 10px;
-      margin-right: 1.5rem;
-    }
-    .bio-section p {
-      flex: 1;
-    }
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 2rem;
-    }
-    .gallery img {
-      width: 150px;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    footer {
-      background: #eee;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 3rem;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Elevon</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="order.html">Order</a>
-      <a href="about.html">About</a>
-    </nav>
-  </header>
-
-  <section class="content">
-    <div class="bio-section">
-      <img src="headshot" alt="Headshot">
-      <p>
-        I’m Westley Kleinman, a sophomore at Duke University studying Mechanical Engineering and serving as the president of Duke Club Cycling. Elevon began as a high school project where I first sold trail models to the Arkansas NICA League. From there, I raced with NICA and MaccabiUSA, and now I bring my passion for cycling and design to trail lovers everywhere with custom 3D trail maps.
-      </p>
-    </div>
-
-    <div class="gallery">
-      <img src="nica_logo" alt="NICA Logo">
-      <img src="start_line" alt="Start Line Race in Argentina">
-      <img src="wheelie" alt="Wheelie Photo">
-      <img src="duke_logo" alt="Duke Logo">
-    </div>
-  </section>
+  <main>
+    <section class="about">
+      <div class="about-text">
+        <h1>About Elevon</h1>
+        <p>Founded by a Duke University mechanical engineering student and Club Cycling president, Elevon was born out of a passion for trail design, racing, and 3D modeling.</p>
+        <p>We started by selling to the Arkansas NICA League and have grown to support race organizers and shops across the country.</p>
+      </div>
+      <div class="about-images" style="display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;margin-top:2rem;">
+        <figure>
+          <img src="https://via.placeholder.com/160x160?text=Headshot" alt="Founder headshot" style="border-radius:50%;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
+          <figcaption style="text-align:center;margin-top:0.5rem;">Westley Kleinman, Founder</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/160x120?text=Start+Line" alt="MaccabiUSA start line" style="border-radius:1rem;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
+          <figcaption style="text-align:center;margin-top:0.5rem;">Start line at MaccabiUSA race</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/120x120?text=Duke+Logo" alt="Duke University logo" style="border-radius:1rem;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
+          <figcaption style="text-align:center;margin-top:0.5rem;">Duke University</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/120x120?text=NICA+Logo" alt="NICA logo" style="border-radius:1rem;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
+          <figcaption style="text-align:center;margin-top:0.5rem;">NICA League</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
 
   <footer>
     <p>&copy; 2025 Elevon. All rights reserved.</p>

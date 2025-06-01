@@ -5,49 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elevon — Custom 3D Trail Maps</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" />
+  <meta name="description" content="Custom 3D-printed trail maps from digital topography data. Bring your favorite trails to life with Elevon." />
+  <meta property="og:title" content="Elevon — Custom 3D Trail Maps" />
+  <meta property="og:description" content="Custom 3D-printed trail maps from digital topography data. Bring your favorite trails to life with Elevon." />
+  <meta property="og:image" content="https://westley-kleinman.github.io/Elevon/og-image.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 </head>
 <body>
   <header>
     <img src="Elevon Logo.png" alt="Elevon logo" class="logo" />
-    <nav>
-      <a href="index.html">Home</a>
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html" aria-current="page">Home</a>
       <a href="order.html">Order</a>
       <a href="about.html">About</a>
+      <a href="gallery.html">Gallery</a>
     </nav>
   </header>
 
-  <section class="hero">
-    <div class="hero-text">
-      <h1>Bring Trails to Life</h1>
-      <p>Custom 3D-printed maps of your favorite trail systems and race courses — topography and difficulty, in hand.</p>
-      <a href="order.html" class="cta-button">Get Yours</a>
-    </div>
-    <img src="wheelie.png" alt="Rider doing a wheelie" class="hero-img" />
-  </section>
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Bring Trails to Life</h1>
+        <p>Custom 3D-printed maps of your favorite trail systems and race courses — topography and difficulty, in hand.</p>
+        <a href="order.html" class="cta-button">Get Yours</a>
+      </div>
+      <img src="https://via.placeholder.com/320x220?text=Rider+doing+wheelie" alt="Rider doing a wheelie on a mountain bike, stylized illustration" class="hero-img" />
+    </section>
 
-  <section class="features">
-    <div class="feature">
-      <h2>Topographic Precision</h2>
-      <p>We use real elevation data and laser-precise modeling for a professional, tactile experience.</p>
-    </div>
-    <div class="feature">
-      <h2>Color-Coded Trails</h2>
-      <p>Printed in white terrain with green, blue, and black trail segments flush with the base.</p>
-    </div>
-    <div class="feature">
-      <h2>Made for Riders</h2>
-      <p>Trusted by NICA leagues, race organizers, and local bike shops to bring maps to life.</p>
-    </div>
-  </section>
+    <section class="features" aria-label="Product Features">
+      <div class="feature">
+        <h2>Topographic Precision</h2>
+        <p>We use real elevation data and laser-precise modeling for a professional, tactile experience.</p>
+      </div>
+      <div class="feature">
+        <h2>Color-Coded Trails</h2>
+        <p>Printed in white terrain with green, blue, and black trail segments flush with the base.</p>
+      </div>
+      <div class="feature">
+        <h2>Made for Riders</h2>
+        <p>Trusted by NICA leagues, race organizers, and local bike shops to bring maps to life.</p>
+      </div>
+    </section>
 
-  <section class="gallery">
-    <h2>Example Maps</h2>
-    <div class="gallery-grid">
-      <img src="example_map_1.jpg" alt="Example Map 1" />
-      <img src="example_map_2.jpg" alt="Example Map 2" />
-      <img src="example_map_3.jpg" alt="Example Map 3" />
-    </div>
-  </section>
+    <section class="gallery" aria-label="Example Maps">
+      <h2>Example Maps</h2>
+      <div class="gallery-grid">
+        <figure>
+          <img src="https://via.placeholder.com/320x180?text=Map+1" alt="3D-printed map of a winding forest trail, white terrain with green and blue trails" />
+          <figcaption>Forest Ridge Trail — rolling hills and mixed difficulty</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/320x180?text=Map+2" alt="3D-printed map of a mountain race course, showing elevation and switchbacks" />
+          <figcaption>Summit Challenge — high elevation and technical switchbacks</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/320x180?text=Map+3" alt="3D-printed map of a lakeside trail system, with color-coded segments" />
+          <figcaption>Lakeside Loops — scenic routes and beginner-friendly paths</figcaption>
+        </figure>
+      </div>
+      <p style="text-align:center; margin-top:1.5rem;">
+        <a href="gallery.html" class="cta-button" style="font-size:1rem;">See More in Gallery</a>
+      </p>
+    </section>
+  </main>
 
   <footer>
     <p>&copy; 2025 Elevon. All rights reserved.</p>
