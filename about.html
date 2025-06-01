@@ -7,162 +7,6 @@
   <meta name="description" content="Learn about Elevon's founder, story, and mission to bring custom 3D-printed trail maps to riders, race directors, and shops." />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="favicon.ico" />
-  <style>
-    body {
-      background: linear-gradient(135deg, #f8f9fa 60%, #e5e5e5 100%);
-    }
-    .about-main-content {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 2.5vw;
-    }
-    .about-photos {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 2.5rem;
-      margin: 2.5rem 0 0.5rem 0;
-      flex-wrap: wrap;
-    }
-    .about-photos img {
-      width: 140px;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 1rem;
-      box-shadow: 0 2px 8px rgba(60,122,74,0.10);
-      background: #fff;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .about-photos .headshot {
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--green);
-    }
-    .about-photos img:hover {
-      transform: scale(1.05) translateY(-4px);
-      box-shadow: 0 8px 32px rgba(60,122,74,0.15);
-    }
-    .about-intro {
-      max-width: 900px;
-      margin: 0 auto 2.5rem auto;
-      text-align: center;
-      background: #fff;
-      border-radius: 1.25rem;
-      box-shadow: 0 2px 16px rgba(60,122,74,0.07);
-      padding: 2.5rem 2.5rem 2rem 2.5rem;
-      font-size: 1.18rem;
-    }
-    .about-intro h1 {
-      font-size: 2.4rem;
-      color: var(--green);
-      margin-bottom: 1rem;
-      letter-spacing: 0.01em;
-    }
-    .about-intro p {
-      font-size: 1.18rem;
-      color: #333;
-      margin-bottom: 0.9rem;
-      line-height: 1.7;
-    }
-    .about-logos {
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
-      margin-top: 2.5rem;
-      flex-wrap: wrap;
-    }
-    .about-logos figure {
-      text-align: center;
-    }
-    .about-logos img {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto 0.5rem auto;
-      border-radius: 1rem;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(60,122,74,0.08);
-      transition: box-shadow 0.2s, transform 0.2s;
-    }
-    .about-logos img:hover {
-      box-shadow: 0 8px 32px rgba(60,122,74,0.15);
-      transform: scale(1.06);
-    }
-    .about-logos figcaption {
-      margin-top: 0.5rem;
-      font-size: 1.08rem;
-      color: #555;
-    }
-    .contact-box {
-      max-width: 500px;
-      margin: 3rem auto 2rem auto;
-      background: #fff;
-      border-radius: 1.25rem;
-      box-shadow: 0 4px 24px rgba(60,122,74,0.10);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      border: 1px solid #e5e5e5;
-      font-size: 1.12rem;
-    }
-    .contact-box h2 {
-      color: var(--green);
-      margin-bottom: 0.5rem;
-      font-size: 1.3rem;
-    }
-    .contact-box p {
-      margin-bottom: 1.2rem;
-      color: #444;
-    }
-    .contact-box a, .contact-box .phone {
-      display: block;
-      color: var(--rust);
-      font-weight: bold;
-      font-size: 1.08rem;
-      text-decoration: none;
-      margin-bottom: 0.5rem;
-      word-break: break-all;
-    }
-    .contact-box a:hover {
-      text-decoration: underline;
-    }
-    .contact-box .linkedin {
-      color: var(--green);
-      font-weight: 600;
-      font-size: 1.05rem;
-      margin-top: 0.5rem;
-      margin-bottom: 0;
-      display: inline-block;
-    }
-    .contact-box .linkedin:hover {
-      text-decoration: underline;
-      color: var(--rust);
-    }
-    @media (max-width: 900px) {
-      .about-main-content {
-        max-width: 98vw;
-        padding: 0 1vw;
-      }
-      .about-intro {
-        padding: 1.2rem 0.7rem 1.2rem 0.7rem;
-      }
-      .about-logos {
-        gap: 1.2rem;
-      }
-    }
-    @media (max-width: 700px) {
-      .about-photos {
-        gap: 1.2rem;
-        margin-bottom: 1rem;
-      }
-      .about-intro {
-        padding: 1rem 0.2rem 1rem 0.2rem;
-      }
-      .about-logos {
-        gap: 1.2rem;
-      }
-    }
-  </style>
 </head>
 <body>
   <header>
@@ -175,42 +19,82 @@
   </header>
 
   <main>
-    <div class="about-main-content">
-      <div class="about-photos">
-        <img src="images/headshot.png" alt="Westley Kleinman headshot" class="headshot" />
-        <img src="images/wheelie.png" alt="Westley doing a wheelie on a mountain bike" />
+    <div class="about-main-content" style="max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+
+      <!-- Top: Headshot and tagline row -->
+      <div class="about-headshot-row" style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 3.5rem; margin: 2.5rem 0 1.5rem 0; width: 100%; max-width: 1200px;">
+        <div class="about-headshot" style="display: flex; flex-direction: column; align-items: center;">
+          <img src="images/headshot.png" alt="Westley Kleinman headshot" class="headshot" style="width:220px; height:220px; border-radius:50%; object-fit:cover; border:5px solid var(--green); box-shadow:0 16px 56px rgba(60,122,74,0.18);" />
+          <figcaption style="margin-top:0.9rem; color:#555; font-weight:700; font-size:1.35rem;">Westley Kleinman</figcaption>
+        </div>
+        <div class="about-tagline" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.4rem; min-width: 320px; max-width: 400px;">
+          <div style="font-size:1.55rem; font-weight:850; letter-spacing:0.01em; line-height:1.18; background:linear-gradient(90deg, var(--green) 60%, var(--rust) 100%); background-clip:text; -webkit-background-clip:text; color:transparent; -webkit-text-fill-color:transparent; padding:0.05em 0 0.05em 0;">
+            Founder &bull; Designer<br>
+            Student Athlete &bull; Trail Rider
+          </div>
+          <div style="height: 4px; width: 90px; background: linear-gradient(90deg, var(--green) 60%, var(--rust) 100%); border-radius: 2px; margin-top: 0.1rem;"></div>
+        </div>
       </div>
-      <div class="about-intro">
-        <h1>My Story</h1>
-        <p>
-          Hi, I'm Westley Kleinman, the founder, designer, and maker behind Elevon. I'm a sophomore mechanical engineering student at Duke University, a MaccabiUSA Pan American Games athlete, and a lifelong trail rider.
-        </p>
-        <p>
-          I started Elevon because I wanted to bring the trails and courses I love to life in a way you can hold, display, and celebrate. My very first customer was the <strong>NICA Arkansas League</strong>—the same league where I began racing. Since then, I've helped race directors, shops, and riders across the country bring their favorite trails to life, one map at a time.
-        </p>
+
+      <!-- About section with photos on the left and logos on the right -->
+      <div class="about-intro" style="display: flex; gap: 3.5rem; align-items: center; justify-content: center; width: 100%; max-width: 1450px; background: #fff; border-radius: 1.25rem; box-shadow: 0 2px 16px rgba(60,122,74,0.07); padding: 2.5rem 3.5rem; margin: 0;">
+        <!-- Inline photos on the left -->
+        <div class="about-inline-photos" style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center; min-width: 160px;">
+          <img src="images/wheelie.png" alt="Westley doing a wheelie on a mountain bike at graduation" style="width:150px; height:150px; border-radius:1rem; border:3px solid var(--rust); object-fit:cover; box-shadow:0 4px 18px rgba(207,95,60,0.13); transform:rotate(-4deg);" />
+          <img src="images/start_line.png" alt="Start line at a race" style="width:150px; height:150px; border-radius:1rem; object-fit:cover; box-shadow:0 4px 18px rgba(60,122,74,0.13);" />
+        </div>
+        <!-- About text -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0;">
+          <h1 style="text-align:center;">My Story</h1>
+          <p style="text-align:center;">
+            Hi, I'm Westley Kleinman, the founder, designer, and maker behind Elevon. I'm from Arkansas, where I grew up riding and racing in the NICA Arkansas League and discovered my love for mountain biking and trails.
+          </p>
+          <p style="text-align:center;">
+            These days, I'm a sophomore mechanical engineering student at Duke University, the president of Duke Club Cycling, a MaccabiUSA Pan American Games alumni, and a lifelong trail rider.
+          </p>
+          <p style="text-align:center;">
+            I started Elevon because I wanted to bring the trails and courses I love to life in a way you can hold, display, and celebrate. My very first customer was the <strong>NICA Arkansas League</strong>—the same league where I began racing. Since then, I've helped race directors, shops, and riders across the country bring their favorite trails to life, one map at a time.
+          </p>
+        </div>
+        <!-- Logos on the left: visually full, card-style blocks -->
+        <div class="about-inline-logos" style="display: flex; flex-direction: column; gap: 1.5rem; align-items: stretch; min-width: 210px; max-width: 230px;">
+          <div style="display: flex; align-items: center; background: #f7faf7; border-radius: 1rem; box-shadow: 0 2px 12px rgba(60,122,74,0.09); padding: 1.1rem 1.2rem; gap: 1.1rem;">
+            <img src="images/nica_logo.png" alt="NICA Arkansas League logo" style="width:70px; height:70px; object-fit:contain; filter: grayscale(0.08) brightness(1.01); border-radius: 0.7rem; background: #fff; box-shadow: 0 1px 6px rgba(60,122,74,0.07); flex-shrink: 0;" />
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size:1.13rem; font-weight:600; color:#2d4a2e;">NICA Arkansas</span>
+              <span style="font-size:0.97rem; color:#5a5a5a;">Alumni</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; background: #f7faf7; border-radius: 1rem; box-shadow: 0 2px 12px rgba(60,122,74,0.09); padding: 1.1rem 1.2rem; gap: 1.1rem;">
+            <img src="images/maccabiusa.png" alt="MaccabiUSA logo" style="width:70px; height:70px; object-fit:contain; filter: grayscale(0.08) brightness(1.01); border-radius: 0.7rem; background: #fff; box-shadow: 0 1px 6px rgba(60,122,74,0.07); flex-shrink: 0;" />
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size:1.13rem; font-weight:600; color:#2d4a2e;">MaccabiUSA</span>
+              <span style="font-size:0.97rem; color:#5a5a5a;">Athlete</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; background: #f7faf7; border-radius: 1rem; box-shadow: 0 2px 12px rgba(60,122,74,0.09); padding: 1.1rem 1.2rem; gap: 1.1rem;">
+            <img src="images/duke_logo.png" alt="Duke University logo" style="width:70px; height:70px; object-fit:contain; filter: grayscale(0.08) brightness(1.01); border-radius: 0.7rem; background: #fff; box-shadow: 0 1px 6px rgba(60,122,74,0.07); flex-shrink: 0;" />
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size:1.13rem; font-weight:600; color:#2d4a2e;">Duke University</span>
+              <span style="font-size:0.97rem; color:#5a5a5a;">Student Athlete</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="about-logos">
-        <figure>
-          <img src="images/nica_logo.png" alt="NICA Arkansas League logo" />
-          <figcaption>NICA Arkansas League</figcaption>
-        </figure>
-        <figure>
-          <img src="images/start_line.png" alt="Start line photo" />
-          <figcaption>MaccabiUSA Pan American Games</figcaption>
-        </figure>
-        <figure>
-          <img src="images/duke_logo.png" alt="Duke University logo" />
-          <figcaption>Duke University</figcaption>
-        </figure>
-      </div>
+
       <div class="contact-box">
         <h2>Let's Connect</h2>
         <p>
           Want to chat about custom maps, have a question, or just want to talk trails? Reach out any time—I'd love to hear from you!
         </p>
-        <a href="mailto:Westley.Kleinman@Duke.edu">Westley.Kleinman@Duke.edu</a>
+        <a href="mailto:Westley.Kleinman@Duke.edu" class="contact-email">Westley.Kleinman@Duke.edu</a>
         <span class="phone">501-701-7973</span>
-        <a class="linkedin" href="https://www.linkedin.com/in/westley-kleinman-154048332" target="_blank" rel="noopener">Connect on LinkedIn</a>
+        <a class="linkedin" href="https://www.linkedin.com/in/westley-kleinman-154048332" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" style="vertical-align:middle;margin-right:7px;fill:#0077b5;" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.039 0 3.6 2.001 3.6 4.599v5.597z"/>
+          </svg>
+          Connect on LinkedIn
+        </a>
       </div>
     </div>
   </main>
