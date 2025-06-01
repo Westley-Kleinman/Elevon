@@ -11,8 +11,8 @@
 </head>
 <body>
   <header>
-    <img src="images/Elevon Banner.png" alt="Elevon logo and banner" class="logo" />
-    <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-bg-pazzaz"></div>
+    <nav class="main-nav glass-nav" role="navigation" aria-label="Main navigation">
       <a href="index.html">Home</a>
       <a href="order.html" aria-current="page">Order</a>
       <a href="about.html">About</a>
@@ -20,22 +20,16 @@
   </header>
 
   <main>
-    <section class="order-section">
-      <h1>Order Your Custom Map</h1>
-      <img src="https://via.placeholder.com/320x180?text=Start+Line" alt="Stylized placeholder image of a trail start line" class="order-img" />
-      <iframe data-tally-src="https://tally.so/embed/npM1lV?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Order Your Custom 3D Trail Map"></iframe>
-      <script>
-        var d = document, w = "https://tally.so/widgets/embed.js", v = function () {
-          "undefined" != typeof Tally ? Tally.loadEmbeds() : d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function (e) {
-            e.src = e.dataset.tallySrc;
-          });
-        };
-        if ("undefined" != typeof Tally) v();
-        else if (d.querySelector('script[src="' + w + '"]') == null) {
-          var s = d.createElement("script");
-          s.src = w, s.onload = v, s.onerror = v, d.body.appendChild(s);
-        }
-      </script>
+    <section class="order-section" style="display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.7rem; padding:0.7rem 0 0.3rem 0; max-width:1100px; margin:0 auto 0.7rem auto; background:none; box-shadow:none;">
+      <div class="order-hero-card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:320px; max-width:1100px; flex:2 1 0; padding:0.5rem 0 0.3rem 0;">
+        <h1 style="font-size:2.1rem; font-weight:900; letter-spacing:0.01em; line-height:1.13; background:linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); background-clip:text; -webkit-background-clip:text; color:transparent; -webkit-text-fill-color:transparent; margin-bottom:0.13rem; padding-bottom:0.04em;">Order Your Custom Map</h1>
+        <div class="accent-bar" style="height:3px; width:54px; background:linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); border-radius:2px; margin:0.07rem 0 0.3rem 0;"></div>
+        <div class="order-tagline" style="font-size:1.13rem; font-weight:700; color:#2d4a2e; margin-bottom:0.3rem; letter-spacing:0.01em; max-width:420px; text-align:center;">Bring your favorite trail to life in 3D.</div>
+      </div>
+      <div class="order-iframe-card" tabindex="0" style="background:#fff; border-radius:1.2rem; box-shadow:0 4px 24px rgba(60,122,74,0.13); padding:2.2rem 2.2rem 1.7rem 2.2rem; display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:540px; max-width:1000px; width:100%; margin:0 auto; transition:box-shadow 0.2s, transform 0.2s;">
+        <div class="order-iframe-loading" id="order-iframe-loading" aria-live="polite" style="margin-bottom:0.3rem; color:#888; font-size:1.09rem; letter-spacing:0.01em;">Loading order form…</div>
+        <iframe data-tally-src="https://tally.so/embed/npM1lV?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="520" frameborder="0" marginheight="0" marginwidth="0" title="Order Your Custom 3D Trail Map" aria-label="Order Your Custom 3D Trail Map" onload="document.getElementById('order-iframe-loading').style.display='none';" style="border-radius:0.9rem; box-shadow:0 1px 12px rgba(60,122,74,0.13); width:100%; max-width:940px; min-width:320px; border:1.5px solid #e5e5e5;"></iframe>
+      </div>
     </section>
   </main>
 

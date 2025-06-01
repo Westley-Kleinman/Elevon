@@ -10,8 +10,8 @@
 </head>
 <body>
   <header>
-    <img src="images/Elevon Banner.png" alt="Elevon logo and banner" class="logo" />
-    <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-bg-pazzaz"></div>
+    <nav class="main-nav glass-nav" role="navigation" aria-label="Main navigation">
       <a href="index.html" aria-current="page">Home</a>
       <a href="order.html">Order</a>
       <a href="about.html">About</a>
@@ -19,37 +19,40 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="hero-text">
-        <h1>Relive Every Ridge</h1>
-        <div class="accent-bar"></div>
-        <div class="hero-tagline">3D-printed trail maps for the bold, the curious, the passionate.</div>
-        <a href="order.html" class="cta-button">Order Your Map</a>
+    <section class="hero" style="display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:2.2rem; padding:2.2rem 0 1.2rem 0; max-width:1100px; margin:0 auto 2.2rem auto; background:none; box-shadow:none;">
+      <div class="hero-text" style="display:flex; flex-direction:column; align-items:flex-start; justify-content:center; min-width:420px; max-width:700px; flex:2 1 0; margin-left:-2.8rem;">
+        <h1 style="font-size:3.1rem; font-weight:900; letter-spacing:0.01em; line-height:1.18; background:linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); background-clip:text; -webkit-background-clip:text; color:transparent; -webkit-text-fill-color:transparent; margin-bottom:0.4rem; padding-bottom:0.18em;">Relive Every Ridge</h1>
+        <div class="accent-bar" style="height:5px; width:110px; background:linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); border-radius:3px; margin:0.15rem 0 0.9rem 0;"></div>
+        <div class="hero-tagline" style="font-size:1.18rem; font-weight:700; color:#2d4a2e; margin-bottom:0.9rem; letter-spacing:0.01em; max-width:520px;">Custom 3D-printed trail maps for riders, race directors, and shops.</div>
+        <a href="order.html" class="cta-button" style="font-size:1.13rem; padding:1rem 2.2rem; border-radius:2rem; box-shadow:0 4px 18px rgba(207,95,60,0.10); font-weight:900; letter-spacing:0.01em; background:linear-gradient(90deg,#cf5f3c 60%,#2e3a4a 100%); border:none;">Order Your Map</a>
       </div>
-      <img src="https://via.placeholder.com/320x220?text=3D+Trail+Map" alt="Example 3D-printed trail map with raised topography and colored trails" class="hero-img" />
+      <div class="hero-img-wrapper" style="display:flex; align-items:center; justify-content:center; min-width:0; max-width:420px; width:100%; margin-left:1.2rem;">
+        <!-- Place your custom hero image here. Recommended: a high-quality, wide-aspect photo of a 3D-printed Elevon map, a dramatic trail, or a rider with a map. Ideal size: 900x400px, PNG or JPG, with a transparent or clean background for best effect. Name it 'hero_custom.png' and place it in the images/ folder. -->
+        <img src="images/hero_custom.png" alt="Custom Elevon hero image" class="hero-img" style="display:none;" />
+      </div>
     </section>
 
     <section class="features" aria-label="Product Features">
       <div class="feature">
         <img src="https://via.placeholder.com/320x180?text=Race+Trophy+Map" alt="Placeholder for race trophy 3D map" class="feature-img" />
-        <div class="feature-title">For Race Directors</div>
-        <div class="accent-bar feature-accent"></div>
+        <div class="feature-title" style="font-size:1.18rem; font-weight:800; color:#2d4a2e; margin-bottom:0.15rem; letter-spacing:0.01em;">For Race Directors</div>
+        <div class="accent-bar feature-accent" style="margin-bottom:0.9rem;"></div>
         <p>
           Give your winners a trophy they’ll never forget—a custom 3D model of the course they conquered. Durable, beautiful, and unique to your event.
         </p>
       </div>
       <div class="feature">
         <img src="https://via.placeholder.com/320x180?text=Trail+System+Map" alt="Placeholder for trail system 3D map" class="feature-img" />
-        <div class="feature-title">For Trail Enthusiasts & Shops</div>
-        <div class="accent-bar feature-accent"></div>
+        <div class="feature-title" style="font-size:1.18rem; font-weight:800; color:#2d4a2e; margin-bottom:0.15rem; letter-spacing:0.01em;">For Trail Enthusiasts & Shops</div>
+        <div class="accent-bar feature-accent" style="margin-bottom:0.9rem;"></div>
         <p>
           Showcase your local trail system in 3D. Perfect for shop counters, clubhouses, or as a conversation piece at home.
         </p>
       </div>
       <div class="feature">
         <img src="https://via.placeholder.com/320x180?text=Topographic+Detail" alt="Placeholder for topographic precision map" class="feature-img" />
-        <div class="feature-title">Topographic Precision</div>
-        <div class="accent-bar feature-accent"></div>
+        <div class="feature-title" style="font-size:1.18rem; font-weight:800; color:#2d4a2e; margin-bottom:0.15rem; letter-spacing:0.01em;">Topographic Precision</div>
+        <div class="accent-bar feature-accent" style="margin-bottom:0.9rem;"></div>
         <p>
           Every map is crafted from real elevation data, with color-coded trails and custom engraving options.
         </p>
@@ -57,34 +60,24 @@
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works" aria-label="How It Works">
-      <h2>How It Works</h2>
-      <div class="accent-bar" style="margin:0.5rem auto 2rem auto;"></div>
-      <div class="how-steps">
-        <div class="how-step">
-          <img src="https://via.placeholder.com/80x80?text=1" alt="Step 1 icon: Choose your trail" />
-          <h3>1. Choose Your Trail</h3>
-          <p>Pick any trail, race course, or route you love. We'll turn it into a 3D model.</p>
+    <section class="how-it-works" style="width:100%; max-width:1200px; margin:3.5rem auto 0 auto; padding:3.5rem 0 3.5rem 0; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:1.25rem; box-shadow:0 2px 16px rgba(60,122,74,0.07); min-height:420px;">
+      <h2 style="font-size:2.1rem; font-weight:800; margin-bottom:1.7rem; letter-spacing:0.01em;">How It Works</h2>
+      <div style="width:100px; height:4px; background:linear-gradient(90deg, var(--green) 60%, var(--rust) 100%); border-radius:2px; margin-bottom:2.2rem;"></div>
+      <div style="display:flex; flex-wrap:wrap; gap:2.7rem; justify-content:center; width:100%; max-width:900px;">
+        <div class="how-step" style="background:#fff; border-radius:1rem; box-shadow:0 2px 12px rgba(60,122,74,0.09); padding:2rem 1.5rem; min-width:220px; max-width:260px; text-align:center; display:flex; flex-direction:column; align-items:center;">
+          <img src="https://via.placeholder.com/80x80?text=1" alt="Step 1 icon: Choose your trail" style="margin-bottom:1rem; border-radius:50%; box-shadow:0 2px 8px rgba(60,122,74,0.08); background:#f7faf7;" />
+          <h3 style="color:#cf5f3c; margin-bottom:0.5rem; font-size:1.15rem; font-weight:800; letter-spacing:0.01em;">1. Choose Your Trail</h3>
+          <p style="font-size:1.05rem; color:#444;">Pick any trail, race course, or route you love. We'll turn it into a 3D model.</p>
         </div>
-        <div class="how-arrow" aria-hidden="true">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <path d="M8 24h32m0 0l-8-8m8 8l-8 8" stroke="#cf5f3c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <div class="how-step" style="background:#fff; border-radius:1rem; box-shadow:0 2px 12px rgba(60,122,74,0.09); padding:2rem 1.5rem; min-width:220px; max-width:260px; text-align:center; display:flex; flex-direction:column; align-items:center;">
+          <img src="https://via.placeholder.com/80x80?text=2" alt="Step 2 icon: We model and print" style="margin-bottom:1rem; border-radius:50%; box-shadow:0 2px 8px rgba(60,122,74,0.08); background:#f7faf7;" />
+          <h3 style="color:#cf5f3c; margin-bottom:0.5rem; font-size:1.15rem; font-weight:800; letter-spacing:0.01em;">2. We Model & Print</h3>
+          <p style="font-size:1.05rem; color:#444;">We use real elevation data and advanced 3D printing to create your custom map.</p>
         </div>
-        <div class="how-step">
-          <img src="https://via.placeholder.com/80x80?text=2" alt="Step 2 icon: We model and print" />
-          <h3>2. We Model & Print</h3>
-          <p>We use real elevation data and advanced 3D printing to create your custom map.</p>
-        </div>
-        <div class="how-arrow" aria-hidden="true">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <path d="M8 24h32m0 0l-8-8m8 8l-8 8" stroke="#cf5f3c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="how-step">
-          <img src="https://via.placeholder.com/80x80?text=3" alt="Step 3 icon: Delivered to your door" />
-          <h3>3. Delivered to Your Door</h3>
-          <p>Your finished map arrives ready to display, gift, or award as a trophy.</p>
+        <div class="how-step" style="background:#fff; border-radius:1rem; box-shadow:0 2px 12px rgba(60,122,74,0.09); padding:2rem 1.5rem; min-width:220px; max-width:260px; text-align:center; display:flex; flex-direction:column; align-items:center;">
+          <img src="https://via.placeholder.com/80x80?text=3" alt="Step 3 icon: Delivered to your door" style="margin-bottom:1rem; border-radius:50%; box-shadow:0 2px 8px rgba(60,122,74,0.08); background:#f7faf7;" />
+          <h3 style="color:#cf5f3c; margin-bottom:0.5rem; font-size:1.15rem; font-weight:800; letter-spacing:0.01em;">3. Delivered to Your Door</h3>
+          <p style="font-size:1.05rem; color:#444;">Your finished map arrives ready to display, gift, or award as a trophy.</p>
         </div>
       </div>
     </section>
