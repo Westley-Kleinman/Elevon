@@ -1,59 +1,120 @@
-<!DOCTYPE html>
+<!DOCTYPE html>More actions
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Elevon</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="favicon.ico" />
-  <meta name="description" content="Learn about Elevon's founder, story, and mission to bring custom 3D-printed trail maps to riders everywhere." />
-  <meta property="og:title" content="About Elevon" />
-  <meta property="og:description" content="Learn about Elevon's founder, story, and mission to bring custom 3D-printed trail maps to riders everywhere." />
-  <meta property="og:image" content="https://westley-kleinman.github.io/Elevon/og-image.jpg" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elevon • About</title>
+  <meta name="description" content="Learn more about Elevon, the custom 3D trail map company founded by outdoor enthusiasts and mechanical engineering students.">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3A6F7F;
+      --light-bg: #f8f9fa;
+      --text: #333;
+      --subtext: #555;
+      --spacing: 1.5rem;
+      --profile-size: 140px;
+      --logo-size: 140px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
+    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10; display: flex; justify-content: center; padding: var(--spacing) 0; }
+    nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
+    nav a:hover, nav a.active { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: var(--spacing); }
+    h1 { font-size: 2.5rem; color: var(--primary); text-align: center; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.5rem; color: var(--subtext); text-align: center; margin-bottom: var(--spacing); }
+    /* Bio Section */
+    .bio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--spacing); margin-bottom: calc(var(--spacing) * 2); }
+    .profile-logos { display: flex; gap: var(--spacing); justify-content: center; align-items: center; }
+    .profile-logos img { width: var(--profile-size); height: var(--profile-size); object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .profile-logos .duke-logo { width: var(--logo-size); height: var(--logo-size); border-radius: 8px; object-fit: contain; padding: 0.5rem; border: 3px solid var(--primary); background: #fff; }
+    .bio-text { max-width: 600px; }
+    .bio-text p { margin-bottom: 1rem; color: var(--subtext); }
+    /* Moments Section */
+    .moments { margin-bottom: calc(var(--spacing) * 2); }
+    .moments h2 { margin-bottom: var(--spacing); text-align: center; }
+    .moments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--spacing); }
+    .moment-card { background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; }
+    .moment-card img { width: 100%; height: auto; display: block; }
+    .moment-card p { padding: var(--spacing); color: var(--subtext); }
+    /* Affiliations Section */
+    .affiliations { margin-bottom: calc(var(--spacing) * 2); }
+    .affiliations h2 { margin-bottom: var(--spacing); text-align: center; }
+    .affiliations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), 1fr)); gap: var(--spacing); justify-items: center; }
+    .affiliations-grid .logo-card img { width: var(--logo-size); height: var(--logo-size); object-fit: contain; border: 3px solid var(--primary); border-radius: 8px; padding: 0.5rem; background: #fff; }
+    .logo-caption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--subtext); text-align: center; }
+    /* Contact Section */
+    .contact { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: calc(var(--spacing) * 2); }
+    .contact h2 { color: var(--primary); margin-bottom: 0.5rem; text-align: center; }
+    .contact p { margin-bottom: var(--spacing); text-align: center; }
+    .contact ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; align-items: center; }
+    .contact li { margin-bottom: 0.5rem; }
+    .contact a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
+  </style>
 </head>
 <body>
-  <header>
-    <img src="Elevon Logo.png" alt="Elevon logo" class="logo" />
-    <nav role="navigation" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="order.html">Order</a>
-      <a href="about.html" aria-current="page">About</a>
-      <a href="gallery.html">Gallery</a>
-    </nav>
-  </header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="order.html">Order</a>
+    <a href="about.html" class="active">About</a>
+  </nav>
 
-  <main>
-    <section class="about">
-      <div class="about-text">
-        <h1>About Elevon</h1>
-        <p>Founded by a Duke University mechanical engineering student and Club Cycling president, Elevon was born out of a passion for trail design, racing, and 3D modeling.</p>
-        <p>We started by selling to the Arkansas NICA League and have grown to support race organizers and shops across the country.</p>
+  <div class="container">
+    <h1>About Elevon</h1>
+    <h2>Turning Topographical Trails into 3D-Printed Masterpieces</h2>
+
+    <section class="bio">
+      <div class="profile-logos">
+        <img src="images/headshot.png" alt="Westley Kleinman">
+        <img src="images/duke_logo.png" alt="Duke University Logo" class="duke-logo">
       </div>
-      <div class="about-images" style="display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;margin-top:2rem;">
-        <figure>
-          <img src="https://via.placeholder.com/160x160?text=Headshot" alt="Founder headshot" style="border-radius:50%;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
-          <figcaption style="text-align:center;margin-top:0.5rem;">Westley Kleinman, Founder</figcaption>
-        </figure>
-        <figure>
-          <img src="https://via.placeholder.com/160x120?text=Start+Line" alt="MaccabiUSA start line" style="border-radius:1rem;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
-          <figcaption style="text-align:center;margin-top:0.5rem;">Start line at MaccabiUSA race</figcaption>
-        </figure>
-        <figure>
-          <img src="https://via.placeholder.com/120x120?text=Duke+Logo" alt="Duke University logo" style="border-radius:1rem;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
-          <figcaption style="text-align:center;margin-top:0.5rem;">Duke University</figcaption>
-        </figure>
-        <figure>
-          <img src="https://via.placeholder.com/120x120?text=NICA+Logo" alt="NICA logo" style="border-radius:1rem;box-shadow:0 4px 16px rgba(60,122,74,0.08);" />
-          <figcaption style="text-align:center;margin-top:0.5rem;">NICA League</figcaption>
-        </figure>
+      <div class="bio-text">
+        <p><em>Hello!</em> I’m Westley Kleinman—a freshman studying Mechanical Engineering at Duke University and proud native of Hot Springs, Arkansas. My creative journey began at 13 when I bought my first 3D printer, turning it into a lifeline of innovation during the COVID lockdowns.</p>
+        <p>What started as playground experiments in terrain modeling quickly grew into Elevon’s signature 3D trail maps. By my senior year of high school, I was professionally crafting custom trophies for top teams at the Arkansas NICA State Championship—my very first customers in Varsity NICA. Today, I serve as President of Duke Club Cycling and proudly raced for the MaccabiUSA Pan American team in Argentina.</p>
       </div>
     </section>
-  </main>
 
-  <footer>
-    <p>&copy; 2025 Elevon. All rights reserved.</p>
-  </footer>
+    <section class="moments">
+      <h2>Featured Moments</h2>
+      <div class="moments-grid">
+        <div class="moment-card">
+          <img src="images/wheelie.png" alt="Westley Wheelie in Cap and Gown">
+          <p>Celebrating my high school graduation with a wheelie in cap & gown—where I first combined cycling and 3D printing.</p>
+        </div>
+        <div class="moment-card">
+          <img src="images/start_line.png" alt="Start Line of Major Race">
+          <p>On the start line of my biggest race—representing the MaccabiUSA Pan American team in Argentina.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="affiliations">
+      <h2>Affiliations & Experience</h2>
+      <div class="affiliations-grid">
+        <div class="logo-card">
+          <img src="images/nica_logo.png" alt="NICA Logo">
+          <p class="logo-caption"><strong>NICA Alumni</strong></p>
+          <p class="logo-caption"><strong>NICA AR Alumni</strong></p>
+        </div>
+        <div class="logo-card">
+          <img src="images/Elevon Logo.png" alt="Elevon Logo">
+          <p class="logo-caption"><strong>Elevon Brand</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact">
+      <h2>Get in Touch</h2>
+      <p>If you’d like to learn more, place a custom order, or just say hello, you can reach me at:</p>
+      <ul>
+        <li>📧 <a href="mailto:Westley.Kleinman@Duke.edu">Westley.Kleinman@Duke.edu</a></li>
+        <li>📱 <a href="tel:+15017017973">(501) 701-7973</a></li>
+      </ul>
+    </section>
+
+    <footer>&copy; 2025 Elevon. All rights reserved.</footer>
+  </div>
 </body>
 </html>
