@@ -1,78 +1,78 @@
-<!DOCTYPE html>More actions
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elevon • Custom 3D Trail Maps</title>
-  <meta name="description" content="Bring your 2D maps to life with Elevon’s custom 3D-printed trail models—raised routes, personalized plates, and podium-style bases. Order instantly via our online form.">
-  <meta name="description" content="Relive Every Ridge—Elevon transforms 2D trail maps into detailed 3D models perfect for display, planning, or gifting.">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    :root { --primary: #3A6F7F; --dark-primary: #335a67; --light-bg: #f8f9fa; --text: #333; --subtext: #555; --spacing: 1.5rem; }
-    :root {
-      --primary: #3A6F7F;
-      --dark-primary: #335a67;
-      --light-bg: #f8f9fa;
-      --text: #333;
-      --subtext: #555;
-      --spacing: 1.5rem;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Poppins', sans-serif; color: var(--text); background: var(--light-bg); line-height: 1.6; }
-    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; position: sticky; top: 0; }
-    nav { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: center; padding: var(--spacing) 0; position: sticky; top: 0; z-index: 10; }
-    nav a { margin: 0 var(--spacing); color: var(--primary); font-weight: 600; text-decoration: none; }
-    nav a:hover, nav a.active { text-decoration: underline; }
-    header { text-align: center; background: #fff; padding: calc(var(--spacing)*2) var(--spacing) var(--spacing); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .container { max-width: 900px; margin: var(--spacing) auto; padding: 0 var(--spacing); }
-    .btn { display: inline-block; margin-top: var(--spacing); padding: 0.75em 1.5em; background: var(--primary); color: #fff; border-radius: 4px; text-decoration: none; font-weight: 600; transition: background 0.3s; }
-    .btn:hover { background: var(--dark-primary); }
-    .feature-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing); margin: calc(var(--spacing)*2) 0; }
-    .feature-card { background: #fff; padding: var(--spacing); border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-    .feature-card img { width: 100%; height: auto; border-radius: 4px; }
-    .feature-card h3 { margin: var(--spacing) 0 0.5rem; color: var(--primary); }
-    .feature-card p { color: var(--subtext); }
-    footer { text-align: center; padding: var(--spacing) 0; font-size: 0.85rem; color: #999; background: #fff; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); margin-top: var(--spacing); }
-  </style>
+  <meta name="description" content="Custom 3D-printed trail maps for race trophies, trail enthusiasts, and bike shops. Bring your favorite routes to life with Elevon." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" />
 </head>
 <body>
-  <nav>
-    <a href="index.html" class="active">Home</a>
-    <a href="order.html">Order</a>
-    <a href="about.html">About</a>
-  </nav>
-
   <header>
-    <img src="images/Elevon Banner.png" alt="Elevon Banner" style="max-width:100%; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <h1 style="margin-top:var(--spacing); color: var(--primary);">Relive Every Ridge—3D Print Your Favorite Trails</h1>
-    <p style="max-width:600px; margin:var(--spacing) auto; color:#555;">Elevon transforms your 2D trail maps into detailed 3D models perfect for display, planning, or gifting.</p>
-    <a href="order.html" class="btn">Order Now</a>
+    <img src="images/Elevon Banner.png" alt="Elevon logo and banner" class="logo" />
+    <nav role="navigation" aria-label="Main navigation">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="order.html">Order</a>
+      <a href="about.html">About</a>
+    </nav>
   </header>
 
-  <div class="container">
-    <!-- Example Product Gallery -->
-    <section class="feature-gallery">
-      <div class="feature-card">
-        <img src="images/map-system.jpg" alt="3D Trail System Map">
-        <h3>Complete Trail System</h3>
-        <p>Display an entire trail network in 3D for easy interpretation—ideal for bike shops or park organizations showcasing all available routes at a glance.</p>
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Relive Every Ridge</h1>
+        <p>
+          Elevon transforms your favorite trails and race courses into stunning 3D-printed maps.<br>
+          <strong>Perfect as race trophies, shop displays, or personal keepsakes.</strong>
+        </p>
+        <a href="order.html" class="cta-button">Order Your Map</a>
       </div>
+      <img src="https://via.placeholder.com/320x220?text=3D+Trail+Map" alt="Example 3D-printed trail map with raised topography and colored trails" class="hero-img" />
+    </section>
 
-      <div class="feature-card">
-        <img src="images/map-race.jpg" alt="3D Race Course Trophy">
-        <h3>Race Course Trophies</h3>
-        <p>Celebrate victories with custom race course trophies—award winners a physical model of the trail they conquered.</p>
+    <section class="features" aria-label="Product Features">
+      <div class="feature">
+        <h2>For Race Directors</h2>
+        <p>
+          Give your winners a trophy they’ll never forget—a custom 3D model of the course they conquered. Durable, beautiful, and unique to your event.
+        </p>
       </div>
-
-      <!-- Placeholder for future images or 360° viewer -->
-      <div class="feature-card">
-        <img src="images/placeholder-360.jpg" alt="360° Interactive Map Preview">
-        <h3>360° Interactive Preview</h3>
-        <p>Rotate and explore your map from every angle with our upcoming interactive viewer feature.</p>
+      <div class="feature">
+        <h2>For Trail Enthusiasts & Shops</h2>
+        <p>
+          Showcase your local trail system in 3D. Perfect for shop counters, clubhouses, or as a conversation piece at home.
+        </p>
+      </div>
+      <div class="feature">
+        <h2>Topographic Precision</h2>
+        <p>
+          Every map is crafted from real elevation data, with color-coded trails and custom engraving options.
+        </p>
       </div>
     </section>
-  </div>
 
-  <footer>&copy; 2025 Elevon. All rights reserved.</footer>
+    <section class="gallery" aria-label="Example Maps">
+      <h2>Example Maps</h2>
+      <div class="gallery-grid">
+        <figure>
+          <img src="https://via.placeholder.com/320x180?text=Trail+System" alt="3D-printed map of a forest trail system with colored routes" />
+          <figcaption>Complete Trail System — see every route at a glance</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/320x180?text=Race+Course" alt="3D-printed map of a race course with elevation and switchbacks" />
+          <figcaption>Race Course Trophy — commemorate your event</figcaption>
+        </figure>
+        <figure>
+          <img src="https://via.placeholder.com/320x180?text=360+Preview" alt="360-degree interactive preview of a 3D map" />
+          <figcaption>360° Interactive Preview — coming soon</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Elevon. All rights reserved.</p>
+  </footer>
 </body>
 </html>
