@@ -1,0 +1,151 @@
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+  background: #fff;
+  line-height: 1.6;
+}
+
+header {
+  background: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+}
+
+.logo {
+  height: 50px;
+}
+
+nav a {
+  margin-left: 1rem;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+}
+
+nav a:hover {
+  color: #56a764; /* green accent */
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  padding: 3rem 2rem;
+  background: #f8f8f8;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  flex: 1;
+  padding: 1rem;
+}
+
+.hero-text h1 {
+  font-size: 3rem;
+  color: #2c2c2c;
+}
+
+.hero-text p {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #cf5f3c; /* rust-orange */
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.hero-img {
+  flex: 1;
+  max-width: 500px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.features {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-around;
+  background: #ffffff;
+  text-align: center;
+}
+
+.feature {
+  flex: 1;
+  margin: 0 1rem;
+  max-width: 300px;
+}
+
+.gallery {
+  padding: 2rem;
+  background: #f4f4f4;
+}
+
+.gallery h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.gallery-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.gallery-grid img {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.about {
+  padding: 2rem;
+}
+
+.about-text {
+  margin-bottom: 2rem;
+}
+
+.about-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.about-images img {
+  width: 150px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.order-section {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+footer {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  background: #f0f0f0;
+  color: #777;
+}
