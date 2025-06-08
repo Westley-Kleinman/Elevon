@@ -1,0 +1,199 @@
+/* Copied from Website/style.css for Flask app branding. */
+
+/* Modern, visually appealing, and responsive styles for the Image Color Filter web app */
+body {
+    background: linear-gradient(120deg, #f4f6fb 0%, #e9f0fb 100%);
+    min-height: 100vh;
+    margin: 0;
+}
+.header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: #fff;
+    box-shadow: 0 2px 16px #e0e6ef;
+    padding: 18px 0 10px 0;
+}
+.logo-img {
+    max-width: 70px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #d0d6e1;
+}
+.main-title {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 2.1em;
+    color: #1a2a3a;
+    margin: 0;
+    letter-spacing: 1px;
+}
+.main-form.modern-form {
+    background: #fff;
+    padding: 32px 32px 24px 32px;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px #d0d6e1;
+    max-width: 760px;
+    margin: 40px auto 32px auto;
+}
+.main-label {
+    font-size: 1.15em;
+    color: #1a2a3a;
+    font-weight: 500;
+}
+.file-input {
+    margin-top: 8px;
+    margin-bottom: 18px;
+    font-size: 1.08em;
+    border-radius: 6px;
+    border: 1.5px solid #cfd8e3;
+    padding: 7px 12px;
+    background: #f7fafd;
+}
+.divider {
+    border: none;
+    border-top: 2px solid #e0e6ef;
+    margin: 24px 0 18px 0;
+}
+.modern-outputs {
+    gap: 32px !important;
+}
+.modern-output-block {
+    background: linear-gradient(90deg, #f8fafc 60%, #e9f0fb 100%);
+    border: 1.5px solid #e0e6ef;
+    border-radius: 12px;
+    padding: 22px 18px 18px 18px;
+    margin-bottom: 0;
+    box-shadow: 0 2px 12px #e0e6ef;
+}
+.output-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.output-number {
+    font-size: 1.13em;
+    font-weight: 600;
+    color: #0074d9;
+    background: #e9f0fb;
+    border-radius: 6px;
+    padding: 2px 12px;
+}
+.modern-filename-input {
+    flex: 1;
+    font-size: 1.08em;
+    border-radius: 6px;
+    border: 1.5px solid #cfd8e3;
+    padding: 5px 10px;
+    background: #f7fafd;
+}
+.modern-color-row {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.modern-color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 2px solid #bbb;
+    box-shadow: 0 1px 6px #e0e6ef;
+    margin-right: 7px;
+}
+.modern-color-input, .modern-tol-input {
+    width: 54px;
+    border-radius: 6px;
+    border: 1.5px solid #cfd8e3;
+    padding: 4px 7px;
+    font-size: 1.05em;
+    background: #f7fafd;
+    transition: border 0.2s;
+}
+.modern-color-input:focus, .modern-tol-input:focus {
+    border: 2px solid #0074d9;
+    outline: none;
+    background: #fff;
+}
+.modern-color-label {
+    margin-left: 10px;
+    font-size: 1em;
+    color: #444;
+    min-width: 90px;
+    display: inline-block;
+}
+.apply-btn.modern-apply-btn {
+    background: linear-gradient(90deg, #0074d9 60%, #005fa3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    box-shadow: 0 1px 6px #d0d6e1;
+    transition: background 0.2s;
+    margin-left: 8px;
+}
+.apply-btn.modern-apply-btn:hover {
+    background: linear-gradient(90deg, #005fa3 60%, #0074d9 100%);
+}
+.main-btn.modern-main-btn {
+    background: linear-gradient(90deg, #28a745 60%, #1e7e34 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 13px 30px;
+    font-size: 1.18em;
+    margin-top: 30px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 2px 12px #d0d6e1;
+    transition: background 0.2s;
+}
+.main-btn.modern-main-btn:hover {
+    background: linear-gradient(90deg, #1e7e34 60%, #28a745 100%);
+}
+.modal.modern-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    align-items: center;
+    justify-content: center;
+}
+.modal.modern-modal[style*="display: flex"] {
+    display: flex !important;
+}
+.modal-content.modern-modal-content {
+    border-radius: 16px;
+    box-shadow: 0 2px 24px #aaa;
+    padding: 28px 18px 18px 18px;
+    background: #fff;
+    outline: none;
+    max-width: 400px;
+    width: 96vw;
+    position: relative;
+}
+.modern-close {
+    font-size: 32px;
+    color: #aaa;
+}
+.modern-close:hover, .modern-close:focus {
+    color: #0074d9;
+}
+@media (max-width: 700px) {
+    .main-form.modern-form {
+        padding: 12px 2vw 12px 2vw;
+        max-width: 98vw;
+    }
+    .modern-output-block {
+        padding: 12px 2vw 12px 2vw;
+        max-width: 98vw;
+    }
+}
