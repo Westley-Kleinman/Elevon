@@ -184,9 +184,38 @@
     <script>
 let topColors = [];
 let applyTarget = {out: 0, slot: 0};
-let lastPicked = {};
 function setTopColors(colors) {
     topColors = colors;
+}
+function extractTopColorsFrontend() {
+    const fileInput = document.getElementById('image');
+    if (!fileInput.files.length) return;
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new window.Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const data = ctx.getImageData(0, 0, img.width, img.height).data;
+            const colorCounts = {};
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i+3] === 0) continue;
+                const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
+                colorCounts[key] = (colorCounts[key] || 0) + 1;
+            }
+            const top = Object.entries(colorCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([k, v]) => k.split(',').map(Number));
+            setTopColors(top);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 function openApplyDialog(out, slot) {
     applyTarget = {out, slot};
@@ -202,17 +231,14 @@ function openApplyDialog(out, slot) {
             colorRow.style.alignItems = 'center';
             colorRow.style.marginBottom = '8px';
             colorRow.style.justifyContent = 'space-between';
-            // Color swatch preview
             const swatch = document.createElement('span');
             swatch.className = 'color-swatch modern-color-swatch';
             swatch.style.background = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
             swatch.style.marginRight = '10px';
-            // RGB label
             const rgbLabel = document.createElement('span');
             rgbLabel.textContent = 'RGB(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
             rgbLabel.style.fontWeight = '500';
             rgbLabel.style.marginRight = '10px';
-            // Keep button
             const keepBtn = document.createElement('button');
             keepBtn.className = 'apply-btn modern-apply-btn';
             keepBtn.style.background = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',0.85)';
@@ -230,7 +256,6 @@ function openApplyDialog(out, slot) {
             colorRow.appendChild(keepBtn);
             modalColors.appendChild(colorRow);
         });
-        // Add Cancel button
         const cancelBtn = document.createElement('button');
         cancelBtn.className = 'apply-btn modern-apply-btn';
         cancelBtn.style.background = '#888';
@@ -239,7 +264,6 @@ function openApplyDialog(out, slot) {
         cancelBtn.onclick = closeApplyDialog;
         modalColors.appendChild(cancelBtn);
     }
-    // Show modal as a centered flex popup
     modal.style.display = 'flex';
     setTimeout(function() {
         document.querySelector('.modal-content').focus();
@@ -284,10 +308,16 @@ document.addEventListener('input', function(e) {
         if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     }
 });
-window.onclick = function(event) {
-    var modal = document.getElementById('apply-modal');
-    if (event.target == modal) {
-        closeApplyDialog();
+function highlightOutputBlock(outIdx) {
+    for (let i = 0; i < 3; i++) {
+        const block = document.getElementById('output-block-' + i);
+        if (block) {
+            if (i === outIdx) {
+                block.classList.add('selected');
+            } else {
+                block.classList.remove('selected');
+            }
+        }
     }
 }
 function handleFormSubmit(e) {
