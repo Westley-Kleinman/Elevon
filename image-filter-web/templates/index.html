@@ -23,16 +23,16 @@
         <div class="outputs-container">
         {% for out in range(3) %}
         <div class="output-block" id="output-block-{{out}}">
-            <div class="output-header" style="display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 0.7rem;">
+            <div class="output-header" style="display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; margin-bottom: 1.1rem;">
+                <div style="display: flex; align-items: center; gap: 0.7rem; flex: 1 1 auto;">
                     <span class="output-number">Output {{out+1}}</span>
-                    <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input" aria-label="Output {{out+1}} filename">
+                    <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input" aria-label="Output {{out+1}} filename" style="max-width: 180px;">
                 </div>
-                <button type="button" class="main-btn download-btn" onclick="downloadSingleOutput('{{ out }}')">Download</button>
+                <button type="button" class="main-btn download-btn" style="padding: 0.5rem 1.3rem; font-size: 1.05rem; border-radius: 0.6rem; margin-left: 1.2rem;" onclick="downloadSingleOutput('{{ out }}')">Download</button>
             </div>
-            <div class="color-slots">
+            <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
             {% for slot in range(3) %}
-            <div class="color-row" style="align-items: flex-end; gap: 0.7rem; margin-bottom: 1.1rem;">
+            <div class="color-row" style="align-items: flex-end; gap: 0.7rem; margin-bottom: 0.7rem;">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
                 <span id="color-label-{{out}}-{{slot}}" class="color-label color-label-preview" style="font-size: 1.05rem; font-weight: 700; min-width: 120px; display: inline-block; border-radius: 0.5rem; padding: 0.3rem 1.1rem; background: #eee; color: #2e3a4a; border: 2px solid #e5e5e5; transition: background 0.2s, border 0.2s; margin-right: 0.7rem;"></span>
                 <div style="display: flex; gap: 0.3rem;">
@@ -41,14 +41,14 @@
                     <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue" oninput="updateColorPreview({{out}},{{slot}})">
                 </div>
                 <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input" aria-label="Tolerance" style="margin-left:0.5rem;">
-                <button type="button" class="apply-btn" onclick="openApplyDialog('{{ out }}', '{{ slot }}')">🎨 Pick</button>
+                <button type="button" class="apply-btn" style="margin-left: 0.7rem;" onclick="openApplyDialog('{{ out }}', '{{ slot }}')">🎨 Pick</button>
             </div>
             {% endfor %}
             </div>
         </div>
         {% endfor %}
         </div>
-        <button type="submit" class="main-btn">Download Outputs</button>
+        <button type="submit" class="main-btn" style="margin: 2.2rem auto 0 auto; display: block; padding: 1.1rem 2.7rem; font-size: 1.18rem; border-radius: 0.8rem;">Download All Outputs</button>
     </form>
     <!-- Modal for picking top color -->
     <div id="apply-modal" class="modal">
