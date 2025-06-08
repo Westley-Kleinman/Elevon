@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, send_file
 from PIL import Image
 import numpy as np
 import io
@@ -20,24 +20,6 @@ def filter_by_colors(image, color_tolerance_list):
     out_img[mask, :3] = 0
     out_img[..., 3] = 255
     return Image.fromarray(out_img)
-
-def get_top_colors(image, num_colors=5):
-    arr = np.array(image.convert('RGBA'))
-    mask = arr[..., 3] != 0
-    pixels = arr[..., :3][mask]
-    if len(pixels) == 0:
-        return []
-    unique, counts = np.unique(pixels.reshape(-1, 3), axis=0, return_counts=True)
-    top = unique[np.argsort(-counts)][:num_colors]
-    return [tuple(map(int, c)) for c in top]
-
-@app.route('/top_colors', methods=['POST'])
-def top_colors():
-    file = request.files['image']
-    image = Image.open(file.stream)
-    top = get_top_colors(image)
-    print('DEBUG: Received image, top colors:', top)
-    return jsonify({'top_colors': top})
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

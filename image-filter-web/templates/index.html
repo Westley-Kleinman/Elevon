@@ -142,9 +142,9 @@
         <img src="/static/images/elevon_logo.png" alt="Elevon Logo" class="logo-img">
         <h1 class="main-title">Elevon Image Color Filter</h1>
     </div>
-    <form method="post" enctype="multipart/form-data" class="main-form modern-form">
+    <form method="post" enctype="multipart/form-data" class="main-form modern-form" onsubmit="return handleFormSubmit(event)">
         <label class="main-label" style="font-size:1.15rem;font-weight:700;color:#2e3a4a;">Select PNG image:</label>
-        <input type="file" name="image" id="image" accept="image/png" required onchange="fetchTopColors()" class="file-input" style="margin-bottom:1.2rem;"><br>
+        <input type="file" name="image" id="image" accept="image/png" required onchange="extractTopColorsFrontend()" class="file-input" style="margin-bottom:1.2rem;"><br>
         <hr class="divider">
         <div class="outputs-container modern-outputs" style="display: flex; flex-direction: column; gap: 2.2rem; align-items: center;">
         {% for out in range(3) %}
@@ -276,15 +276,38 @@ function highlightOutputBlock(outIdx) {
         }
     }
 }
-function fetchTopColors() {
-    var fileInput = document.getElementById('image');
+function extractTopColorsFrontend() {
+    const fileInput = document.getElementById('image');
     if (!fileInput.files.length) return;
-    var formData = new FormData();
-    formData.append('image', fileInput.files[0]);
-    fetch('/top_colors', { method: 'POST', body: formData })
-        .then(function(resp) { return resp.json(); })
-        .then(function(data) { setTopColors(data.top_colors); })
-        .catch(function() { setTopColors([]); });
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new window.Image();
+        img.onload = function() {
+            // Draw image to canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const data = ctx.getImageData(0, 0, img.width, img.height).data;
+            // Count colors
+            const colorCounts = {};
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i+3] === 0) continue; // skip transparent
+                const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
+                colorCounts[key] = (colorCounts[key] || 0) + 1;
+            }
+            // Sort and get top 5
+            const top = Object.entries(colorCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([k, v]) => k.split(',').map(Number));
+            setTopColors(top);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 document.addEventListener('input', function(e) {
     var id = e.target.id;
@@ -306,6 +329,10 @@ window.onclick = function(event) {
     if (event.target == modal) {
         closeApplyDialog();
     }
+}
+function handleFormSubmit(e) {
+    // Optionally, you can add client-side validation or reduce data here
+    return true;
 }
     </script>
 </body>
