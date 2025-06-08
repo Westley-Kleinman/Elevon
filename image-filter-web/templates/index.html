@@ -156,9 +156,9 @@
             </div>
             <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
             {% for slot in range(3) %}
-            <div class="color-row modern-color-row" style="display: flex; align-items: center; gap: 0.5rem;">
+            <div class="color-row modern-color-row" style="display: flex; align-items: center; gap: 0.5rem; align-items: center;">
                 <span class="color-slot-label" style="min-width: 70px; color: #2e3a4a; font-weight: 600;">Color {{slot+1}}:</span>
-                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch" style="width: 32px; height: 32px; border-radius: 0.5rem; border: 2px solid #e5e5e5; background: #eee; display: inline-block; transition: border 0.2s, box-shadow 0.2s; vertical-align: middle;"></span>
+                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch" style="width: 32px; height: 32px; border-radius: 0.5rem; border: 2px solid #e5e5e5; background: #eee; display: inline-block; transition: border 0.2s, box-shadow 0.2s; vertical-align: middle; margin-right: 8px;"></span>
                 <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red" style="width: 48px;">
                 <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green" style="width: 48px;">
                 <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue" style="width: 48px;">

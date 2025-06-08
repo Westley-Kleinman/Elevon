@@ -53,26 +53,22 @@ def index():
         arr = np.array(image.convert('RGBA'))
         rgb_arr = arr[..., :3]
         height, width = arr.shape[:2]
-        output_images = []
-        for _ in output_configs:
-            output_images.append(np.ones((height, width, 4), dtype=np.uint8) * 255)
         flat_rgb = rgb_arr.reshape(-1, 3)
-        for i, (filename, color_tolerance_list) in enumerate(output_configs):
-            mask = np.zeros(flat_rgb.shape[0], dtype=bool)
-            for color, tol in color_tolerance_list:
-                color = np.array(color)
-                dist = np.linalg.norm(flat_rgb - color, axis=1)
-                mask |= dist <= tol
-            out_img = output_images[i].reshape(-1, 4)
-            out_img[mask, :3] = 0
-            out_img[~mask, :3] = 255
-            out_img[:, 3] = 255
         # Package all outputs as a zip
         import zipfile
         import tempfile
         zip_io = io.BytesIO()
         with zipfile.ZipFile(zip_io, 'w') as zf:
-            for (filename, _), out_img in zip(output_configs, output_images):
+            for (filename, color_tolerance_list) in output_configs:
+                mask = np.zeros(flat_rgb.shape[0], dtype=bool)
+                for color, tol in color_tolerance_list:
+                    color = np.array(color)
+                    dist = np.linalg.norm(flat_rgb - color, axis=1)
+                    mask |= dist <= tol
+                out_img = np.ones((height * width, 4), dtype=np.uint8) * 255
+                out_img[mask, :3] = 0
+                out_img[:, 3] = 255
+                out_img = out_img.reshape((height, width, 4))
                 img_io = io.BytesIO()
                 Image.fromarray(out_img).save(img_io, 'PNG')
                 img_io.seek(0)
