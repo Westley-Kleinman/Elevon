@@ -158,12 +158,12 @@
             {% for slot in range(3) %}
             <div class="color-row modern-color-row" style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="color-slot-label" style="min-width: 70px; color: #2e3a4a; font-weight: 600;">Color {{slot+1}}:</span>
-                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch" style="width: 32px; height: 32px; border-radius: 0.5rem; border: 2px solid #e5e5e5; background: #eee; display: inline-block; transition: border 0.2s, box-shadow 0.2s;"></span>
+                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch" style="width: 32px; height: 32px; border-radius: 0.5rem; border: 2px solid #e5e5e5; background: #eee; display: inline-block; transition: border 0.2s, box-shadow 0.2s; vertical-align: middle;"></span>
                 <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red" style="width: 48px;" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green" style="width: 48px;" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue" style="width: 48px;" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input modern-tol-input" aria-label="Tolerance" style="width: 60px;">
-                <span id="color-label-{{out}}-{{slot}}" class="modern-color-label" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500;"></span>
+                <span id="color-label-{{out}}-{{slot}}" class="modern-color-label" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500; min-width: 120px; display: inline-block;"></span>
                 <button type="button" class="apply-btn modern-apply-btn" onclick="openApplyDialog({{out}},{{slot}})" style="background: linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); color: #fff; border: none; border-radius: 0.5rem; padding: 0.3rem 0.9rem; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">🎨 Pick</button>
             </div>
             {% endfor %}
@@ -290,23 +290,39 @@ function applyColorToEntry(color, outputIdx, colorIdx) {
     }
 }
 function updateColorPreview(out, slot) {
-    var r = parseInt(document.getElementById('r_' + out + '_' + slot).value) || 0;
-    var g = parseInt(document.getElementById('g_' + out + '_' + slot).value) || 0;
-    var b = parseInt(document.getElementById('b_' + out + '_' + slot).value) || 0;
+    var r = document.getElementById('r_' + out + '_' + slot).value;
+    var g = document.getElementById('g_' + out + '_' + slot).value;
+    var b = document.getElementById('b_' + out + '_' + slot).value;
     var swatch = document.getElementById('color-preview-' + out + '-' + slot);
     var label = document.getElementById('color-label-' + out + '-' + slot);
-    if (swatch) {
-        swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
-        if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+    // Only update if all fields are filled
+    if (r !== '' && g !== '' && b !== '') {
+        r = Math.max(0, Math.min(255, parseInt(r)));
+        g = Math.max(0, Math.min(255, parseInt(g)));
+        b = Math.max(0, Math.min(255, parseInt(b)));
+        if (swatch) {
+            swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
             swatch.style.border = '2.5px solid #cf5f3c';
             swatch.style.boxShadow = '0 0 0 2px #cf5f3c';
-        } else {
+        }
+        if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
+    } else {
+        if (swatch) {
+            swatch.style.background = '#eee';
             swatch.style.border = '2px solid #e5e5e5';
             swatch.style.boxShadow = 'none';
         }
+        if (label) label.textContent = '';
     }
-    if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
 }
+// On page load, initialize all color previews to match any prefilled values
+window.addEventListener('DOMContentLoaded', function() {
+    for (let out = 0; out < 3; out++) {
+        for (let slot = 0; slot < 3; slot++) {
+            updateColorPreview(out, slot);
+        }
+    }
+});
 document.addEventListener('input', function(e) {
     var id = e.target.id;
     var rgbMatch = id && id.match(/^([rgb])_(\d+)_(\d+)$/);
