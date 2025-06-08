@@ -247,8 +247,8 @@ function openApplyDialog(out, slot) {
             keepBtn.textContent = 'Keep';
             keepBtn.type = 'button';
             keepBtn.onclick = function() {
-                applyColorToEntry(color, applyTarget.out, applyTarget.slot);
-                highlightOutputBlock(applyTarget.out);
+                applyColorToEntry(color, out, slot);
+                highlightOutputBlock(out);
                 closeApplyDialog();
             };
             colorRow.appendChild(swatch);
