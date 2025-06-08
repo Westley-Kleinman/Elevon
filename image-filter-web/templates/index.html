@@ -273,12 +273,19 @@ function closeApplyDialog() {
     document.getElementById('apply-modal').style.display = 'none';
 }
 function setColorInputsAndPreview(out, slot, r, g, b) {
-    // Set the input values
-    document.getElementById('r_' + out + '_' + slot).value = r;
-    document.getElementById('g_' + out + '_' + slot).value = g;
-    document.getElementById('b_' + out + '_' + slot).value = b;
-    // Update the preview and label
-    updateColorPreview(out, slot);
+    // Set the input values and trigger input events for live update
+    const rInput = document.getElementById('r_' + out + '_' + slot);
+    const gInput = document.getElementById('g_' + out + '_' + slot);
+    const bInput = document.getElementById('b_' + out + '_' + slot);
+    if (rInput && gInput && bInput) {
+        rInput.value = r;
+        gInput.value = g;
+        bInput.value = b;
+        // Manually trigger input events so listeners update the preview
+        rInput.dispatchEvent(new Event('input', { bubbles: true }));
+        gInput.dispatchEvent(new Event('input', { bubbles: true }));
+        bInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 }
 function applyColorToEntry(color, outputIdx, colorIdx) {
     setColorInputsAndPreview(outputIdx, colorIdx, color[0], color[1], color[2]);
