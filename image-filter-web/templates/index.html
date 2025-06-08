@@ -329,11 +329,14 @@ function handleFormSubmit(e) {
                     const imageData = ctx.getImageData(0, 0, img.width, img.height);
                     const data = imageData.data;
                     for (let i = 0; i < data.length; i += 4) {
+                        const originalR = data[i];
+                        const originalG = data[i+1];
+                        const originalB = data[i+2];
                         let keep = false;
                         for (const c of colorTols) {
-                            const dr = data[i] - c.r;
-                            const dg = data[i+1] - c.g;
-                            const db = data[i+2] - c.b;
+                            const dr = originalR - c.r;
+                            const dg = originalG - c.g;
+                            const db = originalB - c.b;
                             const dist = Math.sqrt(dr*dr + dg*dg + db*db);
                             if (dist <= c.tol) {
                                 keep = true;
@@ -341,11 +344,14 @@ function handleFormSubmit(e) {
                             }
                         }
                         if (!keep) {
-                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // white
+                            // Not kept: make it white
+                            data[i] = 255; 
+                            data[i+1] = 255; 
+                            data[i+2] = 255;
                         } else {
-                            data[i] = 0; data[i+1] = 0; data[i+2] = 0; // black
+                            // Kept: preserve original color (already in data[i], data[i+1], data[i+2])
                         }
-                        data[i+3] = 255;
+                        data[i+3] = 255; // Ensure pixel is opaque
                     }
                     ctx.putImageData(imageData, 0, 0);
                     // Download result
@@ -392,11 +398,14 @@ function downloadSingleOutput(out) {
                 const imageData = ctx.getImageData(0, 0, img.width, img.height);
                 const data = imageData.data;
                 for (let i = 0; i < data.length; i += 4) {
+                    const originalR = data[i];
+                    const originalG = data[i+1];
+                    const originalB = data[i+2];
                     let keep = false;
                     for (const c of colorTols) {
-                        const dr = data[i] - c.r;
-                        const dg = data[i+1] - c.g;
-                        const db = data[i+2] - c.b;
+                        const dr = originalR - c.r;
+                        const dg = originalG - c.g;
+                        const db = originalB - c.b;
                         const dist = Math.sqrt(dr*dr + dg*dg + db*db);
                         if (dist <= c.tol) {
                             keep = true;
@@ -404,11 +413,14 @@ function downloadSingleOutput(out) {
                         }
                     }
                     if (!keep) {
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255;
+                        // Not kept: make it white
+                        data[i] = 255; 
+                        data[i+1] = 255; 
+                        data[i+2] = 255;
                     } else {
-                        data[i] = 0; data[i+1] = 0; data[i+2] = 0;
+                        // Kept: preserve original color (already in data[i], data[i+1], data[i+2])
                     }
-                    data[i+3] = 255;
+                    data[i+3] = 255; // Ensure pixel is opaque
                 }
                 ctx.putImageData(imageData, 0, 0);
                 const link = document.createElement('a');
