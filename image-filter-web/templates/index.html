@@ -64,6 +64,15 @@ let applyTarget = {out: 0, slot: 0};
 function setTopColors(colors) {
     topColors = colors;
 }
+
+function areColorsSimilar(color1, color2, threshold = 20) {
+    // Calculate Euclidean distance between two colors
+    const dr = color1[0] - color2[0];
+    const dg = color1[1] - color2[1];
+    const db = color1[2] - color2[2];
+    return Math.sqrt(dr*dr + dg*dg + db*db) < threshold;
+}
+
 function extractTopColorsFrontend() {
     const fileInput = document.getElementById('image');
     if (!fileInput.files.length) return;
@@ -80,15 +89,30 @@ function extractTopColorsFrontend() {
             const data = ctx.getImageData(0, 0, img.width, img.height).data;
             const colorCounts = {};
             for (let i = 0; i < data.length; i += 4) {
-                if (data[i+3] === 0) continue;
+                if (data[i+3] === 0) continue; // Skip transparent pixels
                 const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
                 colorCounts[key] = (colorCounts[key] || 0) + 1;
             }
-            const top = Object.entries(colorCounts)
+            
+            const sortedColors = Object.entries(colorCounts)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
                 .map(([k, v]) => k.split(',').map(Number));
-            setTopColors(top);
+
+            const distinctTopColors = [];
+            for (const color of sortedColors) {
+                if (distinctTopColors.length >= 5) break;
+                let isSimilarToExisting = false;
+                for (const existingColor of distinctTopColors) {
+                    if (areColorsSimilar(color, existingColor)) {
+                        isSimilarToExisting = true;
+                        break;
+                    }
+                }
+                if (!isSimilarToExisting) {
+                    distinctTopColors.push(color);
+                }
+            }
+            setTopColors(distinctTopColors);
         };
         img.src = e.target.result;
     };
