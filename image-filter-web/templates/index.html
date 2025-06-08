@@ -87,12 +87,13 @@
             margin-bottom: 0.7rem;
         }
         .color-swatch {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 0.5rem;
-            border: 1.5px solid #e5e5e5;
+            border: 2px solid #e5e5e5;
             background: #eee;
             display: inline-block;
+            transition: border 0.2s, box-shadow 0.2s;
         }
         .color-swatch.selected {
             border: 2.5px solid #cf5f3c;
@@ -148,22 +149,22 @@
         <hr class="divider">
         <div class="outputs-container modern-outputs" style="display: flex; flex-direction: column; gap: 2.2rem; align-items: center;">
         {% for out in range(3) %}
-        <div class="output-block modern-output-block" id="output-block-{{out}}" style="width: 100%; max-width: 420px; margin: 0 auto;">
-            <div class="output-header">
-                <span class="output-number">Output {{out+1}}</span>
-                <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input modern-filename-input" aria-label="Output {{out+1}} filename">
+        <div class="output-block modern-output-block" id="output-block-{{out}}" style="width: 100%; max-width: 420px; margin: 0 auto; background: #fff; border-radius: 1.1rem; box-shadow: 0 2px 12px rgba(60,122,74,0.07); padding: 1.2rem 1.2rem 1.2rem 1.2rem;">
+            <div class="output-header" style="display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem;">
+                <span class="output-number" style="font-weight: 700; color: var(--green, #3c7a4a); font-size: 1.1rem;">Output {{out+1}}</span>
+                <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input modern-filename-input" aria-label="Output {{out+1}} filename" style="flex: 1; border-radius: 0.5rem; border: 1.5px solid #e5e5e5; padding: 0.3rem 0.7rem; font-size: 1rem;">
             </div>
             <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
             {% for slot in range(3) %}
             <div class="color-row modern-color-row" style="display: flex; align-items: center; gap: 0.5rem;">
-                <span class="color-slot-label">Color {{slot+1}}:</span>
-                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch"></span>
+                <span class="color-slot-label" style="min-width: 70px; color: #2e3a4a; font-weight: 600;">Color {{slot+1}}:</span>
+                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch" style="width: 32px; height: 32px; border-radius: 0.5rem; border: 2px solid #e5e5e5; background: #eee; display: inline-block; transition: border 0.2s, box-shadow 0.2s;"></span>
                 <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red" style="width: 48px;">
                 <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green" style="width: 48px;">
                 <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue" style="width: 48px;">
                 <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input modern-tol-input" aria-label="Tolerance" style="width: 60px;">
-                <span id="color-label-{{out}}-{{slot}}" class="modern-color-label"></span>
-                <button type="button" class="apply-btn modern-apply-btn" onclick="openApplyDialog({{out}},{{slot}})">🎨 Pick</button>
+                <span id="color-label-{{out}}-{{slot}}" class="modern-color-label" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500;"></span>
+                <button type="button" class="apply-btn modern-apply-btn" onclick="openApplyDialog({{out}},{{slot}})" style="background: linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); color: #fff; border: none; border-radius: 0.5rem; padding: 0.3rem 0.9rem; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">🎨 Pick</button>
             </div>
             {% endfor %}
             </div>
@@ -257,57 +258,12 @@ function applyColorToEntry(color, outputIdx, colorIdx) {
     var label = document.getElementById(labelId);
     if (swatch) {
         swatch.style.background = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
-        swatch.classList.add('selected');
+        swatch.style.border = '2.5px solid #cf5f3c';
+        swatch.style.boxShadow = '0 0 0 2px #cf5f3c';
     }
     if (label) {
         label.textContent = 'RGB(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
     }
-    lastPicked[outputIdx] = true;
-}
-function highlightOutputBlock(outIdx) {
-    for (let i = 0; i < 3; i++) {
-        const block = document.getElementById('output-block-' + i);
-        if (block) {
-            if (i === outIdx) {
-                block.classList.add('selected');
-            } else {
-                block.classList.remove('selected');
-            }
-        }
-    }
-}
-function extractTopColorsFrontend() {
-    const fileInput = document.getElementById('image');
-    if (!fileInput.files.length) return;
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new window.Image();
-        img.onload = function() {
-            // Draw image to canvas
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const data = ctx.getImageData(0, 0, img.width, img.height).data;
-            // Count colors
-            const colorCounts = {};
-            for (let i = 0; i < data.length; i += 4) {
-                if (data[i+3] === 0) continue; // skip transparent
-                const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
-                colorCounts[key] = (colorCounts[key] || 0) + 1;
-            }
-            // Sort and get top 5
-            const top = Object.entries(colorCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
-                .map(([k, v]) => k.split(',').map(Number));
-            setTopColors(top);
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
 }
 document.addEventListener('input', function(e) {
     var id = e.target.id;
@@ -320,7 +276,11 @@ document.addEventListener('input', function(e) {
         var b = parseInt(document.getElementById('b_' + out + '_' + slot).value) || 0;
         var swatch = document.getElementById('color-preview-' + out + '-' + slot);
         var label = document.getElementById('color-label-' + out + '-' + slot);
-        if (swatch) swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+        if (swatch) {
+            swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+            swatch.style.border = '2.5px solid #cf5f3c';
+            swatch.style.boxShadow = '0 0 0 2px #cf5f3c';
+        }
         if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     }
 });
