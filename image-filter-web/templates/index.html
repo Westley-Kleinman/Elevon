@@ -302,8 +302,14 @@ document.addEventListener('input', function(e) {
         var label = document.getElementById('color-label-' + out + '-' + slot);
         if (swatch) {
             swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
-            swatch.style.border = '2.5px solid #cf5f3c';
-            swatch.style.boxShadow = '0 0 0 2px #cf5f3c';
+            // Only highlight if a valid color is entered
+            if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+                swatch.style.border = '2.5px solid #cf5f3c';
+                swatch.style.boxShadow = '0 0 0 2px #cf5f3c';
+            } else {
+                swatch.style.border = '2px solid #e5e5e5';
+                swatch.style.boxShadow = 'none';
+            }
         }
         if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     }
