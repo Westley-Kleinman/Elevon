@@ -1,182 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Image Color Filter | Elevon</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        body {
-            background: linear-gradient(120deg, #f6f8f7 0%, #eaf3ee 100%);
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            min-height: 100vh;
-        }
-        .header-bar {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            background: #fff;
-            box-shadow: 0 2px 16px rgba(60,122,74,0.07);
-            padding: 1.2rem 2.2rem 1.2rem 2.2rem;
-            border-radius: 0 0 1.5rem 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-        .logo-img {
-            max-width: 70px;
-            border-radius: 1.2rem;
-            background: #fff;
-            box-shadow: 0 2px 12px rgba(60,122,74,0.10);
-        }
-        .main-title {
-            font-size: 2.1rem;
-            color: #2e3a4a;
-            font-weight: 900;
-            letter-spacing: 0.01em;
-        }
-        .main-form {
-            background: #fff;
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 36px rgba(60,122,74,0.13);
-            padding: 2.5rem 2.5rem 2rem 2.5rem;
-            max-width: 900px;
-            margin: 0 auto 2.5rem auto;
-        }
-        .outputs-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2.2rem;
-            align-items: center;
-        }
-        .output-block {
-            background: #f6f8f7;
-            border-radius: 1.1rem;
-            box-shadow: 0 2px 12px rgba(60,122,74,0.07);
-            padding: 1.2rem 1.2rem 1.2rem 1.2rem;
-            width: 100%;
-            max-width: 420px;
-            margin: 0 auto;
-            transition: box-shadow 0.2s;
-        }
-        .output-block.selected {
-            box-shadow: 0 0 0 4px #cf5f3c, 0 2px 12px rgba(60,122,74,0.07);
-            border: 2px solid #cf5f3c;
-        }
-        .output-header {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            margin-bottom: 0.7rem;
-        }
-        .output-number {
-            font-weight: 700;
-            color: #2e3a4a;
-            font-size: 1.1rem;
-        }
-        .filename-input {
-            flex: 1;
-            border-radius: 0.5rem;
-            border: 1.5px solid #e5e5e5;
-            padding: 0.3rem 0.7rem;
-            font-size: 1rem;
-        }
-        .color-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.7rem;
-        }
-        .color-swatch {
-            width: 32px;
-            height: 32px;
-            border-radius: 0.5rem;
-            border: 2px solid #e5e5e5;
-            background: #eee;
-            display: inline-block;
-            transition: border 0.2s, box-shadow 0.2s;
-        }
-        .color-swatch.selected {
-            border: 2.5px solid #cf5f3c;
-            box-shadow: 0 0 0 2px #cf5f3c;
-        }
-        .apply-btn {
-            background: #2e3a4a;
-            color: #fff;
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0.3rem 0.9rem;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .apply-btn:hover {
-            background: #cf5f3c;
-        }
-        .main-btn {
-            background: linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%);
-            color: #fff;
-            border: none;
-            border-radius: 0.7rem;
-            padding: 0.7rem 2.2rem;
-            font-size: 1.2rem;
-            font-weight: 900;
-            margin-top: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 2px 12px rgba(60,122,74,0.07);
-        }
-        .main-btn:hover {
-            background: linear-gradient(90deg,#cf5f3c 0%,#2e3a4a 100%);
-        }
-        .divider {
-            margin: 1.2rem 0 1.7rem 0;
-            border: none;
-            border-top: 2px solid #e5e5e5;
-        }
-        @media (max-width: 900px) {
-            .outputs-container { flex-direction: column; gap: 1.5rem; }
-        }
+        /* All custom styles moved to static/style.css for a sleek, modern, and easy-to-use UI. */
     </style>
 </head>
 <body>
     <div class="header-bar">
         <img src="/static/images/elevon_logo.png" alt="Elevon Logo" class="logo-img">
-        <h1 class="main-title">Elevon Image Color Filter DICK</h1>
+        <h1 class="main-title">Elevon Image Color Filter</h1>
     </div>
-    <form method="post" enctype="multipart/form-data" class="main-form modern-form" onsubmit="return handleFormSubmit(event)">
-        <label class="main-label" style="font-size:1.15rem;font-weight:700;color:#2e3a4a;">Select PNG image:</label>
-        <input type="file" name="image" id="image" accept="image/png" required onchange="extractTopColorsFrontend()" class="file-input" style="margin-bottom:1.2rem;"><br>
+    <form method="post" enctype="multipart/form-data" class="main-form" onsubmit="return handleFormSubmit(event)">
+        <div class="form-section">
+            <label class="main-label">Select PNG image:</label>
+            <input type="file" name="image" id="image" accept="image/png" required onchange="extractTopColorsFrontend()" class="file-input">
+        </div>
         <hr class="divider">
-        <div class="outputs-container modern-outputs" style="display: flex; flex-direction: column; gap: 2.2rem; align-items: center;">
+        <div class="outputs-container">
         {% for out in range(3) %}
-        <div class="output-block modern-output-block" id="output-block-{{out}}" style="width: 100%; max-width: 420px; margin: 0 auto; background: #fff; border-radius: 1.1rem; box-shadow: 0 2px 12px rgba(60,122,74,0.07); padding: 1.2rem 1.2rem 1.2rem 1.2rem;">
-            <div class="output-header" style="display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem;">
-                <span class="output-number" style="font-weight: 700; color: var(--green, #3c7a4a); font-size: 1.1rem;">Output {{out+1}}</span>
-                <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input modern-filename-input" aria-label="Output {{out+1}} filename" style="flex: 1; border-radius: 0.5rem; border: 1.5px solid #e5e5e5; padding: 0.3rem 0.7rem; font-size: 1rem;">
+        <div class="output-block" id="output-block-{{out}}">
+            <div class="output-header">
+                <span class="output-number">Output {{out+1}}</span>
+                <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input" aria-label="Output {{out+1}} filename">
             </div>
-            <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
+            <div class="color-slots">
             {% for slot in range(3) %}
-            <div class="color-row modern-color-row" style="display: flex; align-items: center; gap: 0.5rem; align-items: center;">
-                <span class="color-slot-label" style="min-width: 70px; color: #2e3a4a; font-weight: 600;">Color {{slot+1}}:</span>
-                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch" style="width: 32px; height: 32px; border-radius: 0.5rem; border: 2px solid #e5e5e5; background: #eee; display: inline-block; transition: border 0.2s, box-shadow 0.2s; vertical-align: middle; margin-right: 8px;"></span>
-                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red" style="width: 48px;">
-                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green" style="width: 48px;">
-                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue" style="width: 48px;">
-                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input modern-tol-input" aria-label="Tolerance" style="width: 60px;">
-                <span id="color-label-{{out}}-{{slot}}" class="modern-color-label" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500; min-width: 120px; display: inline-block;"></span>
-                <button type="button" class="apply-btn modern-apply-btn" onclick="openApplyDialog({{out}},{{slot}})" style="background: linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%); color: #fff; border: none; border-radius: 0.5rem; padding: 0.3rem 0.9rem; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">🎨 Pick</button>
+            <div class="color-row">
+                <span class="color-slot-label">Color {{slot+1}}:</span>
+                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch"></span>
+                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input" aria-label="Red">
+                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input" aria-label="Green">
+                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue">
+                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input" aria-label="Tolerance">
+                <span id="color-label-{{out}}-{{slot}}" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500; min-width: 120px; display: inline-block;"></span>
+                <button type="button" class="apply-btn" onclick="openApplyDialog('{{ out }}', '{{ slot }}')">🎨 Pick</button>
             </div>
             {% endfor %}
             </div>
         </div>
         {% endfor %}
         </div>
-        <button type="submit" class="main-btn modern-main-btn">Download Outputs</button>
+        <button type="submit" class="main-btn">Download Outputs</button>
     </form>
     <!-- Modal for picking top color -->
-    <div id="apply-modal" class="modal modern-modal" style="display:none; align-items: center; justify-content: center;">
-        <div class="modal-content modern-modal-content" tabindex="-1" style="background:#fff; border-radius:1.2rem; box-shadow:0 8px 36px rgba(60,122,74,0.15); padding:2.2rem 2.5rem 1.7rem 2.5rem; min-width:320px;">
-            <span class="close modern-close" onclick="closeApplyDialog()" style="position:absolute; top:10px; right:18px; cursor:pointer; font-size:2rem;">&times;</span>
+    <div id="apply-modal" class="modal">
+        <div class="modal-content" tabindex="-1">
+            <span class="close" onclick="closeApplyDialog()">&times;</span>
             <h3 style="margin-top:0; color:#2e3a4a; font-size:1.3rem; font-weight:900;">Pick a Top Color</h3>
             <div id="modal-top-colors"></div>
         </div>
