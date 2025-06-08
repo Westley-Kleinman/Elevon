@@ -46,6 +46,7 @@ def index():
             filename = request.form.get(f'filename_{out}', '').strip()
             if not filename:
                 continue
+            # Remove any extension and force .png
             filename = os.path.splitext(filename)[0] + '.png'
             color_tolerance_list = []
             for slot in range(3):
@@ -82,6 +83,7 @@ def index():
             out_img[mask, :3] = 0
             out_img[~mask, :3] = 255
             out_img[:, 3] = 255
+        # Package all outputs as a zip
         import zipfile
         import tempfile
         zip_io = io.BytesIO()
