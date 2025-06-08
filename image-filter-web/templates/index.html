@@ -133,8 +133,7 @@
         const formData = new FormData();
         formData.append('image', fileInput.files[0]);
         fetch('/top_colors', { method: 'POST', body: formData })
-            .then(resp => resp.json())
-            .then data => setTopColors(data.top_colors))
+            .then(data => setTopColors(data.top_colors))
             .catch(() => setTopColors([]));
     }
     document.addEventListener('input', function(e) {
