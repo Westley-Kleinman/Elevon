@@ -44,18 +44,18 @@
         }
         .outputs-container {
             display: flex;
-            gap: 2.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 2.2rem;
+            align-items: center;
         }
         .output-block {
             background: #f6f8f7;
             border-radius: 1.1rem;
             box-shadow: 0 2px 12px rgba(60,122,74,0.07);
             padding: 1.2rem 1.2rem 1.2rem 1.2rem;
-            min-width: 240px;
-            flex: 1 1 260px;
-            max-width: 320px;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
             transition: box-shadow 0.2s;
         }
         .output-block.selected {
@@ -146,22 +146,22 @@
         <label class="main-label" style="font-size:1.15rem;font-weight:700;color:#2e3a4a;">Select PNG image:</label>
         <input type="file" name="image" id="image" accept="image/png" required onchange="fetchTopColors()" class="file-input" style="margin-bottom:1.2rem;"><br>
         <hr class="divider">
-        <div class="outputs-container modern-outputs">
+        <div class="outputs-container modern-outputs" style="display: flex; flex-direction: column; gap: 2.2rem; align-items: center;">
         {% for out in range(3) %}
-        <div class="output-block modern-output-block" id="output-block-{{out}}">
+        <div class="output-block modern-output-block" id="output-block-{{out}}" style="width: 100%; max-width: 420px; margin: 0 auto;">
             <div class="output-header">
                 <span class="output-number">Output {{out+1}}</span>
                 <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input modern-filename-input" aria-label="Output {{out+1}} filename">
             </div>
-            <div class="color-slots">
+            <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
             {% for slot in range(3) %}
-            <div class="color-row modern-color-row">
+            <div class="color-row modern-color-row" style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
                 <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch"></span>
-                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red">
-                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green">
-                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue">
-                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input modern-tol-input" aria-label="Tolerance">
+                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red" style="width: 48px;">
+                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green" style="width: 48px;">
+                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue" style="width: 48px;">
+                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input modern-tol-input" aria-label="Tolerance" style="width: 60px;">
                 <span id="color-label-{{out}}-{{slot}}" class="modern-color-label"></span>
                 <button type="button" class="apply-btn modern-apply-btn" onclick="openApplyDialog({{out}},{{slot}})">🎨 Pick</button>
             </div>

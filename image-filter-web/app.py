@@ -5,6 +5,7 @@ import io
 import os
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable Flask static file caching
 
 # Color filter logic (vectorized, similar to your desktop app)
 def filter_by_colors(image, color_tolerance_list):
