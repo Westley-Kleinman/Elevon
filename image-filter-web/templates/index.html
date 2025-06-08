@@ -7,10 +7,8 @@
     </head>
     <body>
         <div class="header-bar">
-            <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
-                <img src="/static/images/elevon_logo.png" alt="Elevon Logo" class="logo-img" style="max-width:60px;vertical-align:middle;box-shadow:none;">
-                <h1 class="main-title" style="margin:0;">Image Color Filter</h1>
-            </a>
+            <img src="{{ url_for('static', filename='images/elevon_logo.png') }}" alt="Elevon Logo" class="logo-img">
+            <h1 class="main-title">Image Color Filter</h1>
         </div>
         <form method="post" enctype="multipart/form-data" class="main-form modern-form">
             <label class="main-label">Select PNG image:</label>
@@ -134,7 +132,7 @@
         formData.append('image', fileInput.files[0]);
         fetch('/top_colors', { method: 'POST', body: formData })
             .then(resp => resp.json())
-            .then data => setTopColors(data.top_colors))
+            .then(data => setTopColors(data.top_colors))
             .catch(() => setTopColors([]));
     }
     document.addEventListener('input', function(e) {
