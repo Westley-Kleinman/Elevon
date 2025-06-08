@@ -169,32 +169,71 @@ function applyColorToEntry(color, outputIdx, colorIdx) {
     highlightOutputBlock(outputIdx);
     closeApplyDialog();
 }
+
 function updateColorPreview(out, slot) {
-    var r = document.getElementById('r_' + out + '_' + slot).value;
-    var g = document.getElementById('g_' + out + '_' + slot).value;
-    var b = document.getElementById('b_' + out + '_' + slot).value;
-    var label = document.getElementById('color-label-' + out + '-' + slot);
-    if (r !== '' && g !== '' && b !== '') {
-        r = Math.max(0, Math.min(255, parseInt(r)));
-        g = Math.max(0, Math.min(255, parseInt(g)));
-        b = Math.max(0, Math.min(255, parseInt(b)));
-        if (label) {
-            label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
-            label.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
-            // Set text color for contrast
-            var luminance = (0.299*r + 0.587*g + 0.114*b)/255;
-            label.style.color = luminance > 0.6 ? '#222' : '#fff';
-            label.style.border = '2px solid #2e3a4a';
+    const rInput = document.getElementById('r_' + out + '_' + slot);
+    const gInput = document.getElementById('g_' + out + '_' + slot);
+    const bInput = document.getElementById('b_' + out + '_' + slot);
+    const colorLabel = document.getElementById('color-label-' + out + '-' + slot);
+
+    if (colorLabel) {
+        colorLabel.style.display = 'none'; // Hide the dedicated color label span
+    }
+
+    // Ensure inputs exist before trying to read their values or style them
+    if (!rInput || !gInput || !bInput) {
+        // console.error('RGB input elements not found for out:' + out + ', slot:' + slot);
+        return;
+    }
+
+    const rValStr = rInput.value;
+    const gValStr = gInput.value;
+    const bValStr = bInput.value;
+
+    if (rValStr.trim() !== '' && gValStr.trim() !== '' && bValStr.trim() !== '') {
+        const r = parseInt(rValStr);
+        const g = parseInt(gValStr);
+        const b = parseInt(bValStr);
+
+        if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+            const rNorm = Math.max(0, Math.min(255, r));
+            const gNorm = Math.max(0, Math.min(255, g));
+            const bNorm = Math.max(0, Math.min(255, b));
+
+            const bgColor = 'rgb(' + rNorm + ',' + gNorm + ',' + bNorm + ')';
+            const luminance = (0.299 * rNorm + 0.587 * gNorm + 0.114 * bNorm) / 255;
+            const textColor = luminance > 0.6 ? '#222' : '#fff';
+            const borderColor = luminance > 0.6 ? '#aaa' : '#555';
+
+            [rInput, gInput, bInput].forEach(input => {
+                if (input) {
+                    input.style.background = bgColor;
+                    input.style.color = textColor;
+                    input.style.border = '1px solid ' + borderColor;
+                }
+            });
+        } else {
+            // Handle cases where input is not a valid number after parsing
+            [rInput, gInput, bInput].forEach(input => {
+                if (input) {
+                    input.style.background = '';
+                    input.style.color = '';
+                    input.style.border = ''; // Reverts to CSS defined border
+                }
+            });
         }
     } else {
-        if (label) {
-            label.textContent = '';
-            label.style.background = '#eee';
-            label.style.color = '#2e3a4a';
-            label.style.border = '2px solid #e5e5e5';
-        }
+        // Reset styles if any input is empty
+        [rInput, gInput, bInput].forEach(input => {
+            if (input) {
+                input.style.background = '';
+                input.style.color = '';
+                input.style.border = ''; // Reverts to CSS defined border
+            }
+        });
     }
 }
+
 // On page load, initialize all color previews to match any prefilled values
 window.addEventListener('DOMContentLoaded', function() {
     for (let out = 0; out < 3; out++) {
