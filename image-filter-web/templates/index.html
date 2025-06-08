@@ -376,9 +376,9 @@ function handleFormSubmit(e) {
                             }
                         }
                         if (keep) { // Pixel matches the filter
-                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
-                        } else { // Pixel does not match the filter
                             data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
+                        } else { // Pixel does not match the filter
+                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
                         }
                         data[i+3] = 255; // Ensure pixel is opaque
                     }
@@ -439,9 +439,9 @@ function downloadSingleOutput(out) {
                         }
                     }
                     if (keep) { // Pixel matches the filter
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
-                    } else { // Pixel does not match the filter
                         data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
+                    } else { // Pixel does not match the filter
+                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
                     }
                     data[i+3] = 255;
                 }
