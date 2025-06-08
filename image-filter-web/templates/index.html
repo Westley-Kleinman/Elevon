@@ -32,11 +32,11 @@
             <div class="color-row">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
                 <span id="color-preview-{{out}}-{{slot}}" class="color-swatch"></span>
-                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input" aria-label="Red">
-                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input" aria-label="Green">
-                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue">
+                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input" aria-label="Red" oninput="updateColorPreview({{out}},{{slot}})">
+                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input" aria-label="Green" oninput="updateColorPreview({{out}},{{slot}})">
+                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input" aria-label="Tolerance">
-                <span id="color-label-{{out}}-{{slot}}" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500; min-width: 120px; display: inline-block;"></span>
+                <span id="color-label-{{out}}-{{slot}}" class="color-label" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500; min-width: 120px; display: inline-block;"></span>
                 <button type="button" class="apply-btn" onclick="openApplyDialog('{{ out }}', '{{ slot }}')">🎨 Pick</button>
             </div>
             {% endfor %}
@@ -177,8 +177,8 @@ function updateColorPreview(out, slot) {
         b = Math.max(0, Math.min(255, parseInt(b)));
         if (swatch) {
             swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
-            swatch.style.border = '2.5px solid #cf5f3c';
-            swatch.style.boxShadow = '0 0 0 2px #cf5f3c';
+            swatch.style.border = '2.5px solid #2e3a4a';
+            swatch.style.boxShadow = '0 0 0 2px #2e3a4a';
         }
         if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     } else {
