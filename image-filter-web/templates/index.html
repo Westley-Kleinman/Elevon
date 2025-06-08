@@ -18,6 +18,7 @@
         <div class="form-section">
             <label class="main-label">Select PNG image:</label>
             <input type="file" name="image" id="image" accept="image/png" required onchange="extractTopColorsFrontend()" class="file-input">
+            <img id="image-preview" src="#" alt="Image preview" style="max-width: 150px; max-height: 150px; margin-left: 15px; display: none; vertical-align: middle; border-radius: 4px; border: 1px solid #ddd;">
         </div>
         <hr class="divider">
         <div class="outputs-container">
@@ -75,49 +76,83 @@ function areColorsSimilar(color1, color2, threshold = 20) {
 
 function extractTopColorsFrontend() {
     const fileInput = document.getElementById('image');
-    if (!fileInput.files.length) return;
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new window.Image();
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const data = ctx.getImageData(0, 0, img.width, img.height).data;
-            const colorCounts = {};
-            for (let i = 0; i < data.length; i += 4) {
-                if (data[i+3] === 0) continue; // Skip transparent pixels
-                const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
-                colorCounts[key] = (colorCounts[key] || 0) + 1;
-            }
-            
-            const sortedColors = Object.entries(colorCounts)
-                .sort((a, b) => b[1] - a[1])
-                .map(([k, v]) => k.split(',').map(Number));
+    const previewElement = document.getElementById('image-preview');
 
-            const distinctTopColors = [];
-            for (const color of sortedColors) {
-                if (distinctTopColors.length >= 5) break;
-                let isSimilarToExisting = false;
-                for (const existingColor of distinctTopColors) {
-                    if (areColorsSimilar(color, existingColor)) {
-                        isSimilarToExisting = true;
-                        break;
+    if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const dataURL = e.target.result;
+            
+            if (previewElement) {
+                previewElement.src = dataURL;
+                previewElement.style.display = 'inline-block';
+            }
+
+            const img = new window.Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const data = ctx.getImageData(0, 0, img.width, img.height).data;
+                const colorCounts = {};
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i+3] === 0) continue; // Skip transparent pixels
+                    const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
+                    colorCounts[key] = (colorCounts[key] || 0) + 1;
+                }
+            
+                const sortedColors = Object.entries(colorCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([k, v]) => k.split(',').map(Number));
+
+                const distinctTopColors = [];
+                for (const color of sortedColors) {
+                    if (distinctTopColors.length >= 5) break;
+                    let isSimilarToExisting = false;
+                    for (const existingColor of distinctTopColors) {
+                        if (areColorsSimilar(color, existingColor)) {
+                            isSimilarToExisting = true;
+                            break;
+                        }
+                    }
+                    if (!isSimilarToExisting) {
+                        distinctTopColors.push(color);
                     }
                 }
-                if (!isSimilarToExisting) {
-                    distinctTopColors.push(color);
+                setTopColors(distinctTopColors);
+            };
+            img.onerror = function() {
+                if (previewElement) {
+                    previewElement.style.display = 'none';
+                    previewElement.src = '#';
                 }
-            }
-            setTopColors(distinctTopColors);
+                alert('Error loading image for color extraction. Please ensure it is a valid PNG file.');
+                setTopColors([]);
+            };
+            img.src = dataURL;
         };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+        reader.onerror = function() {
+            if (previewElement) {
+                previewElement.style.display = 'none';
+                previewElement.src = '#';
+            }
+            alert('Error reading file.');
+            setTopColors([]);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        if (previewElement) {
+            previewElement.style.display = 'none';
+            previewElement.src = '#';
+        }
+        setTopColors([]); 
+    }
 }
+
 function openApplyDialog(out, slot) {
     applyTarget = {out, slot};
     const modal = document.getElementById('apply-modal');
