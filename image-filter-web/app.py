@@ -35,6 +35,7 @@ def top_colors():
     file = request.files['image']
     image = Image.open(file.stream)
     top = get_top_colors(image)
+    print('DEBUG: Received image, top colors:', top)
     return jsonify({'top_colors': top})
 
 @app.route('/', methods=['GET', 'POST'])

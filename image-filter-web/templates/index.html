@@ -1,193 +1,312 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Color Filter</title>
+    <title>Image Color Filter | Elevon</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f6fb; }
-    h1 { color: #222; margin-top: 30px; }
-    .main-form { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 24px #d0d6e1; max-width: 700px; margin: 40px auto; }
-    .main-label { font-size: 1.1em; }
-    .outputs-container { display: flex; gap: 20px; flex-wrap: wrap; }
-    .output-block { background: #f8fafc; border: 1px solid #e0e6ef; border-radius: 8px; padding: 15px; flex: 1 1 200px; min-width: 220px; }
-    .output-label { font-weight: bold; }
-    .filename-input { width: 80%; margin-bottom: 8px; }
-    .color-slots { margin-top: 8px; }
-    .color-row { margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
-    .color-swatch { display: inline-block; width: 22px; height: 22px; border: 1.5px solid #bbb; vertical-align: middle; margin-right: 5px; border-radius: 6px; transition: background 0.2s, border 0.2s; box-shadow: 0 1px 4px #e0e6ef; }
-    .color-slot-label { width: 70px; display: inline-block; font-weight: 500; color: #333; }
-    .color-input, .tol-input { width: 48px; margin-right: 4px; border-radius: 4px; border: 1px solid #cfd8e3; padding: 3px 6px; font-size: 1em; background: #f7fafd; transition: border 0.2s; }
-    .color-input:focus, .tol-input:focus { border: 1.5px solid #0074d9; outline: none; background: #fff; }
-    .apply-btn { background: linear-gradient(90deg, #0074d9 60%, #005fa3 100%); color: #fff; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.97em; font-weight: 500; box-shadow: 0 1px 4px #d0d6e1; transition: background 0.2s; }
-    .apply-btn:hover { background: linear-gradient(90deg, #005fa3 60%, #0074d9 100%); }
-    .main-btn { background: linear-gradient(90deg, #28a745 60%, #1e7e34 100%); color: #fff; border: none; border-radius: 4px; padding: 10px 24px; font-size: 1.1em; margin-top: 20px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px #d0d6e1; transition: background 0.2s; }
-    .main-btn:hover { background: linear-gradient(90deg, #1e7e34 60%, #28a745 100%); }
-    /* Modal styles */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.3); }
-    .modal-content { background: #fff; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 350px; border-radius: 10px; box-shadow: 0 2px 16px #aaa; }
-    .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-    .close:hover, .close:focus { color: #000; text-decoration: none; cursor: pointer; }
+        body {
+            background: linear-gradient(120deg, #f6f8f7 0%, #eaf3ee 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .header-bar {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: #fff;
+            box-shadow: 0 2px 16px rgba(60,122,74,0.07);
+            padding: 1.2rem 2.2rem 1.2rem 2.2rem;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .logo-img {
+            max-width: 70px;
+            border-radius: 1.2rem;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(60,122,74,0.10);
+        }
+        .main-title {
+            font-size: 2.1rem;
+            color: #2e3a4a;
+            font-weight: 900;
+            letter-spacing: 0.01em;
+        }
+        .main-form {
+            background: #fff;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 36px rgba(60,122,74,0.13);
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            max-width: 900px;
+            margin: 0 auto 2.5rem auto;
+        }
+        .outputs-container {
+            display: flex;
+            gap: 2.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .output-block {
+            background: #f6f8f7;
+            border-radius: 1.1rem;
+            box-shadow: 0 2px 12px rgba(60,122,74,0.07);
+            padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+            min-width: 240px;
+            flex: 1 1 260px;
+            max-width: 320px;
+            transition: box-shadow 0.2s;
+        }
+        .output-block.selected {
+            box-shadow: 0 0 0 4px #cf5f3c, 0 2px 12px rgba(60,122,74,0.07);
+            border: 2px solid #cf5f3c;
+        }
+        .output-header {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-bottom: 0.7rem;
+        }
+        .output-number {
+            font-weight: 700;
+            color: #2e3a4a;
+            font-size: 1.1rem;
+        }
+        .filename-input {
+            flex: 1;
+            border-radius: 0.5rem;
+            border: 1.5px solid #e5e5e5;
+            padding: 0.3rem 0.7rem;
+            font-size: 1rem;
+        }
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.7rem;
+        }
+        .color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 0.5rem;
+            border: 1.5px solid #e5e5e5;
+            background: #eee;
+            display: inline-block;
+        }
+        .color-swatch.selected {
+            border: 2.5px solid #cf5f3c;
+            box-shadow: 0 0 0 2px #cf5f3c;
+        }
+        .apply-btn {
+            background: #2e3a4a;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.9rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .apply-btn:hover {
+            background: #cf5f3c;
+        }
+        .main-btn {
+            background: linear-gradient(90deg,#2e3a4a 60%,#cf5f3c 100%);
+            color: #fff;
+            border: none;
+            border-radius: 0.7rem;
+            padding: 0.7rem 2.2rem;
+            font-size: 1.2rem;
+            font-weight: 900;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(60,122,74,0.07);
+        }
+        .main-btn:hover {
+            background: linear-gradient(90deg,#cf5f3c 0%,#2e3a4a 100%);
+        }
+        .divider {
+            margin: 1.2rem 0 1.7rem 0;
+            border: none;
+            border-top: 2px solid #e5e5e5;
+        }
+        @media (max-width: 900px) {
+            .outputs-container { flex-direction: column; gap: 1.5rem; }
+        }
     </style>
 </head>
 <body>
-    <h1>Image Color Filter</h1>
-    <form method="post" enctype="multipart/form-data" class="main-form">
-        <label class="main-label">Select PNG image:</label>
-        <input type="file" name="image" id="image" accept="image/png" required onchange="fetchTopColors()"><br>
-        <div id="top-colors" class="top-colors"></div>
-        <hr>
-        <div class="outputs-container" style="flex-direction:column; gap:28px;">
+    <div class="header-bar">
+        <img src="/static/images/elevon_logo.png" alt="Elevon Logo" class="logo-img">
+        <h1 class="main-title">Elevon Image Color Filter</h1>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="main-form modern-form">
+        <label class="main-label" style="font-size:1.15rem;font-weight:700;color:#2e3a4a;">Select PNG image:</label>
+        <input type="file" name="image" id="image" accept="image/png" required onchange="fetchTopColors()" class="file-input" style="margin-bottom:1.2rem;"><br>
+        <hr class="divider">
+        <div class="outputs-container modern-outputs">
         {% for out in range(3) %}
-        <div class="output-block" style="max-width: 520px; margin: 0 auto;">
-            <label class="output-label">Output {{out+1}} Filename:</label>
-            <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input"><br>
-            <b>Colors for Output {{out+1}} (up to 3):</b>
+        <div class="output-block modern-output-block" id="output-block-{{out}}">
+            <div class="output-header">
+                <span class="output-number">Output {{out+1}}</span>
+                <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input modern-filename-input" aria-label="Output {{out+1}} filename">
+            </div>
             <div class="color-slots">
             {% for slot in range(3) %}
-            <div class="color-row">
+            <div class="color-row modern-color-row">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
-                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch" style="margin-right:6px; background:#eee; border:1.5px solid #bbb;"></span>
-                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input">
-                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input">
-                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input">
-                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input">
-                <span id="color-label-{{out}}-{{slot}}" style="margin-left:8px; font-size:0.97em; color:#444; min-width:90px; display:inline-block;"></span>
-                <button type="button" class="apply-btn" onclick="openApplyDialog({{out}},{{slot}})">Pick from Top Colors</button>
+                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch modern-color-swatch"></span>
+                <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input modern-color-input" aria-label="Red">
+                <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input modern-color-input" aria-label="Green">
+                <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input modern-color-input" aria-label="Blue">
+                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input modern-tol-input" aria-label="Tolerance">
+                <span id="color-label-{{out}}-{{slot}}" class="modern-color-label"></span>
+                <button type="button" class="apply-btn modern-apply-btn" onclick="openApplyDialog({{out}},{{slot}})">🎨 Pick</button>
             </div>
             {% endfor %}
             </div>
         </div>
         {% endfor %}
         </div>
-        <button type="submit" class="main-btn">Download Outputs</button>
+        <button type="submit" class="main-btn modern-main-btn">Download Outputs</button>
     </form>
-
     <!-- Modal for picking top color -->
-    <div id="apply-modal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeApplyDialog()">&times;</span>
-            <h3>Pick a Top Color</h3>
+    <div id="apply-modal" class="modal modern-modal" style="display:none; align-items: center; justify-content: center;">
+        <div class="modal-content modern-modal-content" tabindex="-1" style="background:#fff; border-radius:1.2rem; box-shadow:0 8px 36px rgba(60,122,74,0.15); padding:2.2rem 2.5rem 1.7rem 2.5rem; min-width:320px;">
+            <span class="close modern-close" onclick="closeApplyDialog()" style="position:absolute; top:10px; right:18px; cursor:pointer; font-size:2rem;">&times;</span>
+            <h3 style="margin-top:0; color:#2e3a4a; font-size:1.3rem; font-weight:900;">Pick a Top Color</h3>
             <div id="modal-top-colors"></div>
         </div>
     </div>
-
     <script>
-    let topColors = [];
-    let applyTarget = {out: 0, slot: 0};
-    function setTopColors(colors) {
-        topColors = colors;
-        const container = document.getElementById('top-colors');
-        container.innerHTML = '';
-        if (!colors.length) return;
-        container.innerHTML = '<b>Top Colors Detected:</b>';
-        colors.forEach((color, idx) => {
-            const div = document.createElement('div');
-            div.className = 'color-row';
-            div.innerHTML = `<span class="color-swatch" style="background: rgb(${color[0]},${color[1]},${color[2]})"></span>RGB(${color[0]},${color[1]},${color[2]})`;
-            container.appendChild(div);
+let topColors = [];
+let applyTarget = {out: 0, slot: 0};
+let lastPicked = {};
+function setTopColors(colors) {
+    topColors = colors;
+}
+function openApplyDialog(out, slot) {
+    applyTarget = {out, slot};
+    const modal = document.getElementById('apply-modal');
+    const modalColors = document.getElementById('modal-top-colors');
+    modalColors.innerHTML = '';
+    if (!topColors.length) {
+        modalColors.innerHTML = '<i>No top colors detected. Please select an image first.</i>';
+    } else {
+        topColors.forEach(function(color, idx) {
+            const colorRow = document.createElement('div');
+            colorRow.style.display = 'flex';
+            colorRow.style.alignItems = 'center';
+            colorRow.style.marginBottom = '8px';
+            colorRow.style.justifyContent = 'space-between';
+            // Color swatch preview
+            const swatch = document.createElement('span');
+            swatch.className = 'color-swatch modern-color-swatch';
+            swatch.style.background = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+            swatch.style.marginRight = '10px';
+            // RGB label
+            const rgbLabel = document.createElement('span');
+            rgbLabel.textContent = 'RGB(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
+            rgbLabel.style.fontWeight = '500';
+            rgbLabel.style.marginRight = '10px';
+            // Keep button
+            const keepBtn = document.createElement('button');
+            keepBtn.className = 'apply-btn modern-apply-btn';
+            keepBtn.style.background = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',0.85)';
+            keepBtn.style.color = '#fff';
+            keepBtn.style.margin = '5px 0 5px 8px';
+            keepBtn.textContent = 'Keep';
+            keepBtn.type = 'button';
+            keepBtn.onclick = function() {
+                applyColorToEntry(color, applyTarget.out, applyTarget.slot);
+                highlightOutputBlock(applyTarget.out);
+                closeApplyDialog();
+            };
+            colorRow.appendChild(swatch);
+            colorRow.appendChild(rgbLabel);
+            colorRow.appendChild(keepBtn);
+            modalColors.appendChild(colorRow);
         });
+        // Add Cancel button
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'apply-btn modern-apply-btn';
+        cancelBtn.style.background = '#888';
+        cancelBtn.style.margin = '5px';
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.onclick = closeApplyDialog;
+        modalColors.appendChild(cancelBtn);
     }
-    function openApplyDialog(out, slot) {
-        applyTarget = {out, slot};
-        const modal = document.getElementById('apply-modal');
-        const modalColors = document.getElementById('modal-top-colors');
-        modalColors.innerHTML = '';
-        if (!topColors.length) {
-            modalColors.innerHTML = '<i>No top colors detected. Please select an image first.</i>';
-        } else {
-            topColors.forEach((color, idx) => {
-                const colorRow = document.createElement('div');
-                colorRow.style.display = 'flex';
-                colorRow.style.alignItems = 'center';
-                colorRow.style.marginBottom = '8px';
-
-                // Color swatch button (for preview only, not clickable)
-                const btn = document.createElement('span');
-                btn.className = 'apply-btn';
-                btn.style.background = `rgb(${color[0]},${color[1]},${color[2]})`;
-                btn.style.color = '#fff';
-                btn.style.margin = '5px';
-                btn.style.border = 'none';
-                btn.style.cursor = 'default';
-                btn.textContent = `RGB(${color[0]},${color[1]},${color[2]})`;
-                btn.tabIndex = -1;
-
-                // Keep button (clickable)
-                const keepBtn = document.createElement('button');
-                keepBtn.className = 'apply-btn';
-                keepBtn.style.background = `rgba(${color[0]},${color[1]},${color[2]},0.85)`;
-                keepBtn.style.color = '#fff';
-                keepBtn.style.margin = '5px 0 5px 8px';
-                keepBtn.textContent = 'Keep';
-                keepBtn.type = 'button';
-                keepBtn.onclick = function() { applyColorToEntry(color, applyTarget.out, applyTarget.slot); closeApplyDialog(); };
-
-                colorRow.appendChild(btn);
-                colorRow.appendChild(keepBtn);
-                modalColors.appendChild(colorRow);
-            });
-            // Add Cancel button
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'apply-btn';
-            cancelBtn.style.background = '#888';
-            cancelBtn.style.margin = '5px';
-            cancelBtn.textContent = 'Cancel';
-            cancelBtn.onclick = closeApplyDialog;
-            modalColors.appendChild(cancelBtn);
-        }
-        modal.style.display = 'block';
+    // Show modal as a centered flex popup
+    modal.style.display = 'flex';
+    setTimeout(function() {
+        document.querySelector('.modal-content').focus();
+    }, 100);
+}
+function closeApplyDialog() {
+    document.getElementById('apply-modal').style.display = 'none';
+}
+function applyColorToEntry(color, outputIdx, colorIdx) {
+    document.getElementById('r_' + outputIdx + '_' + colorIdx).value = color[0];
+    document.getElementById('g_' + outputIdx + '_' + colorIdx).value = color[1];
+    document.getElementById('b_' + outputIdx + '_' + colorIdx).value = color[2];
+    var previewId = 'color-preview-' + outputIdx + '-' + colorIdx;
+    var labelId = 'color-label-' + outputIdx + '-' + colorIdx;
+    var swatch = document.getElementById(previewId);
+    var label = document.getElementById(labelId);
+    if (swatch) {
+        swatch.style.background = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+        swatch.classList.add('selected');
     }
-    function closeApplyDialog() {
-        document.getElementById('apply-modal').style.display = 'none';
+    if (label) {
+        label.textContent = 'RGB(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
     }
-    function applyColorToEntry(color, outputIdx, colorIdx) {
-        // Set the RGB values
-        document.getElementById(`r_${outputIdx}_${colorIdx}`).value = color[0];
-        document.getElementById(`g_${outputIdx}_${colorIdx}`).value = color[1];
-        document.getElementById(`b_${outputIdx}_${colorIdx}`).value = color[2];
-        // Update the color preview swatch and RGB label
-        const previewId = `color-preview-${outputIdx}-${colorIdx}`;
-        const labelId = `color-label-${outputIdx}-${colorIdx}`;
-        const swatch = document.getElementById(previewId);
-        const label = document.getElementById(labelId);
-        if (swatch) {
-            swatch.style.background = `rgb(${color[0]},${color[1]},${color[2]})`;
-        }
-        if (label) {
-            label.textContent = `RGB(${color[0]}, ${color[1]}, ${color[2]})`;
+    lastPicked[outputIdx] = true;
+}
+function highlightOutputBlock(outIdx) {
+    for (let i = 0; i < 3; i++) {
+        const block = document.getElementById('output-block-' + i);
+        if (block) {
+            if (i === outIdx) {
+                block.classList.add('selected');
+            } else {
+                block.classList.remove('selected');
+            }
         }
     }
-    function fetchTopColors() {
-        const fileInput = document.getElementById('image');
-        if (!fileInput.files.length) return;
-        const formData = new FormData();
-        formData.append('image', fileInput.files[0]);
-        fetch('/top_colors', { method: 'POST', body: formData })
-            .then(resp => resp.json())
-            .then(data => setTopColors(data.top_colors))
-            .catch(() => setTopColors([]));
+}
+function fetchTopColors() {
+    var fileInput = document.getElementById('image');
+    if (!fileInput.files.length) return;
+    var formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+    fetch('/top_colors', { method: 'POST', body: formData })
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) { setTopColors(data.top_colors); })
+        .catch(function() { setTopColors([]); });
+}
+document.addEventListener('input', function(e) {
+    var id = e.target.id;
+    var rgbMatch = id && id.match(/^([rgb])_(\d+)_(\d+)$/);
+    if (rgbMatch) {
+        var out = rgbMatch[2];
+        var slot = rgbMatch[3];
+        var r = parseInt(document.getElementById('r_' + out + '_' + slot).value) || 0;
+        var g = parseInt(document.getElementById('g_' + out + '_' + slot).value) || 0;
+        var b = parseInt(document.getElementById('b_' + out + '_' + slot).value) || 0;
+        var swatch = document.getElementById('color-preview-' + out + '-' + slot);
+        var label = document.getElementById('color-label-' + out + '-' + slot);
+        if (swatch) swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+        if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     }
-    // Update color preview and label when user types in RGB fields
-    document.addEventListener('input', function(e) {
-        const id = e.target.id;
-        const rgbMatch = id && id.match(/^([rgb])_(\d+)_(\d+)$/);
-        if (rgbMatch) {
-            const [, channel, out, slot] = rgbMatch;
-            const r = parseInt(document.getElementById(`r_${out}_${slot}`).value) || 0;
-            const g = parseInt(document.getElementById(`g_${out}_${slot}`).value) || 0;
-            const b = parseInt(document.getElementById(`b_${out}_${slot}`).value) || 0;
-            const swatch = document.getElementById(`color-preview-${out}-${slot}`);
-            const label = document.getElementById(`color-label-${out}-${slot}`);
-            if (swatch) swatch.style.background = `rgb(${r},${g},${b})`;
-            if (label) label.textContent = `RGB(${r}, ${g}, ${b})`;
-        }
-    });
-    window.onclick = function(event) {
-        const modal = document.getElementById('apply-modal');
-        if (event.target == modal) {
-            closeApplyDialog();
-        }
+});
+window.onclick = function(event) {
+    var modal = document.getElementById('apply-modal');
+    if (event.target == modal) {
+        closeApplyDialog();
     }
+}
     </script>
 </body>
 </html>
