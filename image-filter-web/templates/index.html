@@ -8,7 +8,7 @@
 <body>
     <div class="header-bar">
         <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
-            <img src="{{ url_for('static', filename='images/elevon_logo.png') }}" alt="Elevon Logo" class="logo-img" style="max-width:60px;vertical-align:middle;box-shadow:none;">
+            <img src="/static/images/elevon_logo.png" alt="Elevon Logo" class="logo-img" style="max-width:60px;vertical-align:middle;box-shadow:none;">
             <h1 class="main-title" style="margin:0;">Image Color Filter</h1>
         </a>
     </div>
@@ -64,7 +64,7 @@ function openApplyDialog(out, slot) {
     if (!topColors.length) {
         modalColors.innerHTML = '<i>No top colors detected. Please select an image first.</i>';
     } else {
-        topColors.forEach((color, idx) => {
+        topColors.forEach(function(color, idx) {
             const colorRow = document.createElement('div');
             colorRow.style.display = 'flex';
             colorRow.style.alignItems = 'center';
@@ -73,17 +73,17 @@ function openApplyDialog(out, slot) {
             // Color swatch preview
             const swatch = document.createElement('span');
             swatch.className = 'color-swatch modern-color-swatch';
-            swatch.style.background = `rgb(${color[0]},${color[1]},${color[2]})`;
+            swatch.style.background = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
             swatch.style.marginRight = '10px';
             // RGB label
             const rgbLabel = document.createElement('span');
-            rgbLabel.textContent = `RGB(${color[0]}, ${color[1]}, ${color[2]})`;
+            rgbLabel.textContent = 'RGB(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
             rgbLabel.style.fontWeight = '500';
             rgbLabel.style.marginRight = '10px';
             // Keep button
             const keepBtn = document.createElement('button');
             keepBtn.className = 'apply-btn modern-apply-btn';
-            keepBtn.style.background = `rgba(${color[0]},${color[1]},${color[2]},0.85)`;
+            keepBtn.style.background = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',0.85)';
             keepBtn.style.color = '#fff';
             keepBtn.style.margin = '5px 0 5px 8px';
             keepBtn.textContent = 'Keep';
@@ -105,7 +105,7 @@ function openApplyDialog(out, slot) {
     }
     // Show modal as a centered flex popup
     modal.style.display = 'flex';
-    setTimeout(() => {
+    setTimeout(function() {
         document.querySelector('.modal-content').focus();
     }, 100);
 }
@@ -113,24 +113,24 @@ function closeApplyDialog() {
     document.getElementById('apply-modal').style.display = 'none';
 }
 function applyColorToEntry(color, outputIdx, colorIdx) {
-    document.getElementById(`r_${outputIdx}_${colorIdx}`).value = color[0];
-    document.getElementById(`g_${outputIdx}_${colorIdx}`).value = color[1];
-    document.getElementById(`b_${outputIdx}_${colorIdx}`).value = color[2];
-    const previewId = `color-preview-${outputIdx}-${colorIdx}`;
-    const labelId = `color-label-${outputIdx}-${colorIdx}`;
-    const swatch = document.getElementById(previewId);
-    const label = document.getElementById(labelId);
+    document.getElementById('r_' + outputIdx + '_' + colorIdx).value = color[0];
+    document.getElementById('g_' + outputIdx + '_' + colorIdx).value = color[1];
+    document.getElementById('b_' + outputIdx + '_' + colorIdx).value = color[2];
+    var previewId = 'color-preview-' + outputIdx + '-' + colorIdx;
+    var labelId = 'color-label-' + outputIdx + '-' + colorIdx;
+    var swatch = document.getElementById(previewId);
+    var label = document.getElementById(labelId);
     if (swatch) {
-        swatch.style.background = `rgb(${color[0]},${color[1]},${color[2]})`;
+        swatch.style.background = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
     }
     if (label) {
-        label.textContent = `RGB(${color[0]}, ${color[1]}, ${color[2]})`;
+        label.textContent = 'RGB(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
     }
 }
 function fetchTopColors() {
-    const fileInput = document.getElementById('image');
+    var fileInput = document.getElementById('image');
     if (!fileInput.files.length) return;
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('image', fileInput.files[0]);
     fetch('/top_colors', { method: 'POST', body: formData })
         .then(function(resp) { return resp.json(); })
@@ -138,21 +138,22 @@ function fetchTopColors() {
         .catch(function() { setTopColors([]); });
 }
 document.addEventListener('input', function(e) {
-    const id = e.target.id;
-    const rgbMatch = id && id.match(/^([rgb])_(\d+)_(\d+)$/);
+    var id = e.target.id;
+    var rgbMatch = id && id.match(/^([rgb])_(\d+)_(\d+)$/);
     if (rgbMatch) {
-        const [, channel, out, slot] = rgbMatch;
-        const r = parseInt(document.getElementById(`r_${out}_${slot}`).value) || 0;
-        const g = parseInt(document.getElementById(`g_${out}_${slot}`).value) || 0;
-        const b = parseInt(document.getElementById(`b_${out}_${slot}`).value) || 0;
-        const swatch = document.getElementById(`color-preview-${out}-${slot}`);
-        const label = document.getElementById(`color-label-${out}-${slot}`);
-        if (swatch) swatch.style.background = `rgb(${r},${g},${b})`;
-        if (label) label.textContent = `RGB(${r}, ${g}, ${b})`;
+        var out = rgbMatch[2];
+        var slot = rgbMatch[3];
+        var r = parseInt(document.getElementById('r_' + out + '_' + slot).value) || 0;
+        var g = parseInt(document.getElementById('g_' + out + '_' + slot).value) || 0;
+        var b = parseInt(document.getElementById('b_' + out + '_' + slot).value) || 0;
+        var swatch = document.getElementById('color-preview-' + out + '-' + slot);
+        var label = document.getElementById('color-label-' + out + '-' + slot);
+        if (swatch) swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+        if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     }
 });
 window.onclick = function(event) {
-    const modal = document.getElementById('apply-modal');
+    var modal = document.getElementById('apply-modal');
     if (event.target == modal) {
         closeApplyDialog();
     }
