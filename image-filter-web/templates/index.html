@@ -32,7 +32,7 @@
             </div>
             <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
             {% for slot in range(3) %}
-            <div class="color-row" style="align-items: flex-end; gap: 0.7rem; margin-bottom: 0.7rem;">
+            <div class="color-row" style="display: flex; justify-content: center; align-items: flex-end; gap: 0.7rem; margin-bottom: 0.7rem;">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
                 <span id="color-label-{{out}}-{{slot}}" class="color-label color-label-preview" style="font-size: 1.05rem; font-weight: 700; min-width: 120px; display: inline-block; border-radius: 0.5rem; padding: 0.3rem 1.1rem; background: #eee; color: #2e3a4a; border: 2px solid #e5e5e5; transition: background 0.2s, border 0.2s; margin-right: 0.7rem;"></span>
                 <div style="display: flex; gap: 0.3rem;">
@@ -48,7 +48,7 @@
         </div>
         {% endfor %}
         </div>
-        <button type="submit" class="main-btn" style="margin: 2.2rem auto 0 auto; display: block; padding: 1.1rem 2.7rem; font-size: 1.18rem; border-radius: 0.8rem;">Download All Outputs</button>
+        <button type="submit" class="main-btn" style="display: block; width: fit-content; margin: 2.2rem auto 0 auto; padding: 1.1rem 2.7rem; font-size: 1.18rem; border-radius: 0.8rem;">Download All Outputs</button>
     </form>
     <!-- Modal for picking top color -->
     <div id="apply-modal" class="modal">
