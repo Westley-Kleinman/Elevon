@@ -31,12 +31,11 @@
             {% for slot in range(3) %}
             <div class="color-row">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
-                <span id="color-preview-{{out}}-{{slot}}" class="color-swatch"></span>
+                <span id="color-label-{{out}}-{{slot}}" class="color-label color-label-preview" style="font-size: 1.05rem; font-weight: 700; min-width: 140px; display: inline-block; border-radius: 0.5rem; padding: 0.3rem 0.9rem; background: #eee; color: #2e3a4a; border: 2px solid #e5e5e5; transition: background 0.2s, border 0.2s;"></span>
                 <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input" aria-label="Red" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input" aria-label="Green" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue" oninput="updateColorPreview({{out}},{{slot}})">
                 <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input" aria-label="Tolerance">
-                <span id="color-label-{{out}}-{{slot}}" class="color-label" style="font-size: 0.98rem; color: #2e3a4a; font-weight: 500; min-width: 120px; display: inline-block;"></span>
                 <button type="button" class="apply-btn" onclick="openApplyDialog('{{ out }}', '{{ slot }}')">🎨 Pick</button>
             </div>
             {% endfor %}
@@ -169,25 +168,26 @@ function updateColorPreview(out, slot) {
     var r = document.getElementById('r_' + out + '_' + slot).value;
     var g = document.getElementById('g_' + out + '_' + slot).value;
     var b = document.getElementById('b_' + out + '_' + slot).value;
-    var swatch = document.getElementById('color-preview-' + out + '-' + slot);
     var label = document.getElementById('color-label-' + out + '-' + slot);
     if (r !== '' && g !== '' && b !== '') {
         r = Math.max(0, Math.min(255, parseInt(r)));
         g = Math.max(0, Math.min(255, parseInt(g)));
         b = Math.max(0, Math.min(255, parseInt(b)));
-        if (swatch) {
-            swatch.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
-            swatch.style.border = '2.5px solid #2e3a4a';
-            swatch.style.boxShadow = '0 0 0 2px #2e3a4a';
+        if (label) {
+            label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
+            label.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+            // Set text color for contrast
+            var luminance = (0.299*r + 0.587*g + 0.114*b)/255;
+            label.style.color = luminance > 0.6 ? '#222' : '#fff';
+            label.style.border = '2px solid #2e3a4a';
         }
-        if (label) label.textContent = 'RGB(' + r + ', ' + g + ', ' + b + ')';
     } else {
-        if (swatch) {
-            swatch.style.background = '#eee';
-            swatch.style.border = '2px solid #e5e5e5';
-            swatch.style.boxShadow = 'none';
+        if (label) {
+            label.textContent = '';
+            label.style.background = '#eee';
+            label.style.color = '#2e3a4a';
+            label.style.border = '2px solid #e5e5e5';
         }
-        if (label) label.textContent = '';
     }
 }
 // On page load, initialize all color previews to match any prefilled values
