@@ -364,23 +364,34 @@ function handleFormSubmit(e) {
                     const imageData = ctx.getImageData(0, 0, img.width, img.height);
                     const data = imageData.data;
                     for (let i = 0; i < data.length; i += 4) {
-                        let keep = false;
-                        for (const c of colorTols) {
-                            const dr = data[i] - c.r;
-                            const dg = data[i+1] - c.g;
-                            const db = data[i+2] - c.b;
-                            const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-                            if (dist <= c.tol) {
-                                keep = true;
-                                break;
+                        const rOrig = data[i];
+                        const gOrig = data[i+1];
+                        const bOrig = data[i+2];
+                        const aOrig = data[i+3];
+
+                        if (aOrig < 10) { // Pixel is transparent or nearly transparent
+                            data[i]   = 255; // Set to White
+                            data[i+1] = 255;
+                            data[i+2] = 255;
+                        } else { // Pixel is opaque, apply filter logic
+                            let keep = false;
+                            for (const c of colorTols) {
+                                const dr = rOrig - c.r;
+                                const dg = gOrig - c.g;
+                                const db = bOrig - c.b;
+                                const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                                if (dist <= c.tol) {
+                                    keep = true;
+                                    break;
+                                }
+                            }
+                            if (keep) { // Pixel matches the filter
+                                data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
+                            } else { // Pixel does not match the filter
+                                data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
                             }
                         }
-                        if (keep) { // Pixel matches the filter
-                            data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
-                        } else { // Pixel does not match the filter
-                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
-                        }
-                        data[i+3] = 255; // Ensure pixel is opaque
+                        data[i+3] = 255; // Ensure all output pixels are opaque
                     }
                     ctx.putImageData(imageData, 0, 0);
                     // Download result
@@ -427,23 +438,34 @@ function downloadSingleOutput(out) {
                 const imageData = ctx.getImageData(0, 0, img.width, img.height);
                 const data = imageData.data;
                 for (let i = 0; i < data.length; i += 4) {
-                    let keep = false;
-                    for (const c of colorTols) {
-                        const dr = data[i] - c.r;
-                        const dg = data[i+1] - c.g;
-                        const db = data[i+2] - c.b;
-                        const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-                        if (dist <= c.tol) {
-                            keep = true;
-                            break;
+                    const rOrig = data[i];
+                    const gOrig = data[i+1];
+                    const bOrig = data[i+2];
+                    const aOrig = data[i+3];
+
+                    if (aOrig < 10) { // Pixel is transparent or nearly transparent
+                        data[i]   = 255; // Set to White
+                        data[i+1] = 255;
+                        data[i+2] = 255;
+                    } else { // Pixel is opaque, apply filter logic
+                        let keep = false;
+                        for (const c of colorTols) {
+                            const dr = rOrig - c.r;
+                            const dg = gOrig - c.g;
+                            const db = bOrig - c.b;
+                            const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                            if (dist <= c.tol) {
+                                keep = true;
+                                break;
+                            }
+                        }
+                        if (keep) { // Pixel matches the filter
+                            data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
+                        } else { // Pixel does not match the filter
+                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
                         }
                     }
-                    if (keep) { // Pixel matches the filter
-                        data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
-                    } else { // Pixel does not match the filter
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
-                    }
-                    data[i+3] = 255;
+                    data[i+3] = 255; // Ensure all output pixels are opaque
                 }
                 ctx.putImageData(imageData, 0, 0);
                 const link = document.createElement('a');
