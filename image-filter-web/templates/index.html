@@ -108,7 +108,7 @@ function extractTopColorsFrontend() {
                 // Skip colors with very low saturation (too gray/washed out)
                 // Exception: allow very dark colors (like black) even if low saturation
                 const brightness = max / 255;
-                if (saturation < 0.3 && brightness > 0.2) return false;
+                if (saturation < 0.5 && brightness > 0.1) return false; // More strict: require more vivid color
                 
                 return true;
             }
