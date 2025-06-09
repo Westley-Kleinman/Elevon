@@ -93,27 +93,40 @@ function extractTopColorsFrontend() {
                 const key = data[i] + ',' + data[i+1] + ',' + data[i+2];
                 colorCounts[key] = (colorCounts[key] || 0) + 1;
             }
-            
+              // Helper function to check if a color is solid/saturated enough
+            function isSolidColor(color) {
+                const [r, g, b] = color;
+                
+                // Skip very light colors (too close to white)
+                if (r > 240 && g > 240 && b > 240) return false;
+                
+                // Calculate saturation (simplified HSV saturation)
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                const saturation = max === 0 ? 0 : (max - min) / max;
+                
+                // Skip colors with very low saturation (too gray/washed out)
+                // Exception: allow very dark colors (like black) even if low saturation
+                const brightness = max / 255;
+                if (saturation < 0.3 && brightness > 0.2) return false;
+                
+                return true;
+            }
+
             const sortedColors = Object.entries(colorCounts)
                 .sort((a, b) => b[1] - a[1])
-                .map(([k, v]) => k.split(',').map(Number));
+                .map(([k, v]) => k.split(',').map(Number))
+                .filter(color => isSolidColor(color)); // Only consider solid colors
 
             const distinctTopColors = [];
-            // const whiteThreshold = 245; // Old threshold removed
-            const pureWhite = [255, 255, 255];
-            const whiteSimilarityExclusionThreshold = 30; // Threshold for excluding colors too similar to pure white
+            const distinctnessThreshold = 60; // Increased threshold for better distinctness
 
             for (const color of sortedColors) {
-                if (distinctTopColors.length >= 8) break;
-
-                // Check if the color is too white by comparing similarity to pure white
-                if (areColorsSimilar(color, pureWhite, whiteSimilarityExclusionThreshold)) {
-                    continue; // Skip this color if it's too white
-                }
+                if (distinctTopColors.length >= 5) break; // Limit to exactly 5 colors
 
                 let isSimilarToExisting = false;
                 for (const existingColor of distinctTopColors) {
-                    if (areColorsSimilar(color, existingColor)) {
+                    if (areColorsSimilar(color, existingColor, distinctnessThreshold)) {
                         isSimilarToExisting = true;
                         break;
                     }
