@@ -100,7 +100,7 @@ function extractTopColorsFrontend() {
 
             const distinctTopColors = [];
             for (const color of sortedColors) {
-                if (distinctTopColors.length >= 5) break;
+                if (distinctTopColors.length >= 6) break; // Changed from 5 to 6
                 let isSimilarToExisting = false;
                 for (const existingColor of distinctTopColors) {
                     if (areColorsSimilar(color, existingColor)) {
