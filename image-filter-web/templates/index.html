@@ -65,7 +65,7 @@ function setTopColors(colors) {
     topColors = colors;
 }
 
-function areColorsSimilar(color1, color2, threshold = 40) { // Increased threshold from 20 to 40
+function areColorsSimilar(color1, color2, threshold = 50) { // Increased threshold from 40 to 50
     // Calculate Euclidean distance between two colors
     const dr = color1[0] - color2[0];
     const dg = color1[1] - color2[1];
@@ -99,12 +99,12 @@ function extractTopColorsFrontend() {
                 .map(([k, v]) => k.split(',').map(Number));
 
             const distinctTopColors = [];
-            const whiteThreshold = 240; // Define a threshold for "close to white"
+            const whiteThreshold = 245; // Updated threshold for "close to white"
             for (const color of sortedColors) {
-                if (distinctTopColors.length >= 5) break; // Changed back from 6 to 5
+                if (distinctTopColors.length >= 5) break;
 
-                // Check if the color is too white
-                if (color[0] > whiteThreshold && color[1] > whiteThreshold && color[2] > whiteThreshold) {
+                // Check if the color is too white (all components >= threshold)
+                if (color[0] >= whiteThreshold && color[1] >= whiteThreshold && color[2] >= whiteThreshold) {
                     continue; // Skip this color if it's too white
                 }
 
