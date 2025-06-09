@@ -104,7 +104,7 @@ function extractTopColorsFrontend() {
             const whiteSimilarityExclusionThreshold = 30; // Threshold for excluding colors too similar to pure white
 
             for (const color of sortedColors) {
-                if (distinctTopColors.length >= 5) break;
+                if (distinctTopColors.length >= 8) break;
 
                 // Check if the color is too white by comparing similarity to pure white
                 if (areColorsSimilar(color, pureWhite, whiteSimilarityExclusionThreshold)) {
