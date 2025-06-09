@@ -65,7 +65,7 @@ function setTopColors(colors) {
     topColors = colors;
 }
 
-function areColorsSimilar(color1, color2, threshold = 50) { // Increased threshold from 40 to 50
+function areColorsSimilar(color1, color2, threshold = 30) { // Decreased threshold from 50 to 30 for more distinct colors
     // Calculate Euclidean distance between two colors
     const dr = color1[0] - color2[0];
     const dg = color1[1] - color2[1];
