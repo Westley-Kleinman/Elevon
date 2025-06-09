@@ -99,8 +99,15 @@ function extractTopColorsFrontend() {
                 .map(([k, v]) => k.split(',').map(Number));
 
             const distinctTopColors = [];
+            const whiteThreshold = 240; // Define a threshold for "close to white"
             for (const color of sortedColors) {
-                if (distinctTopColors.length >= 6) break; // Changed from 5 to 6
+                if (distinctTopColors.length >= 6) break;
+
+                // Check if the color is too white
+                if (color[0] > whiteThreshold && color[1] > whiteThreshold && color[2] > whiteThreshold) {
+                    continue; // Skip this color if it's too white
+                }
+
                 let isSimilarToExisting = false;
                 for (const existingColor of distinctTopColors) {
                     if (areColorsSimilar(color, existingColor)) {
