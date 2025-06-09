@@ -351,6 +351,11 @@ function handleFormSubmit(e) {
                     const imageData = ctx.getImageData(0, 0, img.width, img.height);
                     const data = imageData.data;
                     for (let i = 0; i < data.length; i += 4) {
+                        // If the original pixel is transparent, make it white and fully opaque
+                        if (data[i+3] === 0) {
+                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
+                            continue;
+                        }
                         const originalR = data[i];
                         const originalG = data[i+1];
                         const originalB = data[i+2];
@@ -417,6 +422,11 @@ function downloadSingleOutput(out) {
                 const imageData = ctx.getImageData(0, 0, img.width, img.height);
                 const data = imageData.data;
                 for (let i = 0; i < data.length; i += 4) {
+                    // If the original pixel is transparent, make it white and fully opaque
+                    if (data[i+3] === 0) {
+                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
+                        continue;
+                    }
                     const originalR = data[i];
                     const originalG = data[i+1];
                     const originalB = data[i+2];
