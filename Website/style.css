@@ -1126,42 +1126,105 @@ nav a:focus {
   align-items: center;
 }
 
-.visual-stack {
-  position: relative;
+.visual-slideshow {
   width: 100%;
   max-width: 400px;
-}
-
-.process-img {
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
-}
-
-.process-img.primary {
-  width: 100%;
-  height: auto;
   position: relative;
-  z-index: 2;
 }
 
-.process-img.secondary {
-  width: 60%;
-  height: auto;
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.slide {
   position: absolute;
-  bottom: -20px;
-  right: -20px;
-  z-index: 1;
-  opacity: 0.9;
-  border: 4px solid white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
 }
 
-.visual-stack:hover .process-img.primary {
-  transform: translateY(-8px) scale(1.02);
+.slide.active {
+  opacity: 1;
 }
 
-.visual-stack:hover .process-img.secondary {
-  transform: translateY(-4px) scale(1.05);
+.slide .process-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+}
+
+.slide-caption {
+  background: linear-gradient(135deg, var(--dark-blue) 0%, var(--rust) 100%);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 16px 16px;
+}
+
+.slideshow-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nav-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--rust);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.nav-dot:hover,
+.nav-dot.active {
+  background: var(--rust);
+  transform: scale(1.2);
+}
+
+/* Enhanced step interaction */
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.step-item:hover,
+.step-item.active {
+  transform: translateX(8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #e2e8f0 0%, #e6f3ff 100%);
+}
+
+.step-item.active .step-number {
+  background: linear-gradient(135deg, var(--green) 0%, #2a6b3a 100%);
+  box-shadow: 0 4px 15px rgba(60, 122, 74, 0.4);
 }
 
 /* Social Proof Section */

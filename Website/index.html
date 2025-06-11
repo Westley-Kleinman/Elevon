@@ -124,47 +124,29 @@
           
           <a href="order.html" class="cta-button">Start Your Custom Map</a>
         </div>
-        
-        <div class="process-visual">
-          <div class="visual-stack">
-            <img src="images/blender_model.png" alt="3D modeling process" class="process-img primary" />
-            <img src="images/trail_maps.jpg" alt="Finished trail maps" class="process-img secondary" />
+          <div class="process-visual">
+          <div class="visual-slideshow">
+            <div class="slideshow-container">
+              <div class="slide active" data-step="1">
+                <img src="images/trail_maps.jpg" alt="Choose your trail - trail selection" class="process-img" />
+                <div class="slide-caption">Step 1: Choose Your Trail</div>
+              </div>
+              <div class="slide" data-step="2">
+                <img src="images/blender_model.png" alt="3D modeling and design process" class="process-img" />
+                <div class="slide-caption">Step 2: We Design & Print</div>
+              </div>
+              <div class="slide" data-step="3">
+                <img src="images/trail_maps.jpg" alt="Finished maps ready for delivery" class="process-img" />
+                <div class="slide-caption">Step 3: Delivered to You</div>
+              </div>
+            </div>
+            <div class="slideshow-nav">
+              <button class="nav-dot active" data-slide="1"></button>
+              <button class="nav-dot" data-slide="2"></button>
+              <button class="nav-dot" data-slide="3"></button>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Social Proof Section -->
-    <section class="social-proof">
-      <div class="proof-content">
-        <h2>Trusted by Riders & Race Directors</h2>
-        <div class="accent-bar"></div>
-        
-        <div class="testimonial-feature">
-          <div class="testimonial-content">
-            <blockquote>
-              "The perfect way to commemorate our annual mountain bike race. 
-              Each finisher received a custom 3D map of the course - they absolutely loved them!"
-            </blockquote>
-            <cite>- Race Director, Regional MTB Series</cite>
-          </div>
-        </div>
-        
-        <div class="stats-row">
-          <div class="stat-item">
-            <div class="stat-number">100+</div>
-            <div class="stat-label">Custom Maps Created</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">50+</div>
-            <div class="stat-label">Race Events Served</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">1000+</div>
-            <div class="stat-label">Miles Mapped</div>
-          </div>
-        </div>
-      </div>
+        </div></div>
     </section>
 
     <!-- Final Call-to-Action Section -->
@@ -178,11 +160,74 @@
         <a href="order.html" class="cta-button cta-large">Start Your Custom Map</a>
       </div>
     </section>
-
   </main>
 
   <footer>
     <p>&copy; 2025 Elevon. All rights reserved.</p>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const slides = document.querySelectorAll('.slide');
+      const navDots = document.querySelectorAll('.nav-dot');
+      const stepItems = document.querySelectorAll('.step-item');
+      let currentSlide = 0;
+      let slideInterval;
+
+      function showSlide(index) {
+        // Remove active class from all slides, dots, and steps
+        slides.forEach(slide => slide.classList.remove('active'));
+        navDots.forEach(dot => dot.classList.remove('active'));
+        stepItems.forEach(step => step.classList.remove('active'));
+        
+        // Add active class to current slide, dot, and step
+        slides[index].classList.add('active');
+        navDots[index].classList.add('active');
+        stepItems[index].classList.add('active');
+        
+        currentSlide = index;
+      }
+
+      function nextSlide() {
+        const next = (currentSlide + 1) % slides.length;
+        showSlide(next);
+      }
+
+      function startAutoSlide() {
+        slideInterval = setInterval(nextSlide, 3000); // Change slide every 3 seconds
+      }
+
+      function stopAutoSlide() {
+        clearInterval(slideInterval);
+      }
+
+      // Add click listeners to navigation dots
+      navDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          showSlide(index);
+          stopAutoSlide();
+          setTimeout(startAutoSlide, 5000); // Restart auto-slide after 5 seconds
+        });
+      });
+
+      // Add click listeners to step items
+      stepItems.forEach((step, index) => {
+        step.addEventListener('click', () => {
+          showSlide(index);
+          stopAutoSlide();
+          setTimeout(startAutoSlide, 5000); // Restart auto-slide after 5 seconds
+        });
+      });
+
+      // Add hover listeners to pause auto-slide
+      const slideshow = document.querySelector('.visual-slideshow');
+      slideshow.addEventListener('mouseenter', stopAutoSlide);
+      slideshow.addEventListener('mouseleave', startAutoSlide);
+
+      // Initialize first slide and start auto-slide
+      showSlide(0);
+      startAutoSlide();
+    });
+  </script>
 </body>
 </html>
