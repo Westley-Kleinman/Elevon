@@ -236,7 +236,7 @@ nav a:focus {
 
 .hero-text {
   flex: 1;
-  min-width: 400px;
+  min-width: 280px;
   max-width: 600px;
   z-index: 2;
   position: relative;
@@ -278,7 +278,7 @@ nav a:focus {
 
 .hero-img-wrapper {
   flex: 1;
-  min-width: 350px;
+  min-width: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1634,4 +1634,623 @@ footer p {
   -webkit-backdrop-filter: blur(12px) saturate(1.1);
   background: rgba(255,255,255,0.95);
   border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* ========== COMPREHENSIVE MOBILE RESPONSIVENESS ========== */
+
+/* Mobile First - Small devices (phones, up to 480px) */
+@media (max-width: 480px) {
+  /* Navigation */
+  .main-nav.glass-nav {
+    padding: 0.4rem 0.8rem;
+    gap: 0.5rem;
+    width: calc(100vw - 2rem);
+    max-width: calc(100vw - 2rem);
+    top: 35px;
+  }
+  
+  .glass-nav a {
+    font-size: 0.9rem;
+    padding: 0.3em 0.6em;
+  }
+  
+  .nav-bg-pazzaz {
+    height: 80px;
+  }
+  
+  .nav-bg-pazzaz::before {
+    width: 100vw;
+    height: 100px;
+  }
+  
+  /* Hero Section */
+  .hero {
+    flex-direction: column;
+    padding: 2rem 1rem;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.2rem;
+    line-height: 1.2;
+  }
+  
+  .hero-tagline {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .hero-img-wrapper {
+    order: -1;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  
+  .hero-img {
+    border-radius: 12px;
+  }
+  
+  .cta-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+  
+  /* Features Section */
+  .features-section {
+    margin: 1.5rem 0.5rem;
+    padding: 2rem 1rem;
+  }
+  
+  .features-section h2 {
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+  
+  .features-intro {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .feature-card {
+    padding: 1.5rem;
+  }
+  
+  .feature-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .feature-content p {
+    font-size: 0.9rem;
+  }
+  
+  /* Process Overview */
+  .process-overview {
+    margin: 1.5rem 0.5rem;
+    padding: 2rem 1rem;
+  }
+  
+  .process-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .process-text h2 {
+    font-size: 1.8rem;
+  }
+  
+  .process-description {
+    font-size: 0.95rem;
+  }
+  
+  .step-item {
+    padding: 1rem;
+  }
+  
+  .step-number {
+    font-size: 1rem;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+  }
+  
+  .step-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .step-content p {
+    font-size: 0.85rem;
+  }
+  
+  /* Slideshow Visual Stack */
+  .visual-stack {
+    min-height: 300px;
+  }
+  
+  .slide-image {
+    border-radius: 12px;
+  }
+  
+  .slide-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .slide-content p {
+    font-size: 0.9rem;
+  }
+  
+  .navigation-dots {
+    gap: 0.5rem;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+  
+  /* Final CTA */
+  .final-cta {
+    padding: 3rem 1rem;
+  }
+  
+  .final-cta h2 {
+    font-size: 1.8rem;
+  }
+  
+  .final-cta p {
+    font-size: 1rem;
+  }
+  
+  /* Footer */
+  footer {
+    padding: 1.5rem 1rem;
+  }
+  
+  footer p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablet devices (481px to 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Navigation */
+  .main-nav.glass-nav {
+    padding: 0.4rem 1rem;
+    gap: 0.8rem;
+    width: auto;
+    max-width: 90vw;
+  }
+  
+  .glass-nav a {
+    font-size: 1rem;
+    padding: 0.3em 0.8em;
+  }
+  
+  /* Hero Section */
+  .hero {
+    flex-direction: column;
+    padding: 3rem 2rem;
+    gap: 2.5rem;
+    text-align: center;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.8rem;
+  }
+  
+  .hero-tagline {
+    font-size: 1.1rem;
+  }
+  
+  .hero-img-wrapper {
+    order: -1;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  /* Features Section */
+  .features-section {
+    margin: 2rem 1rem;
+    padding: 3rem 2rem;
+  }
+  
+  .features-section h2 {
+    font-size: 2.2rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .feature-card {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    text-align: left;
+  }
+  
+  .feature-image {
+    flex: 0 0 200px;
+  }
+  
+  .feature-content {
+    flex: 1;
+  }
+  
+  /* Process Overview */
+  .process-overview {
+    margin: 2rem 1rem;
+    padding: 3rem 2rem;
+  }
+  
+  .process-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .process-text h2 {
+    font-size: 2.2rem;
+  }
+  
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 2rem;
+  }
+}
+
+/* Large tablets and small desktops (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Container max-widths for better spacing */
+  .features-content,
+  .process-container {
+    max-width: 900px;
+  }
+  
+  /* Features grid - 2 columns on larger tablets */
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  
+  .feature-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  /* Process overview stays as split layout */
+  .process-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+/* Landscape phones and small tablets */
+@media (max-width: 768px) and (orientation: landscape) {
+  .nav-bg-pazzaz {
+    height: 70px;
+  }
+  
+  .main-nav.glass-nav {
+    top: 30px;
+  }
+  
+  .hero {
+    flex-direction: row;
+    padding: 2rem;
+    min-height: auto;
+  }
+  
+  .hero-text {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .hero-img-wrapper {
+    flex: 0 0 300px;
+    order: initial;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.2rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .cta-button,
+  .glass-nav a,
+  .step-item {
+    min-height: 44px; /* Minimum touch target size */
+  }
+  
+  .glass-nav a {
+    padding: 0.4em 1em;
+  }
+  
+  .step-item {
+    padding: 1.2rem;
+  }
+  
+  /* Remove hover effects that don't work on touch */
+  .cta-button:hover::before {
+    display: none;
+  }
+  
+  /* Enhance active states for touch */
+  .cta-button:active {
+    transform: scale(0.98);
+  }
+  
+  .glass-nav a:active {
+    background: rgba(60, 122, 74, 0.1);
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .nav-bg-pazzaz::before {
+    filter: blur(54px) saturate(1.18) brightness(1.08);
+  }
+  
+  .glass-nav {
+    backdrop-filter: blur(15px) saturate(1.15);
+    -webkit-backdrop-filter: blur(15px) saturate(1.15);
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .slideshow-container {
+    animation: none;
+  }
+  
+  .slide {
+    transition: none;
+  }
+  
+  .cta-button::before {
+    transition: none;
+  }
+  
+  .glass-nav a::after {
+    transition: none;
+  }
+  
+  .fadeInUp,
+  .fadeInRight {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ========== ADDITIONAL MOBILE OPTIMIZATIONS ========== */
+
+/* Ensure content doesn't overflow on very small screens */
+@media (max-width: 320px) {
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+  
+  .hero-tagline {
+    font-size: 0.9rem;
+  }
+  
+  .features-section h2 {
+    font-size: 1.6rem;
+  }
+  
+  .process-text h2 {
+    font-size: 1.6rem;
+  }
+  
+  .main-nav.glass-nav {
+    padding: 0.3rem 0.5rem;
+    gap: 0.3rem;
+  }
+  
+  .glass-nav a {
+    font-size: 0.8rem;
+    padding: 0.25em 0.5em;
+  }
+}
+
+/* Improved scrolling and touch behavior */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+/* Prevent horizontal scrolling */
+.hero,
+.features-section,
+.process-overview,
+.final-cta {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Better button spacing for touch devices */
+@media (max-width: 768px) {
+  .cta-button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+  }
+  
+  /* Improve slideshow navigation on mobile */
+  .navigation-dots {
+    padding: 1rem 0;
+    touch-action: manipulation;
+  }
+  
+  .dot {
+    min-width: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .dot::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(45, 74, 46, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .dot.active::before {
+    background: var(--dark-blue);
+    transform: scale(1.2);
+  }
+  
+  /* Make step items more touch-friendly */
+  .step-item {
+    cursor: pointer;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    touch-action: manipulation;
+  }
+  
+  /* Improve feature cards on mobile */
+  .feature-card {
+    border-radius: 16px;
+    transition: transform 0.2s ease;
+  }
+  
+  .feature-card:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ========== MOBILE PERFORMANCE OPTIMIZATIONS ========== */
+
+/* Optimize images for mobile */
+@media (max-width: 768px) {
+  .hero-img,
+  .feature-image img,
+  .slide-image {
+    image-rendering: optimizeQuality;
+    will-change: transform;
+  }
+  
+  /* Reduce complex shadows on mobile for better performance */
+  .hero,
+  .features-section,
+  .process-overview {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  .hero-img {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  }
+  
+  /* Optimize glass effect for mobile */
+  .main-nav.glass-nav {
+    backdrop-filter: blur(8px) saturate(1.05);
+    -webkit-backdrop-filter: blur(8px) saturate(1.05);
+  }
+}
+
+/* Print styles */
+@media print {
+  .nav-bg-pazzaz,
+  .main-nav,
+  .navigation-dots,
+  .cta-button {
+    display: none !important;
+  }
+  
+  .hero,
+  .features-section,
+  .process-overview {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+  
+  body {
+    background: white;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-contrast: high) {
+  .hero-text h1 {
+    background: linear-gradient(135deg, #000 0%, #333 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .glass-nav a {
+    color: #000;
+    font-weight: 700;
+  }
+  
+  .accent-bar {
+    background: #000;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #e2e8f0;
+    --white: #1e293b;
+    --gray: #334155;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #0f172a 60%, #1e293b 100%);
+    color: var(--text);
+  }
+  
+  .hero,
+  .features-section,
+  .process-overview {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .feature-card {
+    background: rgba(51, 65, 85, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .main-nav.glass-nav {
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-nav a {
+    color: #e2e8f0;
+  }
+  
+  .final-cta {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
 }
