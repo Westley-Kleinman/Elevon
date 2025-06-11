@@ -224,29 +224,38 @@
       slideshow.addEventListener('mouseenter', stopAutoSlide);
       slideshow.addEventListener('mouseleave', startAutoSlide);      // Initialize first slide and start auto-slide
       showSlide(0);
-      startAutoSlide();
-    });
+      startAutoSlide();    });
 
-    // Dark mode toggle for testing
-    function toggleDarkMode() {
-      document.body.classList.toggle('force-dark-mode');
-      const isDark = document.body.classList.contains('force-dark-mode');
-      localStorage.setItem('darkMode', isDark);
+    // Enhanced theme management system
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // Use saved theme, or fall back to system preference
+      const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+      
+      // Apply theme to document root
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      return theme;
     }
 
-    // Load saved dark mode preference
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.body.classList.add('force-dark-mode');
+    // Listen for system theme changes
+    function setupThemeListener() {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      mediaQuery.addEventListener('change', (e) => {
+        // Only auto-switch if user hasn't manually set a preference
+        if (!localStorage.getItem('theme')) {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+        }
+      });
     }
+
+    // Initialize theme system
+    initializeTheme();
+    setupThemeListener();
   </script>
-
-  <!-- Dark Mode Toggle Button (for testing) -->
-  <button 
-    onclick="toggleDarkMode()" 
-    style="position: fixed; top: 10px; right: 10px; z-index: 1000; padding: 8px 12px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;"
-    title="Toggle Dark Mode (for testing)"
-  >
-    🌙 Dark Mode
-  </button>
 </body>
 </html>

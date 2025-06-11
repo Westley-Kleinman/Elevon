@@ -33,9 +33,40 @@
       </div>
     </section>
   </main>
-
   <footer>
     <p>&copy; 2025 Elevon. All rights reserved.</p>
   </footer>
+
+  <script>    // Enhanced theme management system
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // Use saved theme, or fall back to system preference
+      const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+      
+      // Apply theme to document root
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      return theme;
+    }
+
+    // Listen for system theme changes
+    function setupThemeListener() {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      
+      mediaQuery.addEventListener('change', (e) => {
+        // Only auto-switch if user hasn't manually set a preference
+        if (!localStorage.getItem('theme')) {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+        }
+      });
+    }
+
+    // Initialize theme system
+    initializeTheme();
+    setupThemeListener();
+  </script>
 </body>
 </html>
