@@ -2145,32 +2145,108 @@ body {
   }
 }
 
-/* ========== MOBILE PERFORMANCE OPTIMIZATIONS ========== */
+/* ========== MOBILE DARK MODE ENHANCEMENTS ========== */
 
-/* Optimize images for mobile */
-@media (max-width: 768px) {
-  .hero-img,
-  .feature-image img,
-  .slide-image {
-    image-rendering: optimizeQuality;
-    will-change: transform;
+/* Enhanced dark mode for mobile devices */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  /* Stronger contrast for mobile screens */
+  .hero-text h1 {
+    /* Fallback for devices that don't support gradient text */
+    color: #f1f5f9;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   }
   
-  /* Reduce complex shadows on mobile for better performance */
+  /* Ensure gradient text works on mobile, with fallback */
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .hero-text h1 {
+      background: linear-gradient(135deg, #f1f5f9 0%, #4ade80 40%, #f97316 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      text-shadow: none;
+    }
+  }
+  
+  /* Enhanced readability for all text on mobile */
+  .hero-tagline,
+  .features-intro,
+  .process-description,
+  .feature-content p,
+  .step-content p,
+  .slide-content p {
+    color: #e2e8f0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Stronger borders and backgrounds for mobile */
   .hero,
   .features-section,
   .process-overview {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
-  .hero-img {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  .feature-card {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
-  /* Optimize glass effect for mobile */
+  .step-item {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Enhanced navigation for mobile dark mode */
   .main-nav.glass-nav {
-    backdrop-filter: blur(8px) saturate(1.05);
-    -webkit-backdrop-filter: blur(8px) saturate(1.05);
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  
+  .glass-nav a {
+    color: #f1f5f9;
+    font-weight: 700;
+  }
+  
+  /* Better button contrast on mobile */
+  .cta-button {
+    background: linear-gradient(135deg, #22c55e 0%, #ea580c 100%);
+    color: #0f172a;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+  }
+}
+
+/* Force dark mode styles for better debugging */
+@media (max-width: 768px) {
+  /* Add a class-based dark mode toggle for testing */
+  .force-dark-mode {
+    background: linear-gradient(135deg, #0f172a 60%, #1e293b 100%) !important;
+    color: #f1f5f9 !important;
+  }
+  
+  .force-dark-mode .hero,
+  .force-dark-mode .features-section,
+  .force-dark-mode .process-overview {
+    background: rgba(15, 23, 42, 0.98) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .force-dark-mode .hero-text h1 {
+    color: #f1f5f9 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .force-dark-mode h2,
+  .force-dark-mode h3 {
+    color: #f1f5f9 !important;
+  }
+  
+  .force-dark-mode p,
+  .force-dark-mode .hero-tagline,
+  .force-dark-mode .features-intro {
+    color: #e2e8f0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
   }
 }
 
@@ -2216,12 +2292,16 @@ body {
   }
 }
 
-/* Dark mode support */
+/* Comprehensive Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #e2e8f0;
+    --text: #f1f5f9;
     --white: #1e293b;
     --gray: #334155;
+    --green: #4ade80;
+    --rust: #f97316;
+    --dark-blue: #e2e8f0;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
   
   body {
@@ -2229,28 +2309,300 @@ body {
     color: var(--text);
   }
   
-  .hero,
-  .features-section,
-  .process-overview {
-    background: rgba(30, 41, 59, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Hero Section Dark Mode */
+  .hero {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .hero::before {
+    background: radial-gradient(ellipse at center, rgba(249,115,22,0.08) 0%, transparent 70%);
+  }
+  
+  /* Fix gradient text in dark mode */
+  .hero-text h1 {
+    background: linear-gradient(135deg, #f1f5f9 0%, #4ade80 40%, #f97316 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .hero-tagline {
+    color: #cbd5e1;
+  }
+  
+  .accent-bar {
+    background: linear-gradient(90deg, #f97316 0%, #4ade80 100%);
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+  }
+  
+  /* Features Section Dark Mode */
+  .features-section {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  .features-section h2 {
+    color: #f1f5f9;
+  }
+  
+  .features-intro {
+    color: #cbd5e1;
   }
   
   .feature-card {
-    background: rgba(51, 65, 85, 0.8);
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  .feature-content h3 {
+    color: #f1f5f9;
+  }
+  
+  .feature-content p {
+    color: #cbd5e1;
+  }
+  
+  /* Process Overview Dark Mode */
+  .process-overview {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .process-text h2 {
+    color: #f1f5f9;
+  }
+  
+  .process-description {
+    color: #cbd5e1;
+  }
+  
+  .step-item {
+    background: rgba(30, 41, 59, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
+  .step-item.active {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #4ade80;
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.2);
+  }
+  
+  .step-number {
+    background: linear-gradient(135deg, #4ade80 0%, #f97316 100%);
+    color: #0f172a;
+  }
+  
+  .step-content h3 {
+    color: #f1f5f9;
+  }
+  
+  .step-content p {
+    color: #cbd5e1;
+  }
+  
+  /* Slideshow Dark Mode */
+  .slide-content h3 {
+    color: #f1f5f9;
+  }
+  
+  .slide-content p {
+    color: #cbd5e1;
+  }
+  
+  .dot {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .dot.active {
+    background: #4ade80;
+  }
+  
+  /* Navigation Dark Mode */
   .main-nav.glass-nav {
-    background: rgba(15, 23, 42, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
   }
   
   .glass-nav a {
-    color: #e2e8f0;
+    color: #cbd5e1;
   }
   
+  .glass-nav a:hover,
+  .glass-nav a:focus {
+    color: #f1f5f9;
+  }
+  
+  .glass-nav a[aria-current="page"] {
+    color: #0f172a;
+    background: linear-gradient(90deg, #4ade80 60%, #f97316 100%);
+    box-shadow: 0 2px 10px rgba(74, 222, 128, 0.3);
+  }
+  
+  .glass-nav a::after {
+    background: linear-gradient(90deg, #4ade80 60%, #f97316 100%);
+  }
+  
+  /* CTA Button Dark Mode */
+  .cta-button {
+    background: linear-gradient(135deg, #4ade80 0%, #f97316 100%);
+    color: #0f172a;
+    box-shadow: 0 6px 25px rgba(74, 222, 128, 0.3);
+  }
+  
+  .cta-button:hover {
+    background: linear-gradient(135deg, #22c55e 0%, #ea580c 100%);
+    box-shadow: 0 8px 30px rgba(74, 222, 128, 0.4);
+    transform: translateY(-2px) scale(1.03);
+  }
+  
+  /* Final CTA Dark Mode */
   .final-cta {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-top: 3px solid #f97316;
+  }
+  
+  .final-cta h2 {
+    color: #f1f5f9;
+  }
+  
+  .final-cta p {
+    color: #cbd5e1;
+  }
+  
+  /* Footer Dark Mode */
+  footer {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-top: 3px solid #f97316;
+    color: #cbd5e1;
+  }
+  
+  footer p {
+    color: #cbd5e1;
+  }
+  
+  /* Image adjustments for dark mode */
+  .hero-img,
+  .feature-image img,
+  .slide-image {
+    opacity: 0.9;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .hero-img:hover {
+    opacity: 1;
+  }
+}
+
+/* ========== MOBILE DARK MODE ENHANCEMENTS ========== */
+
+/* Enhanced dark mode for mobile devices */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  /* Stronger contrast for mobile screens */
+  .hero-text h1 {
+    /* Fallback for devices that don't support gradient text */
+    color: #f1f5f9;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Ensure gradient text works on mobile, with fallback */
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .hero-text h1 {
+      background: linear-gradient(135deg, #f1f5f9 0%, #4ade80 40%, #f97316 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      text-shadow: none;
+    }
+  }
+  
+  /* Enhanced readability for all text on mobile */
+  .hero-tagline,
+  .features-intro,
+  .process-description,
+  .feature-content p,
+  .step-content p,
+  .slide-content p {
+    color: #e2e8f0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Stronger borders and backgrounds for mobile */
+  .hero,
+  .features-section,
+  .process-overview {
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .feature-card {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .step-item {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Enhanced navigation for mobile dark mode */
+  .main-nav.glass-nav {
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  
+  .glass-nav a {
+    color: #f1f5f9;
+    font-weight: 700;
+  }
+  
+  /* Better button contrast on mobile */
+  .cta-button {
+    background: linear-gradient(135deg, #22c55e 0%, #ea580c 100%);
+    color: #0f172a;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+  }
+}
+
+/* Force dark mode styles for better debugging */
+@media (max-width: 768px) {
+  /* Add a class-based dark mode toggle for testing */
+  .force-dark-mode {
+    background: linear-gradient(135deg, #0f172a 60%, #1e293b 100%) !important;
+    color: #f1f5f9 !important;
+  }
+  
+  .force-dark-mode .hero,
+  .force-dark-mode .features-section,
+  .force-dark-mode .process-overview {
+    background: rgba(15, 23, 42, 0.98) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .force-dark-mode .hero-text h1 {
+    color: #f1f5f9 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .force-dark-mode h2,
+  .force-dark-mode h3 {
+    color: #f1f5f9 !important;
+  }
+  
+  .force-dark-mode p,
+  .force-dark-mode .hero-tagline,
+  .force-dark-mode .features-intro {
+    color: #e2e8f0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
   }
 }
