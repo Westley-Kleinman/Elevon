@@ -56,9 +56,112 @@
             <h3 style="margin-top:0; color:#2e3a4a; font-size:1.3rem; font-weight:900;">Pick a Top Color</h3>
             <div id="modal-top-colors"></div>
         </div>
-    </div>
-    <script>
-let topColors = [];
+    </div>    <script>
+    // Helper function to draw thick pixels for centerline tracing
+    function drawThickPixel(data, x, y, width, height, thickness) {
+        const radius = Math.floor(thickness / 2);
+        for (let dy = -radius; dy <= radius; dy++) {
+            for (let dx = -radius; dx <= radius; dx++) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                    // Use circular brush for smoother lines
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist <= radius) {
+                        const index = (ny * width + nx) * 4;
+                        data[index] = 0;     // R
+                        data[index + 1] = 0; // G
+                        data[index + 2] = 0; // B
+                        data[index + 3] = 255; // A
+                    }
+                }
+            }
+        }
+    }
+
+    // Create centerline trace from detected trail pixels
+    function createCenterlineTrace(trailPixels, width, height) {
+        if (trailPixels.size === 0) return new Set();
+        
+        // Convert to array for processing
+        const pixelArray = Array.from(trailPixels).map(coord => {
+            const [x, y] = coord.split(',').map(Number);
+            return {x, y};
+        });
+        
+        // Simple centerline extraction using thinning
+        const centerlinePixels = new Set();
+        
+        // For each trail pixel, check if it's part of the centerline
+        for (const pixel of pixelArray) {
+            const {x, y} = pixel;
+            
+            // Count neighbors (8-connectivity)
+            let neighborCount = 0;
+            const neighbors = [];
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0) continue;
+                    const neighborCoord = `${x + dx},${y + dy}`;
+                    if (trailPixels.has(neighborCoord)) {
+                        neighborCount++;
+                        neighbors.push({x: x + dx, y: y + dy});
+                    }
+                }
+            }
+            
+            // Include pixel if it's:
+            // 1. An endpoint (1 neighbor)
+            // 2. Part of a continuous line (2 neighbors)
+            // 3. A junction point (3+ neighbors)
+            // 4. An isolated pixel (0 neighbors)
+            if (neighborCount <= 2 || neighborCount >= 3) {
+                centerlinePixels.add(`${x},${y}`);
+            }
+            // For pixels with many neighbors, apply additional thinning
+            else if (neighborCount >= 4) {
+                // Check if this pixel is essential for connectivity
+                const isEssential = checkConnectivity(x, y, trailPixels, width, height);
+                if (isEssential) {
+                    centerlinePixels.add(`${x},${y}`);
+                }
+            }
+        }
+        
+        // If centerline is too sparse, include more pixels
+        if (centerlinePixels.size < trailPixels.size * 0.1) {
+            // Fall back to including more trail pixels
+            for (const pixel of pixelArray) {
+                const {x, y} = pixel;
+                // Include every nth pixel to ensure connectivity
+                if ((x + y) % 2 === 0) {
+                    centerlinePixels.add(`${x},${y}`);
+                }
+            }
+        }
+        
+        return centerlinePixels;
+    }
+
+    // Check if a pixel is essential for connectivity
+    function checkConnectivity(x, y, trailPixels, width, height) {
+        // Simple connectivity check - if removing this pixel would disconnect neighbors
+        const neighbors = [];
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                const neighborCoord = `${x + dx},${y + dy}`;
+                if (trailPixels.has(neighborCoord)) {
+                    neighbors.push({x: x + dx, y: y + dy});
+                }
+            }
+        }
+        
+        // If we have 3+ neighbors, this might be a junction
+        return neighbors.length >= 3;
+    }
+
+    let topColors = [];
 let applyTarget = {out: 0, slot: 0};
 function setTopColors(colors) {
     topColors = colors;
@@ -340,8 +443,7 @@ function handleFormSubmit(e) {
                     if (r !== '' && g !== '' && b !== '' && t !== '') {
                         colorTols.push({r: +r, g: +g, b: +b, tol: +t});
                     }
-                }
-                if (colorTols.length > 0) {
+                }                if (colorTols.length > 0) {
                     // Create canvas and process
                     const canvas = document.createElement('canvas');
                     canvas.width = img.width;
@@ -350,6 +452,9 @@ function handleFormSubmit(e) {
                     ctx.drawImage(img, 0, 0);
                     const imageData = ctx.getImageData(0, 0, img.width, img.height);
                     const data = imageData.data;
+                    
+                    // First pass: identify trail pixels
+                    const trailPixels = new Set();
                     for (let i = 0; i < data.length; i += 4) {
                         // If the original pixel is transparent, make it white and fully opaque
                         if (data[i+3] === 0) {
@@ -370,13 +475,25 @@ function handleFormSubmit(e) {
                                 break;
                             }
                         }
-                        if (keep) { // Pixel matches the filter
-                            data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
-                        } else { // Pixel does not match the filter
-                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
+                        if (keep) {
+                            const pixelIndex = Math.floor(i / 4);
+                            const x = pixelIndex % img.width;
+                            const y = Math.floor(pixelIndex / img.width);
+                            trailPixels.add(`${x},${y}`);
                         }
-                        data[i+3] = 255; // Ensure pixel is opaque
+                        // Initially set all pixels to white
+                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
                     }
+
+                    // Create centerline trace with thick uniform lines
+                    const processedTrailPixels = createCenterlineTrace(trailPixels, img.width, img.height);
+                    
+                    // Draw thick lines on the processed pixels
+                    for (const coordStr of processedTrailPixels) {
+                        const [x, y] = coordStr.split(',').map(Number);
+                        drawThickPixel(data, x, y, img.width, img.height, 4); // 4 pixel thick lines
+                    }
+                    
                     ctx.putImageData(imageData, 0, 0);
                     // Download result
                     const link = document.createElement('a');
@@ -412,8 +529,7 @@ function downloadSingleOutput(out) {
                 if (r !== '' && g !== '' && b !== '' && t !== '') {
                     colorTols.push({r: +r, g: +g, b: +b, tol: +t});
                 }
-            }
-            if (colorTols.length > 0) {
+            }            if (colorTols.length > 0) {
                 const canvas = document.createElement('canvas');
                 canvas.width = img.width;
                 canvas.height = img.height;
@@ -421,6 +537,9 @@ function downloadSingleOutput(out) {
                 ctx.drawImage(img, 0, 0);
                 const imageData = ctx.getImageData(0, 0, img.width, img.height);
                 const data = imageData.data;
+                
+                // First pass: identify trail pixels
+                const trailPixels = new Set();
                 for (let i = 0; i < data.length; i += 4) {
                     // If the original pixel is transparent, make it white and fully opaque
                     if (data[i+3] === 0) {
@@ -441,19 +560,31 @@ function downloadSingleOutput(out) {
                             break;
                         }
                     }
-                    if (keep) { // Pixel matches the filter
-                        data[i] = 0; data[i+1] = 0; data[i+2] = 0; // Make it black
-                    } else { // Pixel does not match the filter
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; // Make it white
+                    if (keep) {
+                        const pixelIndex = Math.floor(i / 4);
+                        const x = pixelIndex % img.width;
+                        const y = Math.floor(pixelIndex / img.width);
+                        trailPixels.add(`${x},${y}`);
                     }
-                    data[i+3] = 255; // Ensure pixel is opaque
+                    // Initially set all pixels to white
+                    data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
                 }
+
+                // Create centerline trace with thick uniform lines
+                const processedTrailPixels = createCenterlineTrace(trailPixels, img.width, img.height);
+                
+                // Draw thick lines on the processed pixels
+                for (const coordStr of processedTrailPixels) {
+                    const [x, y] = coordStr.split(',').map(Number);
+                    drawThickPixel(data, x, y, img.width, img.height, 4); // 4 pixel thick lines
+                }
+                
                 ctx.putImageData(imageData, 0, 0);
                 const link = document.createElement('a');
                 link.download = filename.endsWith('.png') ? filename : filename + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-            } else {
+            }else {
                 alert('Please enter at least one color for this output.');
             }
         };
