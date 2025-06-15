@@ -12,11 +12,30 @@
     <div class="header-bar">
         <img src="/static/images/elevon_logo.png" alt="Elevon Logo" class="logo-img">
         <h1 class="main-title">Elevon Image Color Filter</h1>
-    </div>
-    <form method="post" enctype="multipart/form-data" class="main-form" onsubmit="return handleFormSubmit(event)">
+    </div>    <form method="post" enctype="multipart/form-data" class="main-form" onsubmit="return handleFormSubmit(event)">
         <div class="form-section">
-            <label class="main-label">Select PNG image:</label>
-            <input type="file" name="image" id="image" accept="image/png" required onchange="extractTopColorsFrontend()" class="file-input">
+            <label class="main-label">Select image file:</label>
+            <div class="file-drop-zone" id="fileDropZone">
+                <input type="file" name="image" id="image" accept="image/*" required onchange="handleFileSelection()" class="file-input">
+                <div class="drop-zone-content">
+                    <div class="drop-icon">📁</div>
+                    <div class="drop-text">
+                        <div class="drop-primary">Drop image here or click to browse</div>
+                        <div class="drop-secondary">Supports PNG, JPG, JPEG formats</div>
+                    </div>
+                </div>
+            </div>
+            <div id="imagePreview" class="image-preview" style="display: none;">
+                <canvas id="previewCanvas"></canvas>
+                <div class="preview-info">
+                    <span id="imageDimensions"></span>
+                    <span id="fileSize"></span>
+                </div>
+                <div class="preview-toggle">
+                    <input type="checkbox" id="realtimePreview" class="preview-checkbox">
+                    <label for="realtimePreview" class="preview-label">Show real-time preview</label>
+                </div>
+            </div>
         </div>
         <hr class="divider">
         <div class="outputs-container">
@@ -28,35 +47,72 @@
                     <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input" aria-label="Output {{out+1}} filename" style="max-width: 180px;">
                 </div>
                 <button type="button" class="main-btn download-btn" style="padding: 0.5rem 1.3rem; font-size: 1.05rem; border-radius: 0.6rem; margin-left: 1.2rem;" onclick="downloadSingleOutput('{{ out }}')">Download</button>
-            </div>
-            <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
+            </div>            <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
             {% for slot in range(3) %}
             <div class="color-row" style="display: flex; justify-content: center; align-items: flex-end; gap: 0.7rem; margin-bottom: 0.7rem;">
                 <span class="color-slot-label">Color {{slot+1}}:</span>
                 <span id="color-label-{{out}}-{{slot}}" class="color-label color-label-preview" style="font-size: 1.05rem; font-weight: 700; min-width: 120px; display: inline-block; border-radius: 0.5rem; padding: 0.3rem 1.1rem; background: #eee; color: #2e3a4a; border: 2px solid #e5e5e5; transition: background 0.2s, border 0.2s; margin-right: 0.7rem;"></span>
                 <div style="display: flex; gap: 0.3rem;">
-                    <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input" aria-label="Red" oninput="updateColorPreview({{out}},{{slot}})">
-                    <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input" aria-label="Green" oninput="updateColorPreview({{out}},{{slot}})">
-                    <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue" oninput="updateColorPreview({{out}},{{slot}})">
+                    <input type="number" name="r_{{out}}_{{slot}}" id="r_{{out}}_{{slot}}" min="0" max="255" placeholder="R" class="color-input" aria-label="Red" data-output="{{out}}" data-slot="{{slot}}" data-channel="r">
+                    <input type="number" name="g_{{out}}_{{slot}}" id="g_{{out}}_{{slot}}" min="0" max="255" placeholder="G" class="color-input" aria-label="Green" data-output="{{out}}" data-slot="{{slot}}" data-channel="g">
+                    <input type="number" name="b_{{out}}_{{slot}}" id="b_{{out}}_{{slot}}" min="0" max="255" placeholder="B" class="color-input" aria-label="Blue" data-output="{{out}}" data-slot="{{slot}}" data-channel="b">
                 </div>
-                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input" aria-label="Tolerance" style="margin-left:0.5rem;">
-                <button type="button" class="apply-btn" style="margin-left: 0.7rem;" onclick="openApplyDialog('{{ out }}', '{{ slot }}')">🎨 Pick</button>
+                <input type="number" name="t_{{out}}_{{slot}}" id="t_{{out}}_{{slot}}" min="0" max="442" step="1" placeholder="Tolerance" class="tol-input" aria-label="Tolerance" style="margin-left:0.5rem;" data-output="{{out}}" data-slot="{{slot}}">
+                <button type="button" class="apply-btn" style="margin-left: 0.7rem;" data-output="{{out}}" data-slot="{{slot}}">🎨 Pick</button>
             </div>
             {% endfor %}
+            </div>
+            <div id="output-preview-{{out}}" class="output-preview">
+                <canvas id="preview-canvas-{{out}}"></canvas>
             </div>
         </div>
         {% endfor %}
         </div>
         <button type="submit" class="main-btn" style="display: block; width: fit-content; margin: 2.2rem auto 0 auto; padding: 1.1rem 2.7rem; font-size: 1.18rem; border-radius: 0.8rem;">Download All Outputs</button>
-    </form>
-    <!-- Modal for picking top color -->
+    </form>    <!-- Modal for picking top color -->
     <div id="apply-modal" class="modal">
         <div class="modal-content" tabindex="-1">
             <span class="close" onclick="closeApplyDialog()">&times;</span>
             <h3 style="margin-top:0; color:#2e3a4a; font-size:1.3rem; font-weight:900;">Pick a Top Color</h3>
             <div id="modal-top-colors"></div>
         </div>
-    </div>    <script>
+    </div>
+      <!-- Processing Overlay -->
+    <div id="processing-overlay" class="processing-overlay" style="display: none;">
+        <div class="processing-content">
+            <div class="processing-spinner"></div>
+            <div class="processing-text">Processing Image...</div>
+            <div class="processing-details">Extracting centerlines and applying filters</div>
+        </div>
+    </div>
+    
+    <!-- Help Panel -->
+    <button class="help-toggle" onclick="toggleHelpPanel()" title="Show keyboard shortcuts">?</button>
+    <div id="help-panel" class="help-panel">
+        <div class="help-title">Keyboard Shortcuts</div>
+        <div class="help-shortcut">
+            <span class="help-desc">Open file</span>
+            <span class="help-key">Ctrl+O</span>
+        </div>
+        <div class="help-shortcut">
+            <span class="help-desc">Process all</span>
+            <span class="help-key">Ctrl+Enter</span>
+        </div>
+        <div class="help-shortcut">
+            <span class="help-desc">Toggle preview</span>
+            <span class="help-key">R</span>
+        </div>
+        <div class="help-shortcut">
+            <span class="help-desc">Close dialog</span>
+            <span class="help-key">Escape</span>
+        </div>
+        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 0.75rem;">
+            Drag & drop images, click colors to pick from detected colors, use real-time preview for instant feedback.
+            <div style="margin-top: 0.5rem; font-size: 0.7rem; opacity: 0.8;">
+                v2.0 Enhanced • Advanced centerline extraction • Web Worker support
+            </div>
+        </div>
+    </div><script>
     // Helper function to draw thick pixels for centerline tracing
     function drawThickPixel(data, x, y, width, height, thickness) {
         const radius = Math.floor(thickness / 2);
@@ -77,65 +133,235 @@
                 }
             }
         }
+    }    // Advanced Zhang-Suen skeletonization algorithm for better centerlines
+    function zhangSuenThinning(trailPixels, width, height) {
+        if (trailPixels.size === 0) return new Set();
+        
+        // Convert to 2D binary array for easier processing
+        const binary = Array(height).fill().map(() => Array(width).fill(0));
+        for (const coord of trailPixels) {
+            const [x, y] = coord.split(',').map(Number);
+            if (x >= 0 && x < width && y >= 0 && y < height) {
+                binary[y][x] = 1;
+            }
+        }
+        
+        let changed = true;
+        let iteration = 0;
+        const maxIterations = 100; // Prevent infinite loops
+        
+        while (changed && iteration < maxIterations) {
+            changed = false;
+            const toDelete = [];
+            
+            // Two-step process for Zhang-Suen algorithm
+            for (let step = 0; step < 2; step++) {
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        if (binary[y][x] === 1) {
+                            const neighbors = [
+                                binary[y-1][x], binary[y-1][x+1], binary[y][x+1], binary[y+1][x+1],
+                                binary[y+1][x], binary[y+1][x-1], binary[y][x-1], binary[y-1][x-1]
+                            ];
+                            
+                            // Count black neighbors
+                            const blackNeighbors = neighbors.reduce((sum, val) => sum + val, 0);
+                            
+                            // Count 0->1 transitions
+                            let transitions = 0;
+                            for (let i = 0; i < 8; i++) {
+                                if (neighbors[i] === 0 && neighbors[(i + 1) % 8] === 1) {
+                                    transitions++;
+                                }
+                            }
+                            
+                            // Zhang-Suen conditions
+                            const cond1 = blackNeighbors >= 2 && blackNeighbors <= 6;
+                            const cond2 = transitions === 1;
+                            
+                            let cond3, cond4;
+                            if (step === 0) {
+                                cond3 = neighbors[0] * neighbors[2] * neighbors[4] === 0;
+                                cond4 = neighbors[2] * neighbors[4] * neighbors[6] === 0;
+                            } else {
+                                cond3 = neighbors[0] * neighbors[2] * neighbors[6] === 0;
+                                cond4 = neighbors[0] * neighbors[4] * neighbors[6] === 0;
+                            }
+                            
+                            if (cond1 && cond2 && cond3 && cond4) {
+                                toDelete.push([x, y]);
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+                
+                // Apply deletions after checking all pixels
+                for (const [x, y] of toDelete) {
+                    binary[y][x] = 0;
+                }
+                toDelete.length = 0;
+            }
+            iteration++;
+        }
+        
+        // Convert back to Set
+        const result = new Set();
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                if (binary[y][x] === 1) {
+                    result.add(`${x},${y}`);
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    // Improved noise reduction and gap filling
+    function preprocessTrailPixels(trailPixels, width, height) {
+        const processed = new Set();
+        
+        // Remove isolated pixels (noise reduction)
+        for (const coord of trailPixels) {
+            const [x, y] = coord.split(',').map(Number);
+            let neighbors = 0;
+            
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0) continue;
+                    if (trailPixels.has(`${x + dx},${y + dy}`)) {
+                        neighbors++;
+                    }
+                }
+            }
+            
+            // Keep pixels with at least 1 neighbor (removes isolated pixels)
+            if (neighbors > 0) {
+                processed.add(coord);
+            }
+        }
+        
+        // Gap filling: connect nearby trail segments
+        const gapFilled = new Set(processed);
+        for (const coord of processed) {
+            const [x, y] = coord.split(',').map(Number);
+            
+            // Look for gaps in 8 directions
+            const directions = [
+                [0, -2], [2, 0], [0, 2], [-2, 0], // Cardinal directions
+                [1, -1], [1, 1], [-1, 1], [-1, -1] // Diagonal directions
+            ];
+            
+            for (const [dx, dy] of directions) {
+                const gapX = x + dx;
+                const gapY = y + dy;
+                const gapCoord = `${gapX},${gapY}`;
+                
+                if (processed.has(gapCoord)) {
+                    // Fill the gap between current pixel and found pixel
+                    const midX = x + Math.floor(dx / 2);
+                    const midY = y + Math.floor(dy / 2);
+                    const midCoord = `${midX},${midY}`;
+                    
+                    if (midX >= 0 && midX < width && midY >= 0 && midY < height) {
+                        gapFilled.add(midCoord);
+                    }
+                }
+            }
+        }
+        
+        return gapFilled;
+    }
+
+    // Enhanced line drawing with anti-aliasing
+    function drawSmoothThickLine(data, x, y, width, height, thickness, alpha = 1.0) {
+        const radius = thickness / 2;
+        const radiusSquared = radius * radius;
+        
+        const minX = Math.max(0, Math.floor(x - radius));
+        const maxX = Math.min(width - 1, Math.ceil(x + radius));
+        const minY = Math.max(0, Math.floor(y - radius));
+        const maxY = Math.min(height - 1, Math.ceil(y + radius));
+        
+        for (let py = minY; py <= maxY; py++) {
+            for (let px = minX; px <= maxX; px++) {
+                const dx = px - x;
+                const dy = py - y;
+                const distSquared = dx * dx + dy * dy;
+                
+                if (distSquared <= radiusSquared) {
+                    // Anti-aliasing: fade out at edges
+                    const dist = Math.sqrt(distSquared);
+                    let pixelAlpha = alpha;
+                    
+                    if (dist > radius - 1) {
+                        pixelAlpha *= Math.max(0, radius - dist);
+                    }
+                    
+                    const index = (py * width + px) * 4;
+                    const currentAlpha = data[index + 3] / 255;
+                    const newAlpha = Math.min(1, currentAlpha + pixelAlpha);
+                    
+                    // Blend with existing pixel
+                    data[index] = Math.floor(data[index] * (1 - pixelAlpha)); // R
+                    data[index + 1] = Math.floor(data[index + 1] * (1 - pixelAlpha)); // G
+                    data[index + 2] = Math.floor(data[index + 2] * (1 - pixelAlpha)); // B
+                    data[index + 3] = Math.floor(newAlpha * 255); // A
+                }
+            }
+        }
     }
 
     // Create centerline trace from detected trail pixels
     function createCenterlineTrace(trailPixels, width, height) {
         if (trailPixels.size === 0) return new Set();
         
-        // Convert to array for processing
-        const pixelArray = Array.from(trailPixels).map(coord => {
-            const [x, y] = coord.split(',').map(Number);
-            return {x, y};
-        });
+        // Step 1: Preprocess to remove noise and fill gaps
+        const preprocessed = preprocessTrailPixels(trailPixels, width, height);
         
-        // Simple centerline extraction using thinning
+        // Step 2: Apply Zhang-Suen thinning for professional skeletonization
+        const thinned = zhangSuenThinning(preprocessed, width, height);
+        
+        // Step 3: If result is too sparse, fall back to simpler method
+        if (thinned.size < Math.max(10, trailPixels.size * 0.05)) {
+            console.warn('Zhang-Suen thinning resulted in sparse output, using fallback method');
+            return createCenterlineTraceFallback(preprocessed, width, height);
+        }
+        
+        return thinned;
+    }
+
+    // Fallback centerline method (your original algorithm, improved)
+    function createCenterlineTraceFallback(trailPixels, width, height) {
         const centerlinePixels = new Set();
         
-        // For each trail pixel, check if it's part of the centerline
-        for (const pixel of pixelArray) {
-            const {x, y} = pixel;
+        for (const coord of trailPixels) {
+            const [x, y] = coord.split(',').map(Number);
             
-            // Count neighbors (8-connectivity)
+            // Count neighbors
             let neighborCount = 0;
-            const neighbors = [];
             for (let dy = -1; dy <= 1; dy++) {
                 for (let dx = -1; dx <= 1; dx++) {
                     if (dx === 0 && dy === 0) continue;
-                    const neighborCoord = `${x + dx},${y + dy}`;
-                    if (trailPixels.has(neighborCoord)) {
+                    if (trailPixels.has(`${x + dx},${y + dy}`)) {
                         neighborCount++;
-                        neighbors.push({x: x + dx, y: y + dy});
                     }
                 }
             }
             
-            // Include pixel if it's:
-            // 1. An endpoint (1 neighbor)
-            // 2. Part of a continuous line (2 neighbors)
-            // 3. A junction point (3+ neighbors)
-            // 4. An isolated pixel (0 neighbors)
-            if (neighborCount <= 2 || neighborCount >= 3) {
-                centerlinePixels.add(`${x},${y}`);
-            }
-            // For pixels with many neighbors, apply additional thinning
-            else if (neighborCount >= 4) {
-                // Check if this pixel is essential for connectivity
-                const isEssential = checkConnectivity(x, y, trailPixels, width, height);
-                if (isEssential) {
-                    centerlinePixels.add(`${x},${y}`);
-                }
+            // Include important pixels: endpoints, line pixels, and junctions
+            if (neighborCount <= 2 || neighborCount >= 4) {
+                centerlinePixels.add(coord);
             }
         }
         
-        // If centerline is too sparse, include more pixels
+        // Ensure connectivity
         if (centerlinePixels.size < trailPixels.size * 0.1) {
-            // Fall back to including more trail pixels
-            for (const pixel of pixelArray) {
-                const {x, y} = pixel;
-                // Include every nth pixel to ensure connectivity
-                if ((x + y) % 2 === 0) {
-                    centerlinePixels.add(`${x},${y}`);
+            for (const coord of trailPixels) {
+                const [x, y] = coord.split(',').map(Number);
+                if ((x + y) % 3 === 0) { // Sample every 3rd pixel
+                    centerlinePixels.add(coord);
                 }
             }
         }
@@ -161,8 +387,376 @@
         return neighbors.length >= 3;
     }
 
-    let topColors = [];
-let applyTarget = {out: 0, slot: 0};
+        let topColors = [];
+    let applyTarget = {out: 0, slot: 0};
+    let currentImage = null;
+    
+    // Processing overlay functions
+    function showProcessingOverlay(message = 'Processing Image...', details = 'Extracting centerlines and applying filters') {
+        const overlay = document.getElementById('processing-overlay');
+        const text = overlay.querySelector('.processing-text');
+        const detailsElement = overlay.querySelector('.processing-details');
+        text.textContent = message;
+        detailsElement.textContent = details;
+        overlay.style.display = 'flex';
+    }
+    
+    function hideProcessingOverlay() {
+        document.getElementById('processing-overlay').style.display = 'none';
+    }
+    
+    // Web Worker support for better performance
+    let imageWorker = null;
+    let workerTasks = new Map();
+    
+    function initWebWorker() {
+        if (!window.Worker) return false;
+        
+        try {
+            imageWorker = new Worker('/static/image-worker.js');
+            imageWorker.onmessage = function(e) {
+                const { type, taskId, progress, message, imageData, error } = e.data;
+                
+                switch (type) {
+                    case 'progress':
+                        updateProcessingProgress(taskId, progress, message);
+                        break;
+                    case 'complete':
+                        handleWorkerComplete(taskId, imageData);
+                        break;
+                    case 'error':
+                        handleWorkerError(taskId, error);
+                        break;
+                }
+            };
+            
+            imageWorker.onerror = function(error) {
+                console.warn('Web Worker error:', error);
+                imageWorker = null;
+            };
+            
+            return true;
+        } catch (error) {
+            console.warn('Web Worker not supported:', error);
+            return false;
+        }
+    }
+    
+    function updateProcessingProgress(taskId, progress, message) {
+        const overlay = document.getElementById('processing-overlay');
+        const progressElement = overlay.querySelector('.processing-details');
+        if (progressElement) {
+            progressElement.textContent = `${message} (${progress}%)`;
+        }
+    }
+    
+    function handleWorkerComplete(taskId, imageData) {
+        const task = workerTasks.get(taskId);
+        if (!task) return;
+        
+        const { canvas, filename, callback } = task;
+        const ctx = canvas.getContext('2d');
+        const processedImageData = new ImageData(
+            new Uint8ClampedArray(imageData.data),
+            imageData.width,
+            imageData.height
+        );
+        ctx.putImageData(processedImageData, 0, 0);
+        
+        // Download the result
+        const link = document.createElement('a');
+        link.download = filename.endsWith('.png') ? filename : filename + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        workerTasks.delete(taskId);
+        if (callback) callback();
+    }
+    
+    function handleWorkerError(taskId, error) {
+        console.error('Worker processing error:', error);
+        const task = workerTasks.get(taskId);
+        if (task && task.fallbackCallback) {
+            task.fallbackCallback();
+        }
+        workerTasks.delete(taskId);
+    }
+    
+    function processWithWorker(img, colorTols, filename, callback) {
+        if (!imageWorker) {
+            // Fallback to main thread processing
+            return processAndDownloadOutput(img, colorTols, filename, callback);
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, img.width, img.height);
+        
+        const taskId = Date.now() + Math.random();
+        workerTasks.set(taskId, {
+            canvas,
+            filename,
+            callback,
+            fallbackCallback: () => processAndDownloadOutput(img, colorTols, filename, callback)
+        });
+        
+        imageWorker.postMessage({
+            imageData,
+            colorTolerance: colorTols,
+            taskId
+        });
+    }
+
+    // Help panel toggle
+    function toggleHelpPanel() {
+        const panel = document.getElementById('help-panel');
+        if (panel.style.display === 'none' || !panel.style.display) {
+            panel.style.display = 'block';
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
+                }
+            }, 10000);
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    // Keyboard shortcuts for better UX
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + O: Open file dialog
+        if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+            e.preventDefault();
+            document.getElementById('image').click();
+        }
+        
+        // Ctrl/Cmd + Enter: Process all outputs
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            const form = document.querySelector('.main-form');
+            if (form) {
+                form.dispatchEvent(new Event('submit'));
+            }
+        }
+        
+        // Escape: Close modal
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('apply-modal');
+            if (modal && modal.style.display === 'flex') {
+                closeApplyDialog();
+            }
+            const overlay = document.getElementById('processing-overlay');
+            if (overlay && overlay.style.display === 'flex') {
+                // Don't allow canceling processing - could corrupt state
+                // Just ignore escape during processing
+            }
+        }
+        
+        // R key: Toggle real-time preview
+        if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            const activeElement = document.activeElement;
+            // Only if not typing in an input field
+            if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                const checkbox = document.getElementById('realtimePreview');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    updateRealtimePreview();
+                }
+            }
+        }
+    });
+
+    // Enhanced file handling with drag & drop
+    function setupDragAndDrop() {
+        const dropZone = document.getElementById('fileDropZone');
+        const fileInput = document.getElementById('image');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+        
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelection();
+            }
+        }
+    }
+    
+    // Enhanced file selection handler
+    function handleFileSelection() {
+        const fileInput = document.getElementById('image');
+        if (!fileInput.files.length) return;
+        
+        const file = fileInput.files[0];
+        
+        // Validate file type
+        if (!file.type.match(/image\/(png|jpg|jpeg)/i)) {
+            alert('Please select a PNG, JPG, or JPEG image file.');
+            fileInput.value = '';
+            return;
+        }
+        
+        // Validate file size (max 50MB)
+        const maxSize = 50 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('Image file is too large. Please select a file smaller than 50MB.');
+            fileInput.value = '';
+            return;
+        }
+        
+        showImagePreview(file);
+        extractTopColorsFrontend();
+    }
+    
+    // Show image preview with dimensions and file size
+    function showImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                currentImage = img;
+                
+                const canvas = document.getElementById('previewCanvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Calculate preview dimensions (max 400px width)
+                const maxWidth = 400;
+                const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+                canvas.width = img.width * ratio;
+                canvas.height = img.height * ratio;
+                
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Update preview info
+                document.getElementById('imageDimensions').textContent = `${img.width} × ${img.height} pixels`;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                
+                // Show preview container
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Format file size for display
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // Real-time preview functionality
+    function updateRealtimePreview() {
+        const checkbox = document.getElementById('realtimePreview');
+        if (!checkbox.checked || !currentImage) return;
+        
+        // Update all output previews
+        for (let out = 0; out < 3; out++) {
+            updateOutputPreview(out);
+        }
+    }
+    
+    // Update individual output preview
+    function updateOutputPreview(outputIndex) {
+        if (!currentImage) return;
+        
+        const canvas = document.getElementById(`preview-canvas-${outputIndex}`);
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        // Get colors and tolerances for this output
+        const colorTols = [];
+        for (let slot = 0; slot < 3; slot++) {
+            const r = document.getElementById(`r_${outputIndex}_${slot}`).value;
+            const g = document.getElementById(`g_${outputIndex}_${slot}`).value;
+            const b = document.getElementById(`b_${outputIndex}_${slot}`).value;
+            const t = document.getElementById(`t_${outputIndex}_${slot}`).value;
+            if (r !== '' && g !== '' && b !== '' && t !== '') {
+                colorTols.push({r: +r, g: +g, b: +b, tol: +t});
+            }
+        }
+        
+        if (colorTols.length === 0) {
+            document.getElementById(`output-preview-${outputIndex}`).classList.remove('active');
+            return;
+        }
+        
+        // Set canvas size (smaller for preview)
+        const previewScale = 0.3;
+        canvas.width = currentImage.width * previewScale;
+        canvas.height = currentImage.height * previewScale;
+        
+        // Process image (simplified for real-time preview)
+        ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        // Simple color filtering for preview (no centerline processing)
+        for (let i = 0; i < data.length; i += 4) {
+            if (data[i+3] === 0) {
+                data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
+                continue;
+            }
+            
+            let keep = false;
+            for (const c of colorTols) {
+                const dr = data[i] - c.r;
+                const dg = data[i+1] - c.g;
+                const db = data[i+2] - c.b;
+                const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                if (dist <= c.tol) {
+                    keep = true;
+                    break;
+                }
+            }
+            
+            if (!keep) {
+                data[i] = 255; data[i+1] = 255; data[i+2] = 255;
+            } else {
+                data[i] = 0; data[i+1] = 0; data[i+2] = 0;
+            }
+        }
+        
+        ctx.putImageData(imageData, 0, 0);
+        document.getElementById(`output-preview-${outputIndex}`).classList.add('active');
+    }
+
 function setTopColors(colors) {
     topColors = colors;
 }
@@ -383,20 +977,119 @@ function updateColorPreview(out, slot) {
     }
 }
 
-// On page load, initialize all color previews to match any prefilled values
-window.addEventListener('DOMContentLoaded', function() {
-    for (let out = 0; out < 3; out++) {
-        for (let slot = 0; slot < 3; slot++) {
-            updateColorPreview(out, slot);
-            // Add listeners for all R/G/B fields
-            ['r','g','b'].forEach(function(ch) {
-                var el = document.getElementById(ch + '_' + out + '_' + slot);
-                if (el) {
-                    el.addEventListener('input', function() { updateColorPreview(out, slot); });
+// Enhanced event handling
+function updateColorPreview(out, slot) {
+    const rInput = document.getElementById('r_' + out + '_' + slot);
+    const gInput = document.getElementById('g_' + out + '_' + slot);
+    const bInput = document.getElementById('b_' + out + '_' + slot);
+    const colorLabel = document.getElementById('color-label-' + out + '-' + slot);
+
+    if (colorLabel) {
+        colorLabel.style.display = 'none';
+    }
+
+    if (!rInput || !gInput || !bInput) {
+        return;
+    }
+
+    const rValStr = rInput.value;
+    const gValStr = gInput.value;
+    const bValStr = bInput.value;
+
+    if (rValStr.trim() !== '' && gValStr.trim() !== '' && bValStr.trim() !== '') {
+        const r = parseInt(rValStr);
+        const g = parseInt(gValStr);
+        const b = parseInt(bValStr);
+
+        if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+            const rNorm = Math.max(0, Math.min(255, r));
+            const gNorm = Math.max(0, Math.min(255, g));
+            const bNorm = Math.max(0, Math.min(255, b));
+
+            const bgColor = 'rgb(' + rNorm + ',' + gNorm + ',' + bNorm + ')';
+            const luminance = (0.299 * rNorm + 0.587 * gNorm + 0.114 * bNorm) / 255;
+            const textColor = luminance > 0.6 ? '#222' : '#fff';
+            const borderColor = luminance > 0.6 ? '#aaa' : '#555';
+
+            [rInput, gInput, bInput].forEach(input => {
+                if (input) {
+                    input.style.background = bgColor;
+                    input.style.color = textColor;
+                    input.style.border = '1px solid ' + borderColor;
+                }
+            });
+        } else {
+            [rInput, gInput, bInput].forEach(input => {
+                if (input) {
+                    input.style.background = '';
+                    input.style.color = '';
+                    input.style.border = '';
                 }
             });
         }
+    } else {
+        [rInput, gInput, bInput].forEach(input => {
+            if (input) {
+                input.style.background = '';
+                input.style.color = '';
+                input.style.border = '';
+            }
+        });
     }
+    
+    // Update real-time preview if enabled
+    setTimeout(() => updateRealtimePreview(), 100);
+}
+
+// On page load, initialize everything
+window.addEventListener('DOMContentLoaded', function() {
+    setupDragAndDrop();
+    
+    // Initialize Web Worker for better performance
+    const workerSupported = initWebWorker();
+    if (workerSupported) {
+        console.log('Web Worker initialized for better performance on large images');
+    }
+    
+    // Setup color input event listeners
+    for (let out = 0; out < 3; out++) {
+        for (let slot = 0; slot < 3; slot++) {
+            updateColorPreview(out, slot);
+            ['r','g','b'].forEach(function(ch) {
+                const el = document.getElementById(ch + '_' + out + '_' + slot);
+                if (el) {
+                    el.addEventListener('input', function() { 
+                        updateColorPreview(out, slot);
+                    });
+                }
+            });
+            
+            // Setup tolerance input listener
+            const tolInput = document.getElementById('t_' + out + '_' + slot);
+            if (tolInput) {
+                tolInput.addEventListener('input', function() {
+                    setTimeout(() => updateRealtimePreview(), 100);
+                });
+            }
+        }
+    }
+    
+    // Setup real-time preview checkbox
+    const previewCheckbox = document.getElementById('realtimePreview');
+    if (previewCheckbox) {
+        previewCheckbox.addEventListener('change', updateRealtimePreview);
+    }
+    
+    // Setup apply buttons using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('apply-btn')) {
+            const out = e.target.getAttribute('data-output');
+            const slot = e.target.getAttribute('data-slot');
+            if (out !== null && slot !== null) {
+                openApplyDialog(out, slot);
+            }
+        }
+    });
 });
 document.addEventListener('input', function(e) {
     var id = e.target.id;
@@ -427,11 +1120,17 @@ function handleFormSubmit(e) {
         alert('Please select an image.');
         return false;
     }
+    
+    showProcessingOverlay('Processing All Outputs...', 'This may take a moment for large images');
+    
     const file = fileInput.files[0];
     const reader = new FileReader();
     reader.onload = function(ev) {
         const img = new window.Image();
         img.onload = function() {
+            let processedCount = 0;
+            const totalOutputs = 3;
+            
             for (let out = 0; out < 3; out++) {
                 const filename = document.querySelector(`[name=filename_${out}]`).value.trim() || `output${out+1}.png`;
                 let colorTols = [];
@@ -443,64 +1142,34 @@ function handleFormSubmit(e) {
                     if (r !== '' && g !== '' && b !== '' && t !== '') {
                         colorTols.push({r: +r, g: +g, b: +b, tol: +t});
                     }
-                }                if (colorTols.length > 0) {
-                    // Create canvas and process
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    const imageData = ctx.getImageData(0, 0, img.width, img.height);
-                    const data = imageData.data;
-                    
-                    // First pass: identify trail pixels
-                    const trailPixels = new Set();
-                    for (let i = 0; i < data.length; i += 4) {
-                        // If the original pixel is transparent, make it white and fully opaque
-                        if (data[i+3] === 0) {
-                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
-                            continue;
-                        }
-                        const originalR = data[i];
-                        const originalG = data[i+1];
-                        const originalB = data[i+2];
-                        let keep = false;
-                        for (const c of colorTols) {
-                            const dr = originalR - c.r;
-                            const dg = originalG - c.g;
-                            const db = originalB - c.b;
-                            const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-                            if (dist <= c.tol) {
-                                keep = true;
-                                break;
-                            }
-                        }
-                        if (keep) {
-                            const pixelIndex = Math.floor(i / 4);
-                            const x = pixelIndex % img.width;
-                            const y = Math.floor(pixelIndex / img.width);
-                            trailPixels.add(`${x},${y}`);
-                        }
-                        // Initially set all pixels to white
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
-                    }
-
-                    // Create centerline trace with thick uniform lines
-                    const processedTrailPixels = createCenterlineTrace(trailPixels, img.width, img.height);
-                    
-                    // Draw thick lines on the processed pixels
-                    for (const coordStr of processedTrailPixels) {
-                        const [x, y] = coordStr.split(',').map(Number);
-                        drawThickPixel(data, x, y, img.width, img.height, 4); // 4 pixel thick lines
-                    }
-                    
-                    ctx.putImageData(imageData, 0, 0);
-                    // Download result
-                    const link = document.createElement('a');
-                    link.download = filename.endsWith('.png') ? filename : filename + '.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
                 }
+                  if (colorTols.length > 0) {
+                    // Use setTimeout to allow UI to update
+                    setTimeout(() => {
+                        // Use Web Worker for better performance on large images
+                        const useWorker = img.width * img.height > 1000000; // Use worker for images > 1MP
+                        if (useWorker && imageWorker) {
+                            processWithWorker(img, colorTols, filename, () => {
+                                processedCount++;
+                                if (processedCount === totalOutputs || out === 2) {
+                                    setTimeout(() => hideProcessingOverlay(), 500);
+                                }
+                            });
+                        } else {
+                            processAndDownloadOutput(img, colorTols, filename, () => {
+                                processedCount++;
+                                if (processedCount === totalOutputs || out === 2) {
+                                    setTimeout(() => hideProcessingOverlay(), 500);
+                                }
+                            });
+                        }
+                    }, out * 100); // Stagger processing slightly
+                }
+            }
+            
+            // Hide overlay if no outputs to process
+            if (processedCount === 0) {
+                setTimeout(() => hideProcessingOverlay(), 500);
             }
         };
         img.src = ev.target.result;
@@ -508,18 +1177,82 @@ function handleFormSubmit(e) {
     reader.readAsDataURL(file);
     return false;
 }
+
+function processAndDownloadOutput(img, colorTols, filename, callback) {
+    // Create canvas and process
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const imageData = ctx.getImageData(0, 0, img.width, img.height);
+    const data = imageData.data;
+    
+    // First pass: identify trail pixels
+    const trailPixels = new Set();
+    for (let i = 0; i < data.length; i += 4) {
+        // If the original pixel is transparent, make it white and fully opaque
+        if (data[i+3] === 0) {
+            data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
+            continue;
+        }
+        const originalR = data[i];
+        const originalG = data[i+1];
+        const originalB = data[i+2];
+        let keep = false;
+        for (const c of colorTols) {
+            const dr = originalR - c.r;
+            const dg = originalG - c.g;
+            const db = originalB - c.b;
+            const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+            if (dist <= c.tol) {
+                keep = true;
+                break;
+            }
+        }
+        if (keep) {
+            const pixelIndex = Math.floor(i / 4);
+            const x = pixelIndex % img.width;
+            const y = Math.floor(pixelIndex / img.width);
+            trailPixels.add(`${x},${y}`);
+        }
+        // Initially set all pixels to white
+        data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
+    }
+
+    // Create centerline trace with thick uniform lines
+    const processedTrailPixels = createCenterlineTrace(trailPixels, img.width, img.height);
+    
+    // Draw thick lines on the processed pixels
+    for (const coordStr of processedTrailPixels) {
+        const [x, y] = coordStr.split(',').map(Number);
+        drawThickPixel(data, x, y, img.width, img.height, 4); // 4 pixel thick lines
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
+    // Download result
+    const link = document.createElement('a');
+    link.download = filename.endsWith('.png') ? filename : filename + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    if (callback) callback();
+}
 function downloadSingleOutput(out) {
     const fileInput = document.getElementById('image');
     if (!fileInput.files.length) {
         alert('Please select an image.');
         return;
     }
+    
+    showProcessingOverlay(`Processing Output ${parseInt(out) + 1}...`, 'Extracting centerlines and applying filters');
+    
     const file = fileInput.files[0];
     const reader = new FileReader();
     reader.onload = function(ev) {
         const img = new window.Image();
         img.onload = function() {
-            const filename = document.querySelector(`[name=filename_${out}]`).value.trim() || `output${out+1}.png`;
+            const filename = document.querySelector(`[name=filename_${out}]`).value.trim() || `output${parseInt(out)+1}.png`;
             let colorTols = [];
             for (let slot = 0; slot < 3; slot++) {
                 const r = document.getElementById(`r_${out}_${slot}`).value;
@@ -529,62 +1262,23 @@ function downloadSingleOutput(out) {
                 if (r !== '' && g !== '' && b !== '' && t !== '') {
                     colorTols.push({r: +r, g: +g, b: +b, tol: +t});
                 }
-            }            if (colorTols.length > 0) {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                const imageData = ctx.getImageData(0, 0, img.width, img.height);
-                const data = imageData.data;
-                
-                // First pass: identify trail pixels
-                const trailPixels = new Set();
-                for (let i = 0; i < data.length; i += 4) {
-                    // If the original pixel is transparent, make it white and fully opaque
-                    if (data[i+3] === 0) {
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
-                        continue;
+            }
+              if (colorTols.length > 0) {
+                setTimeout(() => {
+                    // Use Web Worker for better performance on large images
+                    const useWorker = img.width * img.height > 1000000; // Use worker for images > 1MP
+                    if (useWorker && imageWorker) {
+                        processWithWorker(img, colorTols, filename, () => {
+                            setTimeout(() => hideProcessingOverlay(), 500);
+                        });
+                    } else {
+                        processAndDownloadOutput(img, colorTols, filename, () => {
+                            setTimeout(() => hideProcessingOverlay(), 500);
+                        });
                     }
-                    const originalR = data[i];
-                    const originalG = data[i+1];
-                    const originalB = data[i+2];
-                    let keep = false;
-                    for (const c of colorTols) {
-                        const dr = originalR - c.r;
-                        const dg = originalG - c.g;
-                        const db = originalB - c.b;
-                        const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-                        if (dist <= c.tol) {
-                            keep = true;
-                            break;
-                        }
-                    }
-                    if (keep) {
-                        const pixelIndex = Math.floor(i / 4);
-                        const x = pixelIndex % img.width;
-                        const y = Math.floor(pixelIndex / img.width);
-                        trailPixels.add(`${x},${y}`);
-                    }
-                    // Initially set all pixels to white
-                    data[i] = 255; data[i+1] = 255; data[i+2] = 255; data[i+3] = 255;
-                }
-
-                // Create centerline trace with thick uniform lines
-                const processedTrailPixels = createCenterlineTrace(trailPixels, img.width, img.height);
-                
-                // Draw thick lines on the processed pixels
-                for (const coordStr of processedTrailPixels) {
-                    const [x, y] = coordStr.split(',').map(Number);
-                    drawThickPixel(data, x, y, img.width, img.height, 4); // 4 pixel thick lines
-                }
-                
-                ctx.putImageData(imageData, 0, 0);
-                const link = document.createElement('a');
-                link.download = filename.endsWith('.png') ? filename : filename + '.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }else {
+                }, 100);
+            } else {
+                hideProcessingOverlay();
                 alert('Please enter at least one color for this output.');
             }
         };
