@@ -122,9 +122,8 @@
             </div>
           </div>
           
-          <a href="order.html" class="cta-button">Start Your Custom Map</a>
-        </div>
-          <div class="process-visual">
+          <a href="order.html" class="cta-button">Start Your Custom Map</a>        </div>
+        <div class="process-visual">
           <div class="visual-slideshow">
             <div class="slideshow-container">
               <div class="slide active" data-step="1">
@@ -146,7 +145,8 @@
               <button class="nav-dot" data-slide="3"></button>
             </div>
           </div>
-        </div></div>
+        </div>
+      </div>
     </section>
 
     <!-- Final Call-to-Action Section -->
@@ -217,14 +217,15 @@
           stopAutoSlide();
           setTimeout(startAutoSlide, 5000); // Restart auto-slide after 5 seconds
         });
-      });
-
-      // Add hover listeners to pause auto-slide
+      });      // Add hover listeners to pause auto-slide
       const slideshow = document.querySelector('.visual-slideshow');
       slideshow.addEventListener('mouseenter', stopAutoSlide);
-      slideshow.addEventListener('mouseleave', startAutoSlide);      // Initialize first slide and start auto-slide
+      slideshow.addEventListener('mouseleave', startAutoSlide);
+      
+      // Initialize first slide and start auto-slide
       showSlide(0);
-      startAutoSlide();    });
+      startAutoSlide();
+    });
 
     // Enhanced theme management system
     function initializeTheme() {
