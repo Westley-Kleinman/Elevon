@@ -479,6 +479,214 @@ header {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
+/* Personal Story Section */
+.personal-story {
+  background: var(--card-background);
+  border-radius: 20px;
+  padding: 3rem;
+  margin: 3rem auto;
+  max-width: 1100px;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.story-content h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.story-content p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.story-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Experience Journey Section */
+.experience-journey {
+  max-width: 1100px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+}
+
+.experience-journey h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 3rem;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+/* My Process Section */
+.my-process {
+  background: var(--surface-light);
+  border-radius: 20px;
+  padding: 4rem 2rem;
+  margin: 4rem auto;
+  max-width: 1100px;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-light);
+}
+
+.process-content h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.process-intro {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2rem;
+  background: var(--card-background);
+  border-radius: 16px;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.step .step-number {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-rust) 0%, var(--primary-green) 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(212,98,26,0.3);
+}
+
+.step-content h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.step-content p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Industry Layout for special card */
+.industry-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icar-banner {
+  margin-bottom: 0.5rem;
+}
+
+.icar-banner img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+}
+
+.company-logos {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.company-logos img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 4px;
+  background: var(--surface-light);
+}
+
+.company-logos img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Response Time Styling */
+.response-time {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--step-background);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-green);
+  text-align: center;
+}
+
+.response-time p {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* Footer Styling */
+footer {
+  background: var(--surface-light);
+  padding: 2rem;
+  text-align: center;
+  margin-top: 4rem;
+  border-top: 1px solid var(--border-light);
+}
+
+footer p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 /* ============================================
    JOURNEY TIMELINE
    ============================================ */
@@ -1013,6 +1221,78 @@ header {
   .final-cta .cta-button {
     font-size: 1.1rem;
     padding: 1.1rem 2.5rem;
+  }
+  
+  .personal-story {
+    padding: 2rem 1.5rem;
+    margin: 2rem auto;
+  }
+  
+  .story-content h2 {
+    font-size: 2rem;
+  }
+  
+  .story-content p {
+    font-size: 1rem;
+  }
+  
+  .experience-journey h2 {
+    font-size: 2rem;
+  }
+  
+  .journey-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .my-process {
+    padding: 2rem 1.5rem;
+    margin: 2rem auto;
+  }
+  
+  .process-content h2 {
+    font-size: 2rem;
+  }
+  
+  .process-intro {
+    font-size: 1rem;
+  }
+  
+  .step {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .step .step-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .step-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .step-content p {
+    font-size: 0.95rem;
+  }
+  
+  .industry-layout {
+    gap: 0.5rem;
+  }
+  
+  .company-logos {
+    gap: 0.5rem;
+  }
+  
+  .response-time {
+    padding: 1rem;
+  }
+  
+  .response-time p {
+    font-size: 0.9rem;
   }
 }
 
