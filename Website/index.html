@@ -122,7 +122,8 @@
             </div>
           </div>
           
-          <a href="order.html" class="cta-button">Start Your Custom Map</a>        </div>
+          <a href="order.html" class="cta-button">Start Your Custom Map</a>
+        </div>
         <div class="process-visual">
           <div class="visual-slideshow">
             <div class="slideshow-container">
@@ -165,7 +166,6 @@
   <footer>
     <p>&copy; 2025 Elevon. All rights reserved.</p>
   </footer>
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const slides = document.querySelectorAll('.slide');
@@ -174,7 +174,19 @@
       let currentSlide = 0;
       let slideInterval;
 
+      // Check if elements exist before proceeding
+      if (slides.length === 0 || navDots.length === 0 || stepItems.length === 0) {
+        console.warn('Process overview elements not found');
+        return;
+      }
+
       function showSlide(index) {
+        // Validate index
+        if (index < 0 || index >= slides.length) {
+          console.warn('Invalid slide index:', index);
+          return;
+        }
+        
         // Remove active class from all slides, dots, and steps
         slides.forEach(slide => slide.classList.remove('active'));
         navDots.forEach(dot => dot.classList.remove('active'));
@@ -191,17 +203,20 @@
       function nextSlide() {
         const next = (currentSlide + 1) % slides.length;
         showSlide(next);
-      }
-
-      function startAutoSlide() {
+      }      function startAutoSlide() {
+        // Clear any existing interval
+        if (slideInterval) {
+          clearInterval(slideInterval);
+        }
         slideInterval = setInterval(nextSlide, 3000); // Change slide every 3 seconds
       }
 
       function stopAutoSlide() {
-        clearInterval(slideInterval);
-      }
-
-      // Add click listeners to navigation dots
+        if (slideInterval) {
+          clearInterval(slideInterval);
+          slideInterval = null;
+        }
+      }// Add click listeners to navigation dots
       navDots.forEach((dot, index) => {
         dot.addEventListener('click', () => {
           showSlide(index);
@@ -209,7 +224,7 @@
           setTimeout(startAutoSlide, 5000); // Restart auto-slide after 5 seconds
         });
       });
-
+      
       // Add click listeners to step items
       stepItems.forEach((step, index) => {
         step.addEventListener('click', () => {
@@ -217,14 +232,27 @@
           stopAutoSlide();
           setTimeout(startAutoSlide, 5000); // Restart auto-slide after 5 seconds
         });
-      });      // Add hover listeners to pause auto-slide
+      });
+        // Add hover listeners to pause auto-slide
       const slideshow = document.querySelector('.visual-slideshow');
-      slideshow.addEventListener('mouseenter', stopAutoSlide);
-      slideshow.addEventListener('mouseleave', startAutoSlide);
-      
-      // Initialize first slide and start auto-slide
+      if (slideshow) {
+        slideshow.addEventListener('mouseenter', stopAutoSlide);
+        slideshow.addEventListener('mouseleave', startAutoSlide);
+      } else {
+        console.warn('Visual slideshow element not found');
+      }
+        // Initialize first slide and start auto-slide
       showSlide(0);
       startAutoSlide();
+      
+      // Pause slideshow when page is not visible to save resources
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          stopAutoSlide();
+        } else {
+          startAutoSlide();
+        }
+      });
     });
 
     // Enhanced theme management system
