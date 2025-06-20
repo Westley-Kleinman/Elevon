@@ -1,5 +1,19 @@
 /* ============================================
-   ELEVON WEBSITE - CLEAN CSS
+   ELEVON WEBSITE - UNIFIED CSS
+   ============================================ 
+   
+   Complete styling for Elevon custom 3D trail maps website
+   
+   Features:
+   - Responsive design (mobile, tablet, desktop)
+   - Dark/light mode theming
+   - Process overview with interactive slideshow
+   - Contact forms and about page
+   - Improved color scheme for better readability
+   - Modern glassmorphism effects
+   - Accessibility features
+   
+   Pages: index.html, about.html, order.html
    ============================================ */
 
 /* ============================================
@@ -744,6 +758,144 @@ nav a:focus {
 }
 
 /* ============================================
+   CONTACT SECTION (ABOUT PAGE)
+   ============================================ */
+
+.contact-section {
+  background: var(--surface-light);
+  border-radius: 20px;
+  padding: 3rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-light);
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.contact-content h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--dark-blue);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.contact-content > p {
+  font-size: 1.1rem;
+  color: var(--dark-blue);
+  text-align: center;
+  margin-bottom: 3rem;
+  line-height: 1.7;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contact-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.contact-method {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--contact-method-background);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  color: var(--dark-blue);
+}
+
+.contact-method:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: var(--section-background);
+}
+
+.method-icon {
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-rust) 0%, var(--accent-rust) 100%);
+  color: white;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.method-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.method-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 0.2rem;
+  color: var(--text-secondary);
+}
+
+.method-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark-blue);
+}
+
+.response-time {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--section-background);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-rust);
+  transition: background 0.3s ease;
+}
+
+.response-time p {
+  margin: 0;
+  color: var(--dark-blue);
+  font-style: italic;
+}
+
+/* Dark mode support for about page */
+:root[data-theme="dark"] .contact-section {
+  background: var(--surface-light);
+  border-color: var(--border-light);
+}
+
+:root[data-theme="dark"] .contact-method {
+  background: var(--contact-method-background);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .contact-method:hover {
+  background: var(--section-background);
+}
+
+:root[data-theme="dark"] .method-icon {
+  background: linear-gradient(135deg, var(--primary-rust) 0%, var(--accent-rust) 100%);
+}
+
+:root[data-theme="dark"] .method-label {
+  color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .method-value {
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .response-time {
+  background: var(--section-background);
+  border-left-color: var(--primary-rust);
+}
+
+/* ============================================
    PROCESS SECTION
    ============================================ */
 
@@ -1364,8 +1516,7 @@ nav a:focus {
     padding: 12px;
     border-radius: 16px;
   }
-  
-  .about-hero,
+    .about-hero,
   .my-process,
   .contact-section,
   .personal-story,
@@ -1531,8 +1682,7 @@ nav a:focus {
   .step-item:hover .step-number {
     transform: none;
   }
-  
-  .journey-grid {
+    .journey-grid {
     grid-template-columns: 1fr;
   }
   
@@ -1631,4 +1781,33 @@ nav a:focus {
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
   }
+}
+
+/* ============================================
+   FOOTER STYLES
+   ============================================ */
+
+footer {
+  background: var(--surface-gray);
+  padding: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-light);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+footer p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Dark mode footer */
+:root[data-theme="dark"] footer {
+  background: var(--surface-gray);
+  border-top-color: var(--border-light);
+}
+
+:root[data-theme="dark"] footer p {
+  color: var(--text-secondary);
 }
