@@ -399,10 +399,65 @@ nav a:focus {
 .hero-img {
   width: 100%;
   height: auto;
+  min-height: 250px;
+  max-height: 400px;
+  object-fit: cover;
   border-radius: 16px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
+
+/* Mobile Image Optimizations */
+  .hero-img {
+    max-height: 300px;
+    min-height: 200px;
+  }
+  
+  .feature-image {
+    height: 180px;
+  }
+  
+  .feature-image img {
+    object-fit: cover;
+  }
+  
+  .founder-photo {
+    width: 120px !important;
+    height: 120px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+  }
+  
+  .card-icon img {
+    width: 40px;
+    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+  }
+  
+  .card-icon {
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+  
+  .company-logos img {
+    width: 35px;
+    height: 35px;
+    max-width: 35px;
+    max-height: 35px;
+  }
+  
+  .icar-banner img {
+    width: 80px;
+    max-width: 80px;
+  }
+  
+  .additional-logos img {
+    width: 30px !important;
+    height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+  }
 
 .hero-img:hover {
   transform: translateY(-8px) scale(1.02);
@@ -492,7 +547,7 @@ nav a:focus {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2.5rem;
   margin-top: 3rem;
 }
@@ -514,8 +569,10 @@ nav a:focus {
 
 .feature-image {
   width: 100%;
-  height: 200px;
+  height: 220px;
   overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  background: var(--surface-light);
 }
 
 .feature-image img {
@@ -618,6 +675,13 @@ nav a:focus {
   object-fit: cover;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   margin-bottom: 1.5rem;
+  border: 4px solid var(--surface-light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.founder-photo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
 .hero-right h1 {
@@ -698,9 +762,9 @@ nav a:focus {
 
 .journey-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -792,7 +856,7 @@ nav a:focus {
 
 .contact-methods {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -1122,7 +1186,10 @@ nav a:focus {
   width: 100%;
   height: 320px;
   object-fit: cover;
+  border-radius: 0;
   transition: transform 0.4s ease;
+  background: var(--surface-light);
+  max-width: 100%;
 }
 
 .slide:hover .process-img {
@@ -1451,11 +1518,28 @@ nav a:focus {
   }
   
   .hero-badges img {
-    width: 100px !important;
-    height: 100px !important;
-    max-width: 100px !important;
-    max-height: 100px !important;
+    width: 70px !important;
+    height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
   }
+  
+  .card-icon img {
+    width: 50px;
+    height: 50px;
+    max-width: 50px;
+    max-height: 50px;
+  }
+  
+  .founder-photo {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .feature-image {
+    height: 200px;
+  }
+  
   .process-steps {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1494,11 +1578,16 @@ nav a:focus {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
-  .hero-content {
+    .hero-content {
     grid-template-columns: 1fr;
     text-align: center;
     gap: 2rem;
+  }
+  
+  .hero-name-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
   }
   
   .hero-badges {
@@ -1784,30 +1873,146 @@ nav a:focus {
 }
 
 /* ============================================
-   FOOTER STYLES
+   SPECIFIC IMAGE OPTIMIZATIONS
    ============================================ */
 
-footer {
-  background: var(--surface-gray);
-  padding: 2rem;
+/* Logo images optimization */
+img[src*="elevon_logo.png"],
+img[src*="duke_logo.png"],
+img[src*="boyd_logo.png"],
+img[src*="time_logo.jpeg"],
+img[src*="nica_logo.png"],
+img[src*="maccabiusa.png"],
+img[src*="ICAR_logo.png"] {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Large banner image handling */
+img[src*="Elevon Banner.png"],
+img[src*="start_line.png"],
+img[src*="wheelie.png"] {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Ensure blender model image is properly sized */
+img[src*="blender_model.png"] {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Trail maps image optimization */
+img[src*="trail_maps.jpg"] {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Headshot specific optimization */
+img[src*="headshot.png"] {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* ============================================
+   IMAGE ERROR HANDLING & FALLBACKS
+   ============================================ */
+
+/* Broken image handling */
+img {
+  background: var(--surface-light);
+  border: 1px solid var(--border-light);
+  min-height: 40px;
+  display: block;
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
   text-align: center;
-  margin-top: 2rem;
-  border-top: 1px solid var(--border-light);
-  transition: background 0.3s ease, border-color 0.3s ease;
+  line-height: 1.4;
 }
 
-footer p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-/* Dark mode footer */
-:root[data-theme="dark"] footer {
+img::before {
+  content: '';
+  display: block;
   background: var(--surface-gray);
-  border-top-color: var(--border-light);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
-:root[data-theme="dark"] footer p {
+img::after {
+  content: 'Image loading...';
+  display: block;
+  padding: 10px;
+  font-size: 11px;
   color: var(--text-secondary);
+  background: var(--surface-light);
+  border-radius: 4px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+img[src=""],
+img:not([src]),
+img[src="#"] {
+  opacity: 0.5;
+}
+
+img[src=""]:after,
+img:not([src]):after,
+img[src="#"]:after {
+  opacity: 1;
+  content: '⚠ Image not found';
+}
+
+/* High resolution display optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hero-img,
+  .feature-image img,
+  .founder-photo,
+  .process-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* ============================================
+   LAYOUT IMPROVEMENTS FOR IMAGE CONTAINERS
+   ============================================ */
+
+/* Ensure consistent feature grid behavior */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+/* Journey grid improvements */
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Contact methods grid improvements */
+.contact-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
