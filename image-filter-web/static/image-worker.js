@@ -22,6 +22,39 @@ function drawThickPixel(data, x, y, width, height, thickness) {
     }
 }
 
+// Enhanced thick pixel drawing with overlap detection
+function drawThickPixelWithOverlapDetection(data, x, y, width, height, thickness, overlapMap) {
+    const radius = Math.floor(thickness / 2);
+    let hasOverlap = false;
+    
+    for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist <= radius) {
+                    const index = (ny * width + nx) * 4;
+                    const coord = `${nx},${ny}`;
+                    
+                    // Check for overlap
+                    if (overlapMap.has(coord)) {
+                        hasOverlap = true;
+                    } else {
+                        overlapMap.add(coord);
+                    }
+                    
+                    data[index] = 0;     // R
+                    data[index + 1] = 0; // G
+                    data[index + 2] = 0; // B
+                    data[index + 3] = 255; // A
+                }
+            }
+        }
+    }
+    return hasOverlap;
+}
+
 // Simplified Zhang-Suen thinning for worker
 function zhangSuenThinning(trailPixels, width, height) {
     if (trailPixels.size === 0) return new Set();
@@ -151,7 +184,7 @@ function createCenterlineTrace(trailPixels, width, height) {
 
 // Main worker message handler
 self.onmessage = function(e) {
-    const { imageData, colorTolerance, taskId } = e.data;
+    const { imageData, colorTolerance, taskId, lineThickness = 4 } = e.data;
     const { data, width, height } = imageData;
     
     try {
@@ -216,11 +249,23 @@ self.onmessage = function(e) {
             progress: 70,
             message: 'Drawing thick lines...'
         });
+          // Draw thick lines on processed pixels
+        const overlapMap = new Set();
+        let overlapCount = 0;
         
-        // Draw thick lines on processed pixels
         for (const coordStr of processedTrailPixels) {
             const [x, y] = coordStr.split(',').map(Number);
-            drawThickPixel(data, x, y, width, height, 4);
+            const hasOverlap = drawThickPixelWithOverlapDetection(data, x, y, width, height, lineThickness, overlapMap);
+            if (hasOverlap) overlapCount++;
+        }
+        
+        // Report overlap statistics
+        if (overlapCount > 0) {
+            self.postMessage({
+                type: 'warning',
+                taskId,
+                message: `Detected ${overlapCount} potential trail overlaps. Consider reducing line thickness.`
+            });
         }
         
         // Final progress update

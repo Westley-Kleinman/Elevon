@@ -440,6 +440,34 @@ body {
     font-size: 0.8rem;
 }
 
+.tol-input {
+    font-size: 1.05rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: 0.6rem;
+    border: 1.5px solid #d1d5db;
+    background: #f3f6fa;
+    color: #2e3a4a;
+    margin: 0 0.15rem;
+    width: 85px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+
+.format-select {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #2e3a4a;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.format-select:hover {
+    border-color: #2563eb;
+}
+
 @media (max-width: 900px) {
     .main-form { padding: 1.2rem 0.5rem; }
     .header-bar { padding: 1.2rem 0.7rem; }

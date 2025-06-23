@@ -37,6 +37,38 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Add line thickness control -->
+        <div class="form-section">
+            <label class="main-label">Line Thickness Settings:</label>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <label for="lineThickness" style="font-weight: 600;">Thickness (pixels):</label>
+                <input type="range" id="lineThickness" name="lineThickness" min="1" max="12" value="4" 
+                       style="flex: 1; max-width: 200px;" oninput="updateThicknessDisplay()">
+                <span id="thicknessDisplay" style="min-width: 40px; font-weight: 600;">4px</span>
+            </div>
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                <strong>Tip:</strong> For 3D printing, use 2-3px for detailed maps, 4-6px for clear visibility. 
+                Avoid high values if trails are close together to prevent overlapping.
+            </div>
+        </div>
+        
+        <!-- Add trail analysis section -->
+        <div class="form-section">
+            <label class="main-label">Trail Analysis:</label>
+            <div style="margin-bottom: 1rem;">
+                <button type="button" class="main-btn" onclick="analyzeTrailSeparation()" 
+                        style="padding: 0.7rem 1.5rem; font-size: 1rem; margin-right: 1rem;">
+                    Analyze Trail Separation
+                </button>
+                <span id="analysisResult" style="font-size: 0.9rem; color: #666;"></span>
+            </div>
+            <div id="separationRecommendation" style="display: none; padding: 1rem; background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; margin-top: 1rem;">
+                <div style="color: #0369a1; font-weight: 600; margin-bottom: 0.5rem;">💡 Recommendation:</div>
+                <div id="recommendationText" style="color: #0c4a6e; font-size: 0.9rem;"></div>
+            </div>
+        </div>
+        
         <hr class="divider">
         <div class="outputs-container">
         {% for out in range(3) %}
@@ -45,6 +77,10 @@
                 <div style="display: flex; align-items: center; gap: 0.7rem; flex: 1 1 auto;">
                     <span class="output-number">Output {{out+1}}</span>
                     <input type="text" name="filename_{{out}}" placeholder="output{{out+1}}.png" class="filename-input" aria-label="Output {{out+1}} filename" style="max-width: 180px;">
+                    <select name="format_{{out}}" class="format-select" style="padding: 0.4rem; border-radius: 0.4rem; border: 1px solid #d1d5db;">
+                        <option value="png">PNG</option>
+                        <option value="svg">SVG (for Inkscape)</option>
+                    </select>
                 </div>
                 <button type="button" class="main-btn download-btn" style="padding: 0.5rem 1.3rem; font-size: 1.05rem; border-radius: 0.6rem; margin-left: 1.2rem;" onclick="downloadSingleOutput('{{ out }}')">Download</button>
             </div>            <div class="color-slots" style="display: flex; flex-direction: column; gap: 0.7rem;">
@@ -133,6 +169,37 @@
                 }
             }
         }
+    }    // Enhanced line drawing with overlap detection
+    function drawThickPixelWithOverlapDetection(data, x, y, width, height, thickness, overlapMap) {
+        const radius = Math.floor(thickness / 2);
+        let hasOverlap = false;
+        
+        for (let dy = -radius; dy <= radius; dy++) {
+            for (let dx = -radius; dx <= radius; dx++) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist <= radius) {
+                        const index = (ny * width + nx) * 4;
+                        const coord = `${nx},${ny}`;
+                        
+                        // Check for overlap with existing trails
+                        if (overlapMap.has(coord)) {
+                            hasOverlap = true;
+                        } else {
+                            overlapMap.add(coord);
+                        }
+                        
+                        data[index] = 0;     // R
+                        data[index + 1] = 0; // G
+                        data[index + 2] = 0; // B
+                        data[index + 3] = 255; // A
+                    }
+                }
+            }
+        }
+        return hasOverlap;
     }    // Advanced Zhang-Suen skeletonization algorithm for better centerlines
     function zhangSuenThinning(trailPixels, width, height) {
         if (trailPixels.size === 0) return new Set();
@@ -416,13 +483,15 @@
             imageWorker = new Worker('/static/image-worker.js');
             imageWorker.onmessage = function(e) {
                 const { type, taskId, progress, message, imageData, error } = e.data;
-                
-                switch (type) {
+                  switch (type) {
                     case 'progress':
                         updateProcessingProgress(taskId, progress, message);
                         break;
                     case 'complete':
                         handleWorkerComplete(taskId, imageData);
+                        break;
+                    case 'warning':
+                        showOverlapWarning(message);
                         break;
                     case 'error':
                         handleWorkerError(taskId, error);
@@ -482,6 +551,36 @@
         workerTasks.delete(taskId);
     }
     
+    function showOverlapWarning(message) {
+        // Create a non-intrusive warning notification
+        const warningDiv = document.createElement('div');
+        warningDiv.style.cssText = `
+            position: fixed; top: 20px; right: 20px; z-index: 10000;
+            background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px;
+            padding: 12px 16px; max-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-family: Inter, sans-serif; font-size: 14px; color: #92400e;
+        `;
+        warningDiv.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">⚠️</span>
+                <div>
+                    <strong>Trail Overlap Warning</strong><br>
+                    ${message}
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="background: none; border: none; cursor: pointer; margin-left: auto; font-size: 18px; color: #92400e;">×</button>
+            </div>
+        `;
+        document.body.appendChild(warningDiv);
+        
+        // Auto-remove after 8 seconds
+        setTimeout(() => {
+            if (warningDiv.parentElement) {
+                warningDiv.remove();
+            }
+        }, 8000);
+    }
+    
     function processWithWorker(img, colorTols, filename, callback) {
         if (!imageWorker) {
             // Fallback to main thread processing
@@ -502,11 +601,13 @@
             callback,
             fallbackCallback: () => processAndDownloadOutput(img, colorTols, filename, callback)
         });
+          const lineThickness = parseInt(document.getElementById('lineThickness')?.value || '4', 10);
         
         imageWorker.postMessage({
             imageData,
             colorTolerance: colorTols,
-            taskId
+            taskId,
+            lineThickness
         });
     }
 
@@ -1286,6 +1387,282 @@ function downloadSingleOutput(out) {
     };
     reader.readAsDataURL(file);
 }
+    // Trail separation analysis for 3D printing optimization
+    function analyzeTrailSeparation() {
+        if (!currentImage) {
+            document.getElementById('analysisResult').textContent = 'Please load an image first.';
+            return;
+        }
+        
+        document.getElementById('analysisResult').textContent = 'Analyzing...';
+        
+        // Get current color tolerances for analysis
+        const colorTols = [];
+        for (let out = 0; out < 3; out++) {
+            for (let slot = 0; slot < 3; slot++) {
+                const r = parseInt(document.getElementById(`r_${out}_${slot}`)?.value || '0');
+                const g = parseInt(document.getElementById(`g_${out}_${slot}`)?.value || '0');
+                const b = parseInt(document.getElementById(`b_${out}_${slot}`)?.value || '0');
+                const t = parseInt(document.getElementById(`t_${out}_${slot}`)?.value || '0');
+                
+                if (r || g || b || t) {
+                    colorTols.push({r, g, b, tol: t});
+                }
+            }
+        }
+        
+        if (colorTols.length === 0) {
+            document.getElementById('analysisResult').textContent = 'Please set at least one color filter first.';
+            return;
+        }
+        
+        // Create canvas for analysis
+        const canvas = document.createElement('canvas');
+        canvas.width = currentImage.width;
+        canvas.height = currentImage.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(currentImage, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        // Identify trail pixels
+        const trailPixels = new Set();
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            
+            for (const color of colorTols) {
+                const dr = r - color.r;
+                const dg = g - color.g;
+                const db = b - color.b;
+                const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                
+                if (dist <= color.tol) {
+                    const pixelIndex = Math.floor(i / 4);
+                    const x = pixelIndex % canvas.width;
+                    const y = Math.floor(pixelIndex / canvas.width);
+                    trailPixels.add(`${x},${y}`);
+                    break;
+                }
+            }
+        }
+        
+        // Analyze minimum distances between trail segments
+        const separationData = calculateTrailSeparations(trailPixels, canvas.width, canvas.height);
+        displaySeparationRecommendation(separationData);
+    }
+    
+    function calculateTrailSeparations(trailPixels, width, height) {
+        const pixelArray = Array.from(trailPixels).map(coord => {
+            const [x, y] = coord.split(',').map(Number);
+            return {x, y};
+        });
+        
+        if (pixelArray.length < 100) {
+            return { minDistance: 999, avgDistance: 999, denseClusters: 0 };
+        }
+        
+        // Sample analysis for performance (analyze every 10th pixel)
+        const sampleSize = Math.min(500, Math.floor(pixelArray.length / 10));
+        const sampledPixels = [];
+        
+        for (let i = 0; i < sampleSize; i++) {
+            const randomIndex = Math.floor(Math.random() * pixelArray.length);
+            sampledPixels.push(pixelArray[randomIndex]);
+        }
+        
+        let minDistance = 999;
+        let totalDistance = 0;
+        let denseClusters = 0;
+        let validPairs = 0;
+        
+        for (let i = 0; i < sampledPixels.length; i++) {
+            let nearestDistance = 999;
+            let nearbyCount = 0;
+            
+            for (let j = 0; j < sampledPixels.length; j++) {
+                if (i === j) continue;
+                
+                const dx = sampledPixels[i].x - sampledPixels[j].x;
+                const dy = sampledPixels[i].y - sampledPixels[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < nearestDistance && distance > 1) { // Ignore adjacent pixels
+                    nearestDistance = distance;
+                }
+                
+                if (distance < 15) { // Count nearby pixels
+                    nearbyCount++;
+                }
+            }
+            
+            if (nearestDistance < 999) {
+                minDistance = Math.min(minDistance, nearestDistance);
+                totalDistance += nearestDistance;
+                validPairs++;
+                
+                if (nearbyCount > 20) { // Dense cluster detection
+                    denseClusters++;
+                }
+            }
+        }
+        
+        return {
+            minDistance: minDistance,
+            avgDistance: validPairs > 0 ? totalDistance / validPairs : 999,
+            denseClusters: denseClusters,
+            totalTrailPixels: trailPixels.size
+        };
+    }
+    
+    function displaySeparationRecommendation(data) {
+        const resultSpan = document.getElementById('analysisResult');
+        const recommendationDiv = document.getElementById('separationRecommendation');
+        const recommendationText = document.getElementById('recommendationText');
+        
+        const currentThickness = parseInt(document.getElementById('lineThickness')?.value || '4');
+        
+        let analysis = `Found ${data.totalTrailPixels} trail pixels. `;
+        let recommendation = '';
+        
+        if (data.minDistance < currentThickness * 2) {
+            analysis += `⚠️ Close trails detected (min: ${data.minDistance.toFixed(1)}px).`;
+            recommendation = `Your current thickness (${currentThickness}px) may cause overlapping. ` +
+                           `Recommended thickness: ${Math.max(1, Math.floor(data.minDistance / 2))}px or lower. ` +
+                           `For 3D printing, consider reducing thickness or increasing image resolution.`;
+        } else if (data.minDistance < currentThickness * 3) {
+            analysis += `⚡ Moderate trail separation (min: ${data.minDistance.toFixed(1)}px).`;
+            recommendation = `Current thickness (${currentThickness}px) should work but watch for overlaps. ` +
+                           `For safer 3D printing, consider ${Math.floor(data.minDistance / 3)}px thickness.`;
+        } else {
+            analysis += `✅ Good trail separation (min: ${data.minDistance.toFixed(1)}px).`;
+            recommendation = `Current thickness (${currentThickness}px) looks safe. You can increase thickness up to ` +
+                           `${Math.floor(data.minDistance / 2)}px for better visibility without overlapping.`;
+        }
+        
+        if (data.denseClusters > data.totalTrailPixels * 0.1) {
+            recommendation += ` Note: Dense trail clusters detected - extra care needed in those areas.`;
+        }
+        
+        resultSpan.textContent = analysis;
+        recommendationText.textContent = recommendation;
+        recommendationDiv.style.display = 'block';
+    }
+    
+    // SVG generation for Inkscape workflow
+    function generateSVG(trailPixels, width, height, lineThickness, filename) {
+        const svgNS = "http://www.w3.org/2000/svg";
+        
+        // Create SVG document
+        let svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="${svgNS}" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+  <defs>
+    <style>
+      .trail-path { 
+        fill: none; 
+        stroke: #000000; 
+        stroke-width: ${lineThickness}; 
+        stroke-linecap: round; 
+        stroke-linejoin: round; 
+      }
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+`;
+        
+        // Convert trail pixels to path data
+        const paths = createSVGPaths(trailPixels, width, height);
+        
+        for (const pathData of paths) {
+            svgContent += `  <path class="trail-path" d="${pathData}"/>\n`;
+        }
+        
+        svgContent += '</svg>';
+        
+        // Download SVG
+        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename.endsWith('.svg') ? filename : filename.replace(/\.[^.]+$/, '.svg');
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+    
+    function createSVGPaths(trailPixels, width, height) {
+        // Group connected pixels into paths
+        const visited = new Set();
+        const paths = [];
+        
+        for (const coordStr of trailPixels) {
+            if (visited.has(coordStr)) continue;
+            
+            const [startX, startY] = coordStr.split(',').map(Number);
+            const path = tracePath(startX, startY, trailPixels, visited);
+            
+            if (path.length > 1) {
+                // Convert path to SVG path data
+                let pathData = `M ${path[0].x} ${path[0].y}`;
+                
+                if (path.length === 2) {
+                    pathData += ` L ${path[1].x} ${path[1].y}`;
+                } else if (path.length > 2) {
+                    // Use smooth curves for longer paths
+                    for (let i = 1; i < path.length; i++) {
+                        if (i === 1) {
+                            pathData += ` L ${path[i].x} ${path[i].y}`;
+                        } else {
+                            // Simple line-to for now, could be enhanced with curves
+                            pathData += ` L ${path[i].x} ${path[i].y}`;
+                        }
+                    }
+                }
+                
+                paths.push(pathData);
+            }
+        }
+        
+        return paths;
+    }
+    
+    function tracePath(startX, startY, trailPixels, visited) {
+        const path = [{x: startX, y: startY}];
+        visited.add(`${startX},${startY}`);
+        
+        let currentX = startX;
+        let currentY = startY;
+        
+        // Follow connected pixels
+        while (true) {
+            let found = false;
+            
+            // Check 8-connected neighbors
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0) continue;
+                    
+                    const nextX = currentX + dx;
+                    const nextY = currentY + dy;
+                    const nextCoord = `${nextX},${nextY}`;
+                    
+                    if (trailPixels.has(nextCoord) && !visited.has(nextCoord)) {
+                        path.push({x: nextX, y: nextY});
+                        visited.add(nextCoord);
+                        currentX = nextX;
+                        currentY = nextY;
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            
+            if (!found) break;
+        }
+        
+        return path;
+    }
     </script>
 </body>
 </html>
