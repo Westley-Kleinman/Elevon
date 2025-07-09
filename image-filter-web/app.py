@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, send_file, jsonify
+from flask_cors import CORS
 from PIL import Image
 import numpy as np
 import io
@@ -11,6 +12,7 @@ import json
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable Flask static file caching
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 

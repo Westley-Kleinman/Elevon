@@ -514,7 +514,7 @@
           const formData = new FormData();
           formData.append('gpx_file', file);
           
-          fetch('/upload_gpx', {
+          fetch('http://localhost:5000/upload_gpx', {
             method: 'POST',
             body: formData
           })
@@ -542,20 +542,31 @@
             }
           })
           .catch(function(error) {
-            console.log('Backend not available, switching to demo mode:', error);
+            console.error('Network error:', error);
             clearInterval(progressInterval);
             
-            // Fallback to demo mode
-            currentTrailData = demoTrailData;
-            displayTrailStats(demoTrailData.stats);
-            create3DPreview(demoTrailData);
+            // Check if it's a network error vs server error
+            if (error.message.includes('fetch')) {
+              showError('Cannot connect to backend server. Make sure Flask is running on port 5000.');
+            } else {
+              showError('Network error: ' + error.message);
+            }
             
+            // Fallback to demo mode for development
             setTimeout(function() {
-              uploadProgress.style.display = 'none';
-              trailStats.style.display = 'block';
-              previewPlaceholder.style.display = 'none';
-              trailCanvas.style.display = 'block';
-              previewControls.style.display = 'flex';
+              console.log('Falling back to demo mode...');
+              currentTrailData = demoTrailData;
+              displayTrailStats(demoTrailData.stats);
+              create3DPreview(demoTrailData);
+              
+              setTimeout(function() {
+                uploadProgress.style.display = 'none';
+                trailStats.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+                trailCanvas.style.display = 'block';
+                previewControls.style.display = 'flex';
+              }, 500);
+            }, 2000);
             }, 500);
           });
         }
@@ -568,9 +579,24 @@
       }
       
       function showError(message) {
+        console.error('GPX Upload Error:', message);
         uploadProgress.style.display = 'none';
         uploadZone.style.display = 'block';
-        alert(message);
+        
+        // Create a better error display
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'background: #fee; border: 1px solid #fcc; color: #c33; padding: 1rem; margin: 1rem 0; border-radius: 4px;';
+        errorDiv.innerHTML = `<strong>Upload Error:</strong> ${message}`;
+        
+        // Insert error message after upload zone
+        uploadZone.parentNode.insertBefore(errorDiv, uploadZone.nextSibling);
+        
+        // Remove error message after 5 seconds
+        setTimeout(() => {
+          if (errorDiv.parentNode) {
+            errorDiv.parentNode.removeChild(errorDiv);
+          }
+        }, 5000);
       }
       
       // 3D Visualization using Three.js
