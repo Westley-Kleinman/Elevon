@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Elevon Test">
+  <trk>
+    <name>Sample Mountain Trail</name>
+    <trkseg>
+      <trkpt lat="35.7796" lon="-78.6382">
+        <ele>100</ele>
+      </trkpt>
+      <trkpt lat="35.7806" lon="-78.6392">
+        <ele>110</ele>
+      </trkpt>
+      <trkpt lat="35.7816" lon="-78.6402">
+        <ele>125</ele>
+      </trkpt>
+      <trkpt lat="35.7826" lon="-78.6412">
+        <ele>140</ele>
+      </trkpt>
+      <trkpt lat="35.7836" lon="-78.6422">
+        <ele>160</ele>
+      </trkpt>
+      <trkpt lat="35.7846" lon="-78.6432">
+        <ele>180</ele>
+      </trkpt>
+      <trkpt lat="35.7856" lon="-78.6442">
+        <ele>200</ele>
+      </trkpt>
+      <trkpt lat="35.7866" lon="-78.6452">
+        <ele>220</ele>
+      </trkpt>
+      <trkpt lat="35.7876" lon="-78.6462">
+        <ele>245</ele>
+      </trkpt>
+      <trkpt lat="35.7886" lon="-78.6472">
+        <ele>270</ele>
+      </trkpt>
+      <trkpt lat="35.7896" lon="-78.6482">
+        <ele>290</ele>
+      </trkpt>
+      <trkpt lat="35.7906" lon="-78.6492">
+        <ele>315</ele>
+      </trkpt>
+      <trkpt lat="35.7916" lon="-78.6502">
+        <ele>340</ele>
+      </trkpt>
+      <trkpt lat="35.7926" lon="-78.6512">
+        <ele>360</ele>
+      </trkpt>
+      <trkpt lat="35.7936" lon="-78.6522">
+        <ele>380</ele>
+      </trkpt>
+      <trkpt lat="35.7946" lon="-78.6532">
+        <ele>400</ele>
+      </trkpt>
+      <trkpt lat="35.7956" lon="-78.6542">
+        <ele>420</ele>
+      </trkpt>
+      <trkpt lat="35.7966" lon="-78.6552">
+        <ele>440</ele>
+      </trkpt>
+      <trkpt lat="35.7976" lon="-78.6562">
+        <ele>460</ele>
+      </trkpt>
+      <trkpt lat="35.7986" lon="-78.6572">
+        <ele>480</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

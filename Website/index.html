@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Westley Kleinman • Engineer & Designer</title>  <meta name="description" content="Personal website of Westley Kleinman - Duke engineering student, competitive cyclist, and founder of Elevon custom 3D trail maps." />
   <link rel="stylesheet" href="style.css" />
+  <!-- Three.js for 3D visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Demo mode for static hosting -->
+  <script>
+    // Check if we're in demo mode (static hosting like Netlify)
+    window.DEMO_MODE = true; // Set to false when running with Flask backend
+  </script>
 </head>
 <body>
   <header>
@@ -133,6 +141,82 @@
               <button class="nav-dot active" data-slide="1"></button>
               <button class="nav-dot" data-slide="2"></button>
               <button class="nav-dot" data-slide="3"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GPX Upload and Preview Section -->
+    <section class="gpx-preview-section">
+      <div class="gpx-container">
+        <div class="gpx-content">
+          <h2>See Your Trail in 3D</h2>
+          <div class="accent-bar"></div>
+          <p class="gpx-intro">
+            Upload your GPX file to see an instant 3D preview of what your custom Elevon map will look like. 
+            Experience the elevation, distance, and terrain before you order.
+          </p>
+          
+          <div class="gpx-upload-area">
+            <!-- Demo Notice for Static Hosting -->
+            <div class="demo-notice" id="demo-notice" style="background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; border: 2px solid #f59e0b;">
+              <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">🚧 Demo Mode</h4>
+              <p style="margin: 0; color: #92400e; font-size: 0.9rem;">This is a preview version. Upload any GPX file to see a sample 3D trail visualization!</p>
+            </div>
+            
+            <div class="upload-zone" id="upload-zone">
+              <div class="upload-icon">📁</div>
+              <div class="upload-text">
+                <h3>Drop your GPX file here</h3>
+                <p>or <span class="upload-link">click to browse</span></p>
+                <small>Supports .gpx files up to 16MB</small>
+              </div>
+              <input type="file" id="gpx-file-input" accept=".gpx" style="display: none;">
+            </div>
+            
+            <div class="upload-progress" id="upload-progress" style="display: none;">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+              <p class="progress-text" id="progress-text">Processing your trail...</p>
+            </div>
+          </div>
+          
+          <div class="trail-stats" id="trail-stats" style="display: none;">
+            <h3>Trail Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-value" id="distance-value">0</div>
+                <div class="stat-label">Distance (km)</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="elevation-value">0</div>
+                <div class="stat-label">Elevation Gain (m)</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="points-value">0</div>
+                <div class="stat-label">Data Points</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="gpx-preview">
+          <div class="preview-container" id="preview-container">
+            <div class="preview-placeholder" id="preview-placeholder">
+              <div class="placeholder-icon">🏔️</div>
+              <h3>Your 3D Preview Will Appear Here</h3>
+              <p>Upload a GPX file to see your trail rendered in beautiful 3D</p>
+            </div>
+            <canvas id="trail-canvas" style="display: none;"></canvas>
+          </div>
+          <div class="preview-controls" id="preview-controls" style="display: none;">
+            <button class="control-btn" id="rotate-btn">🔄 Auto Rotate</button>
+            <button class="control-btn" id="reset-view-btn">🎯 Reset View</button>
+            <div class="view-mode-toggle">
+              <button class="mode-btn active" data-mode="3d">3D</button>
+              <button class="mode-btn" data-mode="topdown">Top View</button>
             </div>
           </div>
         </div>
@@ -274,6 +358,406 @@
     // Initialize theme system
     initializeTheme();
     setupThemeListener();
+
+    // ============================================
+    // GPX UPLOAD AND 3D PREVIEW FUNCTIONALITY
+    // ============================================
+    
+    // Initialize GPX upload functionality
+    if (window.DEMO_MODE) {
+      // Load demo mode for static hosting
+      fetch('gpx-demo.js')
+        .then(response => response.text())
+        .then(script => {
+          eval(script);
+        })
+        .catch(() => {
+          // Fallback: initialize basic demo
+          initializeGPXUploadDemo();
+        });
+    } else {
+      // Full functionality with Flask backend
+      initializeGPXUpload();
+    }
+    
+    function initializeGPXUpload() {
+      const uploadZone = document.getElementById('upload-zone');
+      const fileInput = document.getElementById('gpx-file-input');
+      const uploadProgress = document.getElementById('upload-progress');
+      const trailStats = document.getElementById('trail-stats');
+      const previewContainer = document.getElementById('preview-container');
+      const previewPlaceholder = document.getElementById('preview-placeholder');
+      const trailCanvas = document.getElementById('trail-canvas');
+      const previewControls = document.getElementById('preview-controls');
+      
+      if (!uploadZone || !fileInput) {
+        console.warn('GPX upload elements not found');
+        return;
+      }
+      
+      let currentTrailData = null;
+      let renderer = null;
+      let scene = null;
+      let camera = null;
+      let controls = null;
+      let animationId = null;
+      
+      // File upload handling
+      uploadZone.addEventListener('click', () => fileInput.click());
+      
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+      });
+      
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+      });
+      
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFileUpload(files[0]);
+        }
+      });
+      
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleFileUpload(e.target.files[0]);
+        }
+      });
+      
+      function handleFileUpload(file) {
+        if (!file.name.toLowerCase().endsWith('.gpx')) {
+          showError('Please upload a .gpx file');
+          return;
+        }
+        
+        if (file.size > 16 * 1024 * 1024) {
+          showError('File size must be less than 16MB');
+          return;
+        }
+        
+        // Show progress
+        uploadZone.style.display = 'none';
+        uploadProgress.style.display = 'block';
+        
+        // Simulate progress for user feedback
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 30;
+          if (progress > 90) {
+            clearInterval(progressInterval);
+            progress = 90;
+          }
+          progressFill.style.width = progress + '%';
+        }, 100);
+        
+        // Upload file
+        const formData = new FormData();
+        formData.append('gpx_file', file);
+        
+        fetch('/upload_gpx', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          clearInterval(progressInterval);
+          progressFill.style.width = '100%';
+          
+          if (data.success) {
+            currentTrailData = data.preview_data;
+            displayTrailStats(data.preview_data.stats);
+            create3DPreview(data.preview_data);
+            
+            setTimeout(() => {
+              uploadProgress.style.display = 'none';
+              trailStats.style.display = 'block';
+              previewPlaceholder.style.display = 'none';
+              trailCanvas.style.display = 'block';
+              previewControls.style.display = 'flex';
+            }, 500);
+          } else {
+            showError(data.error || 'Failed to process GPX file');
+          }
+        })
+        .catch(error => {
+          clearInterval(progressInterval);
+          showError('Upload failed: ' + error.message);
+        });
+      }
+      
+      function displayTrailStats(stats) {
+        document.getElementById('distance-value').textContent = stats.distance_km;
+        document.getElementById('elevation-value').textContent = stats.elevation_gain;
+        document.getElementById('points-value').textContent = stats.total_points.toLocaleString();
+      }
+      
+      function showError(message) {
+        uploadProgress.style.display = 'none';
+        uploadZone.style.display = 'block';
+        
+        // Show error message (you can enhance this with a proper modal/toast)
+        alert(message);
+      }
+      
+      // 3D Visualization using Three.js (simplified version)
+      function create3DPreview(trailData) {
+        if (!window.THREE) {
+          // Fallback to 2D canvas if Three.js is not available
+          create2DPreview(trailData);
+          return;
+        }
+        
+        // Initialize Three.js scene
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf8f9fa);
+        
+        // Camera setup
+        camera = new THREE.PerspectiveCamera(75, trailCanvas.offsetWidth / trailCanvas.offsetHeight, 0.1, 1000);
+        camera.position.set(0.5, 1, 0.5);
+        camera.lookAt(0.5, 0, 0.5);
+        
+        // Renderer setup
+        renderer = new THREE.WebGLRenderer({ canvas: trailCanvas, antialias: true });
+        renderer.setSize(trailCanvas.offsetWidth, trailCanvas.offsetHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 1, 0.5);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+        
+        // Create trail geometry
+        createTrailMesh(trailData.points);
+        
+        // Add controls
+        if (window.THREE.OrbitControls) {
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.1;
+        }
+        
+        // Start animation loop
+        animate();
+        
+        // Setup control buttons
+        setupPreviewControls();
+      }
+      
+      function createTrailMesh(points) {
+        // Create trail line
+        const geometry = new THREE.BufferGeometry();
+        const positions = [];
+        
+        points.forEach(point => {
+          positions.push(point[0], point[2], point[1]); // x, z, y (swap y and z for 3D)
+        });
+        
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        
+        const material = new THREE.LineBasicMaterial({ 
+          color: 0x2d5a3d, 
+          linewidth: 3 
+        });
+        
+        const line = new THREE.Line(geometry, material);
+        scene.add(line);
+        
+        // Create elevation surface (simplified)
+        if (points.length > 2) {
+          createElevationSurface(points);
+        }
+        
+        // Add start and end markers
+        addTrailMarkers(points);
+      }
+      
+      function createElevationSurface(points) {
+        // Create a simple surface mesh based on the trail points
+        const surfaceGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
+        const surfaceMaterial = new THREE.MeshLambertMaterial({ 
+          color: 0xe5e5e5,
+          transparent: true,
+          opacity: 0.7,
+          side: THREE.DoubleSide
+        });
+        
+        const surface = new THREE.Mesh(surfaceGeometry, surfaceMaterial);
+        surface.rotation.x = -Math.PI / 2;
+        surface.position.y = -0.1;
+        scene.add(surface);
+      }
+      
+      function addTrailMarkers(points) {
+        // Start marker (green)
+        const startGeometry = new THREE.SphereGeometry(0.02, 8, 6);
+        const startMaterial = new THREE.MeshLambertMaterial({ color: 0x2d5a3d });
+        const startMarker = new THREE.Mesh(startGeometry, startMaterial);
+        
+        if (points.length > 0) {
+          startMarker.position.set(points[0][0], points[0][2] + 0.02, points[0][1]);
+          scene.add(startMarker);
+        }
+        
+        // End marker (rust color)
+        const endGeometry = new THREE.SphereGeometry(0.02, 8, 6);
+        const endMaterial = new THREE.MeshLambertMaterial({ color: 0xd4621a });
+        const endMarker = new THREE.Mesh(endGeometry, endMaterial);
+        
+        if (points.length > 1) {
+          const lastPoint = points[points.length - 1];
+          endMarker.position.set(lastPoint[0], lastPoint[2] + 0.02, lastPoint[1]);
+          scene.add(endMarker);
+        }
+      }
+      
+      function animate() {
+        animationId = requestAnimationFrame(animate);
+        
+        if (controls) {
+          controls.update();
+        }
+        
+        if (renderer && scene && camera) {
+          renderer.render(scene, camera);
+        }
+      }
+      
+      function setupPreviewControls() {
+        const rotateBtn = document.getElementById('rotate-btn');
+        const resetViewBtn = document.getElementById('reset-view-btn');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        
+        let autoRotate = false;
+        
+        if (rotateBtn) {
+          rotateBtn.addEventListener('click', () => {
+            autoRotate = !autoRotate;
+            if (controls) {
+              controls.autoRotate = autoRotate;
+              rotateBtn.textContent = autoRotate ? '⏸️ Stop Rotate' : '🔄 Auto Rotate';
+            }
+          });
+        }
+        
+        if (resetViewBtn) {
+          resetViewBtn.addEventListener('click', () => {
+            if (camera && controls) {
+              camera.position.set(0.5, 1, 0.5);
+              camera.lookAt(0.5, 0, 0.5);
+              controls.reset();
+            }
+          });
+        }
+        
+        modeButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            modeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            if (btn.dataset.mode === 'topdown' && camera) {
+              camera.position.set(0.5, 2, 0.5);
+              camera.lookAt(0.5, 0, 0.5);
+            } else if (btn.dataset.mode === '3d' && camera) {
+              camera.position.set(0.5, 1, 0.5);
+              camera.lookAt(0.5, 0, 0.5);
+            }
+          });
+        });
+      }
+      
+      // Fallback 2D preview
+      function create2DPreview(trailData) {
+        const ctx = trailCanvas.getContext('2d');
+        const width = trailCanvas.offsetWidth;
+        const height = trailCanvas.offsetHeight;
+        
+        trailCanvas.width = width;
+        trailCanvas.height = height;
+        
+        // Clear canvas
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw trail
+        const points = trailData.points;
+        if (points.length < 2) return;
+        
+        ctx.strokeStyle = '#2d5a3d';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(points[0][0] * width, points[0][1] * height);
+        
+        for (let i = 1; i < points.length; i++) {
+          ctx.lineTo(points[i][0] * width, points[i][1] * height);
+        }
+        
+        ctx.stroke();
+        
+        // Draw start marker
+        ctx.fillStyle = '#2d5a3d';
+        ctx.beginPath();
+        ctx.arc(points[0][0] * width, points[0][1] * height, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw end marker
+        ctx.fillStyle = '#d4621a';
+        ctx.beginPath();
+        const lastPoint = points[points.length - 1];
+        ctx.arc(lastPoint[0] * width, lastPoint[1] * height, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Add elevation visualization using color gradients
+        if (points.length > 2) {
+          for (let i = 0; i < points.length - 1; i++) {
+            const elevationRatio = points[i][2]; // z is elevation
+            const hue = 120 * (1 - elevationRatio); // Green to red
+            ctx.strokeStyle = `hsl(${hue}, 70%, 50%)`;
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(points[i][0] * width, points[i][1] * height);
+            ctx.lineTo(points[i + 1][0] * width, points[i + 1][1] * height);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        if (renderer && camera) {
+          camera.aspect = trailCanvas.offsetWidth / trailCanvas.offsetHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(trailCanvas.offsetWidth, trailCanvas.offsetHeight);
+        }
+      });
+      
+      // Cleanup function
+      window.addEventListener('beforeunload', () => {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+        if (renderer) {
+          renderer.dispose();
+        }
+      });
+    }
   </script>
 </body>
 </html>
