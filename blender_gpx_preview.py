@@ -353,9 +353,16 @@ def setup_camera(trail_obj, trail_points):
     span_y = max_y - min_y
     span = max(span_x, span_y)
     
-    # Position camera well above and at an angle
-    distance = max(span * 1.5, 100)  # Minimum distance of 100 units
-    height = max(distance * 0.8, 80)  # Minimum height of 80 units
+    # Scale camera distance intelligently for different trail sizes
+    if span > 10000:  # Very large trails (>10km)
+        distance = min(span * 0.8, 15000)  # Cap at 15km distance
+        height = distance * 0.6
+    elif span > 1000:  # Large trails (1-10km)
+        distance = span * 1.2
+        height = distance * 0.7
+    else:  # Small trails (<1km)
+        distance = max(span * 1.5, 100)  # Minimum distance of 100 units
+        height = max(distance * 0.8, 80)  # Minimum height of 80 units
     
     # Position camera diagonally above the trail center
     camera_x = center_x + distance * 0.6
@@ -390,7 +397,8 @@ def setup_camera(trail_obj, trail_points):
     
     print(f"Camera positioned at: ({{camera_x:.1f}}, {{camera_y:.1f}}, {{camera_z:.1f}})")
     print(f"Trail center: ({{center_x:.1f}}, {{center_y:.1f}}, {{center_z:.1f}})")
-    print(f"Trail span: {{span:.1f}} units")
+    print(f"Trail span: {{span:.1f}} units ({{span/1000:.1f}}km)")
+    print(f"Camera distance: {{distance:.1f}} units ({{distance/1000:.1f}}km)")
     print("Camera setup complete")
     return camera
 

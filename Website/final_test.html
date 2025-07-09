@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Test - User GPX Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: white;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .upload-section {
+            border: 2px solid #333;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .preview-section {
+            border: 2px solid #007acc;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 400px;
+        }
+        .preview-image {
+            max-width: 100%;
+            border: 1px solid #ccc;
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        button {
+            background: #007acc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Final Verification Test</h1>
+        <p>Testing the user's actual stage-1-route.gpx file through the complete workflow</p>
+        
+        <div class="upload-section">
+            <h2>Step 1: Select and Upload GPX File</h2>
+            <input type="file" id="gpx-file" accept=".gpx" />
+            <button onclick="testActualUpload()">Upload & Generate Preview</button>
+            <div id="upload-status"></div>
+        </div>
+        
+        <div class="preview-section">
+            <h2>Step 2: Preview Result</h2>
+            <div id="preview-container">
+                <p>Preview will appear here after upload...</p>
+            </div>
+        </div>
+        
+        <div class="log" id="log"></div>
+        
+        <div style="margin-top: 30px;">
+            <h3>Quick Test with User's File</h3>
+            <button onclick="testUserFile()">Test stage-1-route.gpx Directly</button>
+            <div id="direct-test-status"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function setStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        async function testActualUpload() {
+            const fileInput = document.getElementById('gpx-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                setStatus('upload-status', 'Please select a GPX file first', 'error');
+                return;
+            }
+            
+            log(`Selected file: ${file.name} (${file.size} bytes)`);
+            setStatus('upload-status', 'Uploading file...', 'info');
+            
+            try {
+                // Check backend health first
+                log('Checking backend health...');
+                const healthResponse = await fetch('http://localhost:5000/api/health');
+                const healthData = await healthResponse.json();
+                log(`Backend status: ${healthData.status}, Blender: ${healthData.blender_available}`);
+                
+                // Upload file
+                log('Uploading GPX file...');
+                const formData = new FormData();
+                formData.append('gpx', file);
+                
+                // Add settings for maximum visibility
+                formData.append('trail_thickness', '8.0');
+                formData.append('elevation_scale', '0.05');
+                formData.append('width', '1200');
+                formData.append('height', '800');
+                formData.append('samples', '32');
+                
+                const uploadResponse = await fetch('http://localhost:5000/api/upload-gpx', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                log(`Upload response: ${uploadResponse.status}`);
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    setStatus('upload-status', `Upload failed: ${errorText}`, 'error');
+                    return;
+                }
+                
+                const uploadData = await uploadResponse.json();
+                log(`Upload successful! File ID: ${uploadData.file_id}`);
+                setStatus('upload-status', `Upload successful! Generating preview...`, 'success');
+                
+                if (uploadData.preview_url) {
+                    const fullUrl = `http://localhost:5000${uploadData.preview_url}`;
+                    log(`Preview URL: ${fullUrl}`);
+                    
+                    // Display the preview
+                    const previewContainer = document.getElementById('preview-container');
+                    previewContainer.innerHTML = `
+                        <h3>Generated Preview</h3>
+                        <p><strong>File ID:</strong> ${uploadData.file_id}</p>
+                        <p><strong>Points:</strong> ${uploadData.stats?.total_points || 'Unknown'}</p>
+                        <img src="${fullUrl}" 
+                             alt="GPX Preview" 
+                             class="preview-image"
+                             onload="handleImageLoad(this)"
+                             onerror="handleImageError(this)" />
+                        <p><a href="${fullUrl}" target="_blank">Open preview in new tab</a></p>
+                    `;
+                    
+                    setStatus('upload-status', 'Preview generated successfully!', 'success');
+                } else {
+                    setStatus('upload-status', 'No preview URL received', 'error');
+                }
+                
+            } catch (error) {
+                log(`Error: ${error.message}`);
+                setStatus('upload-status', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testUserFile() {
+            setStatus('direct-test-status', 'Testing user file directly...', 'info');
+            log('Testing stage-1-route.gpx directly...');
+            
+            try {
+                // Test the most recent successful file ID
+                const fileId = 'f6241d5b-613e-4600-bef2-f43f1522d668';
+                const previewUrl = `http://localhost:5000/api/preview/${fileId}`;
+                
+                log(`Testing preview URL: ${previewUrl}`);
+                
+                const response = await fetch(previewUrl);
+                log(`Preview response: ${response.status} (${response.statusText})`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    log(`Preview size: ${blob.size} bytes`);
+                    
+                    // Display the preview
+                    const previewContainer = document.getElementById('preview-container');
+                    previewContainer.innerHTML = `
+                        <h3>User's stage-1-route.gpx Preview</h3>
+                        <p><strong>File ID:</strong> ${fileId}</p>
+                        <p><strong>Size:</strong> ${blob.size.toLocaleString()} bytes</p>
+                        <img src="${previewUrl}" 
+                             alt="User GPX Preview" 
+                             class="preview-image"
+                             onload="handleImageLoad(this)"
+                             onerror="handleImageError(this)" />
+                        <p><a href="${previewUrl}" target="_blank">Open preview in new tab</a></p>
+                    `;
+                    
+                    setStatus('direct-test-status', 'User file preview loaded successfully!', 'success');
+                } else {
+                    setStatus('direct-test-status', `Preview not available: ${response.status}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`Direct test error: ${error.message}`);
+                setStatus('direct-test-status', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function handleImageLoad(img) {
+            log(`Image loaded: ${img.naturalWidth}x${img.naturalHeight} pixels`);
+            
+            // Check if it's actually showing content (not just a solid color)
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = Math.min(img.naturalWidth, 100);
+            canvas.height = Math.min(img.naturalHeight, 100);
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            try {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // Check color diversity (if all pixels are similar, it might be a solid color)
+                let colorVariance = 0;
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    colorVariance += Math.abs(r - 128) + Math.abs(g - 128) + Math.abs(b - 128);
+                }
+                
+                const avgVariance = colorVariance / (data.length / 4);
+                log(`Image color variance: ${avgVariance.toFixed(1)} (higher = more diverse colors)`);
+                
+                if (avgVariance > 50) {
+                    log('✅ Image appears to have diverse content (not a solid color)');
+                } else {
+                    log('⚠️  Image appears to be mostly a solid color');
+                }
+            } catch (e) {
+                log('Could not analyze image content due to CORS');
+            }
+        }
+        
+        function handleImageError(img) {
+            log(`❌ Image failed to load: ${img.src}`);
+        }
+        
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            log('Page loaded - ready for testing');
+        });
+    </script>
+</body>
+</html>

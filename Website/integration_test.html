@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Integration Test</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        img { max-width: 100%; border: 2px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>Website Integration Test</h1>
+    <p>File ID: 014331d8-9079-4145-94e4-71c693f7cd43</p>
+    <p>Preview URL: http://localhost:5000/api/preview/014331d8-9079-4145-94e4-71c693f7cd43</p>
+    
+    <div class="preview-container">
+        <img src="http://localhost:5000/api/preview/014331d8-9079-4145-94e4-71c693f7cd43" alt="GPX Preview" 
+             onload="console.log('Image loaded: ' + this.naturalWidth + 'x' + this.naturalHeight)"
+             onerror="console.error('Image failed to load')" />
+    </div>
+    
+    <script>
+        console.log('Testing preview integration...');
+    </script>
+</body>
+</html>
+        
