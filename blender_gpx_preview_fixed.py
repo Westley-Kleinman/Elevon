@@ -346,7 +346,7 @@ def main():
     print(f"Samples: {scene.cycles.samples}")
     
     # Render
-    bpy.ops.render.render(write_still=True)
+    bpy.ops.render.render()
     
     print("Render complete!")
 

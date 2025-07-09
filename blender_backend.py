@@ -16,7 +16,7 @@ import math
 from datetime import datetime
 import json
 
-from blender_gpx_preview import BlenderGPXPreview
+from blender_gpx_preview_wrapper import BlenderGPXPreview
 
 app = Flask(__name__)
 CORS(app)
