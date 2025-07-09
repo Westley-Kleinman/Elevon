@@ -45,21 +45,32 @@ def parse_gpx_stats(gpx_file):
         root = tree.getroot()
         
         # Handle different GPX namespaces
-        ns = {'default': 'http://www.topografix.com/GPX/1/1'}
+        ns_11 = {'default': 'http://www.topografix.com/GPX/1/1'}
+        ns_10 = {'default': 'http://www.topografix.com/GPX/1/0'}
         
         coordinates = []
         
-        # Try track points first with namespace
-        points = root.findall('.//default:trkpt', ns)
+        # Try track points first with GPX 1.1 namespace
+        points = root.findall('.//default:trkpt', ns_11)
         if not points:
-            # Try route points with namespace
-            points = root.findall('.//default:rtept', ns)
+            # Try with GPX 1.0 namespace
+            points = root.findall('.//default:trkpt', ns_10)
+        if not points:
+            # Try route points with GPX 1.1 namespace
+            points = root.findall('.//default:rtept', ns_11)
+        if not points:
+            # Try route points with GPX 1.0 namespace
+            points = root.findall('.//default:rtept', ns_10)
         
         if not points:
-            # Try without namespace (some GPX files don't use explicit prefixes)
+            # Try without namespace prefix but with full namespaces
             points = root.findall('.//{http://www.topografix.com/GPX/1/1}trkpt')
             if not points:
+                points = root.findall('.//{http://www.topografix.com/GPX/1/0}trkpt')
+            if not points:
                 points = root.findall('.//{http://www.topografix.com/GPX/1/1}rtept')
+            if not points:
+                points = root.findall('.//{http://www.topografix.com/GPX/1/0}rtept')
         
         if not points:
             # Try completely without namespace
@@ -69,34 +80,61 @@ def parse_gpx_stats(gpx_file):
         
         print(f"Found {len(points)} points in GPX file")
         
-        for pt in points:
-            lat = float(pt.get('lat'))
-            lon = float(pt.get('lon'))
-            
-            # Get elevation if available
-            ele_elem = pt.find('ele')
-            if ele_elem is None:
-                ele_elem = pt.find('default:ele', ns)
-            if ele_elem is None:
-                ele_elem = pt.find('{http://www.topografix.com/GPX/1/1}ele')
-            ele = float(ele_elem.text) if ele_elem is not None else 0
-            
-            # Get timestamp if available
-            time_elem = pt.find('time') or pt.find('default:time', ns) or pt.find('{http://www.topografix.com/GPX/1/1}time')
-            timestamp = time_elem.text if time_elem is not None else None
-            
-            coordinates.append((lat, lon, ele, timestamp))
+        if len(points) == 0:
+            return {'error': 'No track points or route points found in GPX file'}
+        
+        for i, pt in enumerate(points):
+            try:
+                lat = float(pt.get('lat'))
+                lon = float(pt.get('lon'))
+                
+                # Get elevation if available - try multiple namespaces
+                ele_elem = pt.find('ele')
+                if ele_elem is None:
+                    ele_elem = pt.find('default:ele', ns_11)
+                if ele_elem is None:
+                    ele_elem = pt.find('default:ele', ns_10)
+                if ele_elem is None:
+                    ele_elem = pt.find('{http://www.topografix.com/GPX/1/1}ele')
+                if ele_elem is None:
+                    ele_elem = pt.find('{http://www.topografix.com/GPX/1/0}ele')
+                ele = float(ele_elem.text) if ele_elem is not None else 0
+                
+                # Get timestamp if available - try multiple namespaces
+                time_elem = pt.find('time')
+                if time_elem is None:
+                    time_elem = pt.find('default:time', ns_11)
+                if time_elem is None:
+                    time_elem = pt.find('default:time', ns_10)
+                if time_elem is None:
+                    time_elem = pt.find('{http://www.topografix.com/GPX/1/1}time')
+                if time_elem is None:
+                    time_elem = pt.find('{http://www.topografix.com/GPX/1/0}time')
+                timestamp = time_elem.text if time_elem is not None else None
+                
+                coordinates.append((lat, lon, ele, timestamp))
+                
+            except ValueError as ve:
+                print(f"Error parsing point {i+1}: {ve}")
+                # Continue processing other points, but note the error
+                continue
+            except Exception as pe:
+                print(f"Unexpected error parsing point {i+1}: {pe}")
+                continue
         
         if not coordinates:
-            return None
+            return {'error': f'Found {len(points)} points but could not parse any valid coordinates (invalid lat/lon values)'}
         
         # Calculate statistics
         stats = calculate_trail_stats(coordinates)
         return stats
         
+    except ET.ParseError as pe:
+        print(f"XML parsing error: {pe}")
+        return {'error': f'Invalid GPX file: XML parsing error - {str(pe)}'}
     except Exception as e:
         print(f"Error parsing GPX: {e}")
-        return None
+        return {'error': f'GPX parsing failed: {str(e)}'}
 
 def calculate_trail_stats(coordinates):
     """Calculate trail statistics from coordinates"""
@@ -179,16 +217,33 @@ def upload_gpx():
         # Save uploaded file
         file.save(gpx_path)
         
+        # Check if file was actually saved and has content
+        file_size = os.path.getsize(gpx_path) if os.path.exists(gpx_path) else 0
+        print(f"📁 Saved GPX file: {gpx_path} ({file_size} bytes)")
+        
+        if file_size == 0:
+            print(f"❌ Uploaded file is empty")
+            return jsonify({'error': 'Uploaded file is empty'}), 400
+        
         # Parse GPX for basic stats
-        stats = parse_gpx_stats(gpx_path)
+        print(f"🔍 Parsing GPX file...")
+        try:
+            stats = parse_gpx_stats(gpx_path)
+            print(f"📊 Parsing result: {stats}")
+        except Exception as parse_error:
+            print(f"❌ GPX parsing exception: {parse_error}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({'error': f'GPX parsing failed: {str(parse_error)}'}), 400
+        
+        # Check if parsing returned an error
+        if isinstance(stats, dict) and 'error' in stats:
+            print(f"❌ GPX parsing error: {stats['error']}")
+            return jsonify({'error': stats['error']}), 400
+        
         if not stats:
-            # Check if file was actually saved and has content
-            file_size = os.path.getsize(gpx_path) if os.path.exists(gpx_path) else 0
-            print(f"❌ GPX parsing failed. File size: {file_size} bytes")
-            if file_size == 0:
-                return jsonify({'error': 'Uploaded file is empty'}), 400
-            else:
-                return jsonify({'error': 'Invalid GPX file format - no track points found'}), 400
+            print(f"❌ GPX parsing returned None - unexpected error")
+            return jsonify({'error': 'Unexpected GPX parsing error'}), 400
         
         response_data = {
             'file_id': file_id,
