@@ -49,7 +49,17 @@ class BlenderGPXPreview {
             });
 
             if (!response.ok) {
-                throw new Error(`Upload failed: ${response.statusText}`);
+                // Try to get the error message from the response body
+                let errorMessage = `Upload failed: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                } catch (e) {
+                    // If we can't parse the JSON, stick with the status text
+                }
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
@@ -194,8 +204,16 @@ class EnhancedGPXUpload {
     }
 
     async processFile(file) {
+        console.log('Processing file:', file.name, 'Size:', file.size, 'Type:', file.type);
+        
         if (!file.name.toLowerCase().endsWith('.gpx')) {
             this.showError('Please select a GPX file');
+            return;
+        }
+
+        // Debug: Check if file has content
+        if (file.size === 0) {
+            this.showError('Selected file is empty');
             return;
         }
 
@@ -228,10 +246,14 @@ class EnhancedGPXUpload {
     }
 
     async processWithBlender(file) {
+        console.log('Processing with Blender:', file.name, file.size);
         this.showLoading('Generating high-quality preview with Blender...');
 
         const settings = this.getBlenderSettings();
+        console.log('Blender settings:', settings);
+        
         const result = await this.blenderPreview.uploadAndGeneratePreview(file, settings);
+        console.log('Blender result:', result);
 
         this.currentFileId = result.file_id;
 

@@ -182,7 +182,13 @@ def upload_gpx():
         # Parse GPX for basic stats
         stats = parse_gpx_stats(gpx_path)
         if not stats:
-            return jsonify({'error': 'Invalid or empty GPX file'}), 400
+            # Check if file was actually saved and has content
+            file_size = os.path.getsize(gpx_path) if os.path.exists(gpx_path) else 0
+            print(f"❌ GPX parsing failed. File size: {file_size} bytes")
+            if file_size == 0:
+                return jsonify({'error': 'Uploaded file is empty'}), 400
+            else:
+                return jsonify({'error': 'Invalid GPX file format - no track points found'}), 400
         
         response_data = {
             'file_id': file_id,

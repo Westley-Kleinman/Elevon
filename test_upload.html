@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPX Upload Test</title>
+</head>
+<body>
+    <h1>GPX Upload Test</h1>
+    
+    <input type="file" id="fileInput" accept=".gpx">
+    <button onclick="uploadFile()">Upload GPX</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('result');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = 'Please select a file';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            console.log('Selected file:', file.name, 'Size:', file.size, 'Type:', file.type);
+            
+            const formData = new FormData();
+            formData.append('gpx', file);
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/upload-gpx', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.text();
+                console.log('Response status:', response.status);
+                console.log('Response:', result);
+                
+                resultDiv.innerHTML = `
+                    <h3>Response (${response.status}):</h3>
+                    <pre>${result}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                resultDiv.innerHTML = `<h3>Error:</h3><pre>${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>
