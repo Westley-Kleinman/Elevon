@@ -4,7 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  <title>Order Your Custom Map — Elevon</title>  <meta name="description" content="Order your custom 3D-printed trail map from Elevon. Upload your trail or race course and bring it to life." />
-  <link rel="stylesheet" href="style.css" />  <script async src="https://tally.so/widgets/embed.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Immediate theme initialization to prevent flash -->
+  <script>
+    // Set light theme immediately
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+  </script>  <script async src="https://tally.so/widgets/embed.js"></script>
 </head>
 <body>
   <header>
@@ -38,11 +43,14 @@
       const savedTheme = localStorage.getItem('theme');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       
-      // Use saved theme, or fall back to system preference
-      const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+      // Default to light mode unless user has explicitly set a preference
+      const theme = savedTheme || 'light';
       
-      // Apply theme to document root
+      // Apply theme to document root immediately
       document.documentElement.setAttribute('data-theme', theme);
+      
+      // Also set CSS class for backup
+      document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
       
       return theme;
     }

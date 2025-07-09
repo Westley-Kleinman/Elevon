@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Westley Kleinman • Engineer & Designer</title>  <meta name="description" content="Personal website of Westley Kleinman - Duke engineering student, competitive cyclist, and founder of Elevon custom 3D trail maps." />
   <link rel="stylesheet" href="style.css" />
+  <!-- Immediate theme initialization to prevent flash -->
+  <script>
+    // Set light theme immediately
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+  </script>
   <!-- Three.js for 3D visualization -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -334,11 +339,14 @@
       const savedTheme = localStorage.getItem('theme');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       
-      // Use saved theme, or fall back to system preference
-      const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+      // Default to light mode unless user has explicitly set a preference
+      const theme = savedTheme || 'light';
       
-      // Apply theme to document root
+      // Apply theme to document root immediately
       document.documentElement.setAttribute('data-theme', theme);
+      
+      // Also set CSS class for backup
+      document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
       
       return theme;
     }
