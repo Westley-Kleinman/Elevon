@@ -259,10 +259,26 @@ def upload_gpx():
                 preview_path = os.path.abspath(os.path.join(PREVIEW_FOLDER, preview_filename))
                 
                 # Get render settings from request
+                base_samples = int(request.form.get('samples', 32))
+                
+                # Adaptive quality based on GPX complexity
+                point_count = stats['points_count']
+                if point_count > 2000:
+                    # Very large files: use lower quality to ensure rendering succeeds
+                    adaptive_samples = min(base_samples, 32)
+                    print(f"🔧 Large GPX file ({point_count} points) - reducing samples to {adaptive_samples}")
+                elif point_count > 1000:
+                    # Large files: moderate reduction
+                    adaptive_samples = min(base_samples, 48)
+                    print(f"🔧 Medium GPX file ({point_count} points) - reducing samples to {adaptive_samples}")
+                else:
+                    # Small files: use requested quality
+                    adaptive_samples = base_samples
+                
                 settings = {
                     'width': int(request.form.get('width', 1920)),
                     'height': int(request.form.get('height', 1080)),
-                    'samples': int(request.form.get('samples', 32)),  # Lower for faster preview
+                    'samples': adaptive_samples,
                     'trail_thickness': float(request.form.get('trail_thickness', 0.3)),
                     'elevation_scale': float(request.form.get('elevation_scale', 0.001)),
                 }

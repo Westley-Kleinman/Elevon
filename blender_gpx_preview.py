@@ -1,7 +1,27 @@
 #!/usr/bin/env python3
 """
 Blender GPX Preview Generator
-Generates high-quality 3D preview images from GPX files using Blender
+Generates high-quality 3D preview images from GPX files using B    print(f"Extracted {len(coordinates)} coordinates")
+    
+    # Aggressive point decimation for large datasets to prevent rendering issues
+    if len(coordinates) > 1500:
+        # For very large datasets, keep every 6th point
+        decimation_factor = 6
+        coordinates = coordinates[::decimation_factor]
+        print(f"Large dataset detected - aggressively decimated to {len(coordinates)} points (every {decimation_factor}th point)")
+    elif len(coordinates) > 800:
+        # For medium-large datasets, keep every 3rd point  
+        decimation_factor = 3
+        coordinates = coordinates[::decimation_factor]
+        print(f"Medium-large dataset detected - decimated to {len(coordinates)} points (every {decimation_factor}th point)")
+    elif len(coordinates) > 400:
+        # For medium datasets, keep every 2nd point  
+        decimation_factor = 2
+        coordinates = coordinates[::decimation_factor]
+        print(f"Medium dataset detected - decimated to {len(coordinates)} points (every {decimation_factor}th point)")
+    
+    print(f"Final coordinate count: {len(coordinates)}")
+    return coordinatesnder
 """
 
 import os
@@ -82,22 +102,37 @@ def parse_gpx(filepath):
     tree = ET.parse(filepath)
     root = tree.getroot()
     
-    # Handle different GPX namespaces
-    ns = {{'default': 'http://www.topografix.com/GPX/1/1'}}
+    # Handle different GPX namespaces - try both 1.0 and 1.1
+    ns_11 = {{'default': 'http://www.topografix.com/GPX/1/1'}}
+    ns_10 = {{'default': 'http://www.topografix.com/GPX/1/0'}}
     
     coordinates = []
+    points = []
     
-    # Try track points first with namespace
-    points = root.findall('.//default:trkpt', ns)
+    # Try GPX 1.1 track points first
+    points = root.findall('.//default:trkpt', ns_11)
     if not points:
-        # Try route points with namespace
-        points = root.findall('.//default:rtept', ns)
+        # Try GPX 1.1 route points
+        points = root.findall('.//default:rtept', ns_11)
     
     if not points:
-        # Try without namespace prefix but with full namespace
+        # Try GPX 1.0 track points
+        points = root.findall('.//default:trkpt', ns_10)
+        if not points:
+            # Try GPX 1.0 route points
+            points = root.findall('.//default:rtept', ns_10)
+    
+    if not points:
+        # Try without namespace prefix but with full namespace (GPX 1.1)
         points = root.findall('.//{{http://www.topografix.com/GPX/1/1}}trkpt')
         if not points:
             points = root.findall('.//{{http://www.topografix.com/GPX/1/1}}rtept')
+    
+    if not points:
+        # Try without namespace prefix but with full namespace (GPX 1.0)
+        points = root.findall('.//{{http://www.topografix.com/GPX/1/0}}trkpt')
+        if not points:
+            points = root.findall('.//{{http://www.topografix.com/GPX/1/0}}rtept')
     
     if not points:
         # Try completely without namespace (some GPX files don't use it)
@@ -111,17 +146,44 @@ def parse_gpx(filepath):
         lat = float(pt.get('lat'))
         lon = float(pt.get('lon'))
         
-        # Get elevation if available - try multiple approaches
+        # Get elevation if available - try multiple approaches for both GPX 1.0 and 1.1
         ele_elem = pt.find('ele')
         if ele_elem is None:
-            ele_elem = pt.find('default:ele', ns)
+            # Try with GPX 1.1 namespace
+            ele_elem = pt.find('default:ele', ns_11)
         if ele_elem is None:
+            # Try with GPX 1.0 namespace  
+            ele_elem = pt.find('default:ele', ns_10)
+        if ele_elem is None:
+            # Try with full GPX 1.1 namespace
             ele_elem = pt.find('{{http://www.topografix.com/GPX/1/1}}ele')
+        if ele_elem is None:
+            # Try with full GPX 1.0 namespace
+            ele_elem = pt.find('{{http://www.topografix.com/GPX/1/0}}ele')
         ele = float(ele_elem.text) if ele_elem is not None else 0
         
         coordinates.append((lat, lon, ele))
     
     print(f"Extracted {{len(coordinates)}} coordinates")
+    
+    # Aggressive point decimation for large datasets to prevent rendering issues
+    if len(coordinates) > 1500:
+        # For very large datasets, keep every 8th point for even more aggressive decimation
+        decimation_factor = 8
+        coordinates = coordinates[::decimation_factor]
+        print(f"Large dataset detected - aggressively decimated to {{len(coordinates)}} points (every {{decimation_factor}}th point)")
+    elif len(coordinates) > 800:
+        # For medium-large datasets, keep every 4th point  
+        decimation_factor = 4
+        coordinates = coordinates[::decimation_factor]
+        print(f"Medium-large dataset detected - decimated to {{len(coordinates)}} points (every {{decimation_factor}}th point)")
+    elif len(coordinates) > 400:
+        # For medium datasets, keep every 2nd point  
+        decimation_factor = 2
+        coordinates = coordinates[::decimation_factor]
+        print(f"Medium dataset detected - decimated to {{len(coordinates)}} points (every {{decimation_factor}}th point)")
+    
+    print(f"Final coordinate count: {{len(coordinates)}}")
     return coordinates
 
 def lat_lon_to_meters(lat, lon, center_lat, center_lon):
@@ -405,11 +467,25 @@ if __name__ == "__main__":
                 timeout=300  # 5 minute timeout
             )
             
+            print(f"Blender exit code: {result.returncode}")
+            print(f"Blender stdout: {result.stdout}")
+            print(f"Blender stderr: {result.stderr}")
+            
             if result.returncode != 0:
-                raise RuntimeError(f"Blender execution failed: {result.stderr}")
+                return {
+                    'success': False,
+                    'error': f"Blender execution failed with code {result.returncode}",
+                    'stdout': result.stdout,
+                    'stderr': result.stderr
+                }
             
             if not os.path.exists(output_image):
-                raise RuntimeError("Output image was not created")
+                return {
+                    'success': False,
+                    'error': "Output image was not created",
+                    'stdout': result.stdout,
+                    'stderr': result.stderr
+                }
             
             return {
                 'success': True,
