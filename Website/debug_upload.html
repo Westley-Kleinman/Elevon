@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug GPX Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: white;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .preview-container {
+            border: 2px solid #333;
+            margin: 20px 0;
+            min-height: 200px;
+            padding: 10px;
+        }
+        .preview-image {
+            max-width: 100%;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Debug GPX Upload Process</h1>
+        
+        <div>
+            <input type="file" id="gpx-file" accept=".gpx" />
+            <button onclick="uploadFile()">Upload and Test</button>
+        </div>
+        
+        <div class="log" id="log"></div>
+        
+        <div class="preview-container" id="preview-container">
+            <p>Preview will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('gpx-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                log('No file selected');
+                return;
+            }
+            
+            log(`Selected file: ${file.name} (${file.size} bytes)`);
+            
+            try {
+                // Test backend health first
+                log('Testing backend health...');
+                const healthResponse = await fetch('http://localhost:5000/api/health');
+                const healthData = await healthResponse.json();
+                log(`Backend health: ${JSON.stringify(healthData)}`);
+                
+                // Upload file
+                log('Uploading file...');
+                const formData = new FormData();
+                formData.append('gpx', file);
+                
+                const uploadResponse = await fetch('http://localhost:5000/api/upload-gpx', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                log(`Upload response status: ${uploadResponse.status}`);
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    log(`Upload error: ${errorText}`);
+                    return;
+                }
+                
+                const uploadData = await uploadResponse.json();
+                log(`Upload response: ${JSON.stringify(uploadData, null, 2)}`);
+                
+                if (uploadData.preview_url) {
+                    log(`Preview URL: ${uploadData.preview_url}`);
+                    
+                    // Display the image
+                    const previewContainer = document.getElementById('preview-container');
+                    const fullUrl = `http://localhost:5000${uploadData.preview_url}`;
+                    log(`Full image URL: ${fullUrl}`);
+                    
+                    previewContainer.innerHTML = `
+                        <h3>Generated Preview</h3>
+                        <img src="${fullUrl}" 
+                             alt="GPX Preview" 
+                             class="preview-image"
+                             onload="logImageLoad(this)"
+                             onerror="logImageError(this)" />
+                    `;
+                } else {
+                    log('No preview URL in response');
+                }
+                
+            } catch (error) {
+                log(`Error: ${error.message}`);
+                console.error('Upload error:', error);
+            }
+        }
+        
+        function logImageLoad(img) {
+            log(`Image loaded successfully: ${img.naturalWidth}x${img.naturalHeight}`);
+        }
+        
+        function logImageError(img) {
+            log(`Image failed to load: ${img.src}`);
+        }
+        
+        // Initial health check
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/health');
+                const data = await response.json();
+                log(`Initial backend health check: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Backend not accessible: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>

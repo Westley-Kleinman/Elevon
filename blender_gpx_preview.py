@@ -289,7 +289,7 @@ def setup_materials():
     trail_mat.node_tree.links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
     
     # Set trail color (bright orange/red)
-    bsdf.inputs['Base Color'].default_value = ({settings.get('trail_color', [0.9, 0.3, 0.1, 1.0])})
+    bsdf.inputs['Base Color'].default_value = {settings.get('trail_color', [0.9, 0.3, 0.1, 1.0])}
     bsdf.inputs['Metallic'].default_value = 0.2
     bsdf.inputs['Roughness'].default_value = 0.3
     
@@ -303,7 +303,7 @@ def setup_materials():
     base_mat.node_tree.links.new(bsdf_base.outputs['BSDF'], output_base.inputs['Surface'])
     
     # Set base color (earth tone)
-    bsdf_base.inputs['Base Color'].default_value = ({settings.get('base_color', [0.4, 0.3, 0.2, 1.0])})
+    bsdf_base.inputs['Base Color'].default_value = {settings.get('base_color', [0.4, 0.3, 0.2, 1.0])}
     bsdf_base.inputs['Roughness'].default_value = 0.8
     
     return trail_mat, base_mat
@@ -348,23 +348,49 @@ def setup_camera(trail_obj, trail_points):
     center_y = (min_y + max_y) / 2
     center_z = (min_z + max_z) / 2
     
-    # Calculate camera distance
-    span = max(max_x - min_x, max_y - min_y)
-    distance = span * 1.5
+    # Calculate camera distance - ensure we can see the entire trail
+    span_x = max_x - min_x
+    span_y = max_y - min_y
+    span = max(span_x, span_y)
+    
+    # Position camera well above and at an angle
+    distance = max(span * 1.5, 100)  # Minimum distance of 100 units
+    height = max(distance * 0.8, 80)  # Minimum height of 80 units
+    
+    # Position camera diagonally above the trail center
+    camera_x = center_x + distance * 0.6
+    camera_y = center_y - distance * 0.6  
+    camera_z = center_z + height
+    
+    # Delete default camera if it exists
+    default_camera = bpy.data.objects.get("Camera")
+    if default_camera:
+        bpy.data.objects.remove(default_camera, do_unlink=True)
     
     # Add new camera
-    bpy.ops.object.camera_add(
-        location=(center_x + distance * 0.7, center_y - distance * 0.7, center_z + distance * 0.5)
-    )
+    bpy.ops.object.camera_add(location=(camera_x, camera_y, camera_z))
     camera = bpy.context.active_object
+    camera.name = "TrailCamera"
     
-    # Point camera at trail center
-    direction = Vector((center_x, center_y, center_z)) - camera.location
-    camera.rotation_euler = direction.to_track_quat('-Z', 'Y').to_euler()
+    # Point camera at trail center using track-to constraint
+    constraint = camera.constraints.new(type='TRACK_TO')
+    
+    # Create an empty object at the trail center to track
+    bpy.ops.object.empty_add(location=(center_x, center_y, center_z))
+    target = bpy.context.active_object
+    target.name = "CameraTarget"
+    
+    # Set up the constraint
+    constraint.target = target
+    constraint.track_axis = 'TRACK_NEGATIVE_Z'
+    constraint.up_axis = 'UP_Y'
     
     # Set as active camera
     bpy.context.scene.camera = camera
     
+    print(f"Camera positioned at: ({{camera_x:.1f}}, {{camera_y:.1f}}, {{camera_z:.1f}})")
+    print(f"Trail center: ({{center_x:.1f}}, {{center_y:.1f}}, {{center_z:.1f}})")
+    print(f"Trail span: {{span:.1f}} units")
     print("Camera setup complete")
     return camera
 

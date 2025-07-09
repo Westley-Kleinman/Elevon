@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Preview Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: white;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .preview-image {
+            max-width: 100%;
+            border: 2px solid #333;
+            display: block;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Test Preview Image</h1>
+        <p>Testing the generated Blender preview image directly:</p>
+        
+        <img src="http://localhost:5000/api/preview/8ed96b33-54e2-4541-8ab4-43e97baaba2f" 
+             alt="Blender Preview" 
+             class="preview-image"
+             onload="console.log('Image loaded successfully')"
+             onerror="console.error('Image failed to load')" />
+        
+        <p>If you see a purple screen above, the issue is with the Blender rendering. If you see a proper trail map, the issue is with the main website's display.</p>
+        
+        <script>
+            // Test fetch to check if the backend is accessible
+            fetch('http://localhost:5000/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Backend health:', data);
+                    document.body.innerHTML += '<p>Backend Status: ' + JSON.stringify(data) + '</p>';
+                })
+                .catch(error => {
+                    console.error('Backend not accessible:', error);
+                    document.body.innerHTML += '<p style="color: red;">Backend Error: ' + error.message + '</p>';
+                });
+        </script>
+    </div>
+</body>
+</html>
