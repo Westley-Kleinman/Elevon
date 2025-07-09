@@ -18,6 +18,7 @@ Elevon/
 │   ├── app.py              # Image filter application
 │   ├── templates/          # Image filter app templates
 │   └── static/             # Image filter static files
+├── trailprint3d-1-90.py    # Blender addon for 3D printable trail maps
 ├── sample_trail.gpx        # Sample GPX file for testing
 ├── test_gpx_upload.py      # Setup script for testing
 ├── test_gpx_functionality.py # GPX functionality tests
@@ -38,6 +39,14 @@ Elevon/
 - **Multiple View Modes**: 3D perspective and top-down views
 - **Auto-rotation**: Camera controls and automatic rotation
 - **Demo Mode**: Works with or without backend
+
+### TrailPrint3D Blender Addon
+- **3D Printable Maps**: Generate STL files for 3D printing
+- **Multiple Shapes**: Hexagon, square, and heart-shaped bases
+- **Terrain Data**: Real elevation data from OpenTopoData/Open-Elevation APIs
+- **Text Integration**: Add trail name, distance, elevation stats
+- **Customizable**: Adjust size, resolution, path thickness
+- **Professional Output**: Ready-to-print STL files
 
 ## 🚀 Quick Start
 
@@ -127,6 +136,27 @@ Supported formats:
 - Elevation-based color coding
 - Interactive camera controls
 - Customizable view modes
+
+## 🎨 Blender Addon for 3D Printing
+
+For creating actual 3D printable trail maps:
+
+### Installation
+```bash
+# Install dependencies
+python setup_blender_addon.py
+
+# Install addon (run as administrator if needed)
+install_blender_addon.bat
+```
+
+### Manual Installation
+1. Copy `trailprint3d-1-90.py` to Blender's addons folder
+2. Enable the addon in Blender: Edit > Preferences > Add-ons
+3. Search for "TrailPrint3D" and enable it
+4. Press 'N' in 3D viewport to access the panel
+
+See `BLENDER_ADDON_GUIDE.md` for detailed instructions.
 
 ## 🧪 Testing
 
