@@ -13,6 +13,8 @@
   <!-- Three.js for 3D visualization -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Blender integration -->
+  <script src="blender-integration.js"></script>
   <!-- Demo mode for static hosting -->
   <script>
     // Check if we're in demo mode (static hosting like Netlify)
@@ -165,13 +167,18 @@
           </p>
           
           <div class="gpx-upload-area">
+            <!-- Backend Status -->
+            <div id="blender-status" class="blender-status">
+              🔄 Checking rendering capabilities...
+            </div>
+            
             <!-- Demo Notice for Static Hosting -->
             <div class="demo-notice" id="demo-notice" style="background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; border: 2px solid #f59e0b;">
               <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">🚧 Demo Mode</h4>
               <p style="margin: 0; color: #92400e; font-size: 0.9rem;">This is a preview version. Upload any GPX file to see a sample 3D trail visualization!</p>
             </div>
             
-            <div class="upload-zone" id="upload-zone">
+            <div class="upload-zone" id="gpx-drop-zone">
               <div class="upload-icon">📁</div>
               <div class="upload-text">
                 <h3>Drop your GPX file here</h3>
@@ -181,17 +188,69 @@
               <input type="file" id="gpx-file-input" accept=".gpx" style="display: none;">
             </div>
             
+            <!-- Blender Settings (shown when Blender is available) -->
+            <div id="blender-preview-section" class="blender-settings" style="display: none;">
+              <h4>🎨 High-Quality Rendering Settings</h4>
+              <form id="blender-settings" class="settings-grid">
+                <div class="setting-group">
+                  <label for="width">Image Width</label>
+                  <select name="width" id="width">
+                    <option value="1920">1920px (HD)</option>
+                    <option value="2560">2560px (2K)</option>
+                    <option value="3840">3840px (4K)</option>
+                  </select>
+                </div>
+                <div class="setting-group">
+                  <label for="height">Image Height</label>
+                  <select name="height" id="height">
+                    <option value="1080">1080px (HD)</option>
+                    <option value="1440">1440px (2K)</option>
+                    <option value="2160">2160px (4K)</option>
+                  </select>
+                </div>
+                <div class="setting-group">
+                  <label for="samples">Quality</label>
+                  <select name="samples" id="samples">
+                    <option value="32">Fast (32 samples)</option>
+                    <option value="64" selected>Balanced (64 samples)</option>
+                    <option value="128">High (128 samples)</option>
+                    <option value="256">Ultra (256 samples)</option>
+                  </select>
+                </div>
+                <div class="setting-group">
+                  <label for="trail_thickness">Trail Thickness</label>
+                  <input type="range" name="trail_thickness" id="trail_thickness" 
+                         min="0.1" max="1.0" step="0.1" value="0.3">
+                  <span class="range-value">0.3</span>
+                </div>
+                <div class="setting-group">
+                  <label for="elevation_scale">Elevation Scale</label>
+                  <input type="range" name="elevation_scale" id="elevation_scale" 
+                         min="0.0005" max="0.002" step="0.0001" value="0.001">
+                  <span class="range-value">0.001</span>
+                </div>
+              </form>
+            </div>
+            
             <div class="upload-progress" id="upload-progress" style="display: none;">
               <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill"></div>
               </div>
               <p class="progress-text" id="progress-text">Processing your trail...</p>
             </div>
+            
+            <div id="loading-message" style="display: none;">
+              Processing your trail...
+            </div>
+            
+            <div id="error-message" style="display: none;">
+              An error occurred processing your file.
+            </div>
           </div>
           
           <div class="trail-stats" id="trail-stats" style="display: none;">
             <h3>Trail Statistics</h3>
-            <div class="stats-grid">
+            <div class="stats-grid" id="gpx-stats">
               <div class="stat-item">
                 <div class="stat-value" id="distance-value">0</div>
                 <div class="stat-label">Distance (km)</div>

@@ -137,26 +137,76 @@ Supported formats:
 - Interactive camera controls
 - Customizable view modes
 
-## 🎨 Blender Addon for 3D Printing
+## 🎨 Blender Integration for High-Quality Previews
 
-For creating actual 3D printable trail maps:
+The system now supports integration with Blender for generating professional-quality 3D preview images from GPX files.
 
-### Installation
+### Features
+- **High-Quality Rendering**: Cycles renderer with customizable quality settings
+- **Professional Materials**: Realistic trail and terrain materials
+- **Automatic Camera Positioning**: Optimal viewing angles for each trail
+- **Customizable Settings**: Trail thickness, colors, resolution, and sample count
+- **Fallback Support**: Gracefully falls back to Three.js if Blender is unavailable
+
+### Setup
+
+#### Option 1: Use Provided Scripts
 ```bash
-# Install dependencies
+# Install Blender addon dependencies
 python setup_blender_addon.py
 
-# Install addon (run as administrator if needed)
-install_blender_addon.bat
+# Install backend dependencies
+pip install -r blender_requirements.txt
+
+# Test the integration
+python test_blender_integration.py
+
+# Start the backend server
+start_blender_backend.bat
 ```
 
-### Manual Installation
-1. Copy `trailprint3d-1-90.py` to Blender's addons folder
-2. Enable the addon in Blender: Edit > Preferences > Add-ons
-3. Search for "TrailPrint3D" and enable it
-4. Press 'N' in 3D viewport to access the panel
+#### Option 2: Manual Setup
+1. **Install Blender 4.2+** from https://www.blender.org/
+2. **Install Python dependencies**:
+   ```bash
+   pip install flask flask-cors
+   ```
+3. **Run the backend**:
+   ```bash
+   python blender_backend.py
+   ```
 
-See `BLENDER_ADDON_GUIDE.md` for detailed instructions.
+### Usage
+
+#### For Development
+1. Start the Blender backend: `python blender_backend.py`
+2. Open your website and upload a GPX file
+3. The system will automatically detect Blender availability
+4. If available, generates high-quality preview images
+5. If not available, falls back to Three.js browser rendering
+
+#### API Endpoints
+- `GET /api/health` - Check Blender availability
+- `POST /api/upload-gpx` - Upload GPX and generate preview
+- `GET /api/preview/{file_id}` - Serve generated preview image
+- `POST /api/regenerate-preview/{file_id}` - Regenerate with new settings
+- `DELETE /api/cleanup/{file_id}` - Clean up temporary files
+
+### Integration with Website
+
+The website automatically detects if the Blender backend is running:
+- ✅ **Blender Available**: Shows high-quality rendering options and settings
+- ⚠️ **Blender Unavailable**: Falls back to Three.js with demo mode
+
+### Files Added
+- `blender_gpx_preview.py` - Core Blender integration
+- `blender_backend.py` - Flask backend server
+- `blender-integration.js` - Frontend JavaScript integration
+- `start_blender_backend.bat` - Easy startup script
+- `test_blender_integration.py` - Integration testing
+- `blender_requirements.txt` - Python dependencies
+
+*Note: Blender integration is currently in development. The system works with Three.js fallback if Blender is not available.*
 
 ## 🧪 Testing
 
