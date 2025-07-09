@@ -16,7 +16,7 @@
   <!-- Demo mode for static hosting -->
   <script>
     // Check if we're in demo mode (static hosting like Netlify)
-    window.DEMO_MODE = false; // Set to true for testing demo mode
+    window.DEMO_MODE = true; // Set to true for frontend-only operation
   </script>
 </head>
 <body>
@@ -514,7 +514,7 @@
           const formData = new FormData();
           formData.append('gpx_file', file);
           
-          fetch('http://localhost:5000/upload_gpx', {
+          fetch('/upload_gpx', {
             method: 'POST',
             body: formData
           })

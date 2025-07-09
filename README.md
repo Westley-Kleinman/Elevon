@@ -14,10 +14,10 @@ Elevon/
 │   ├── order.html          # Order form
 │   ├── style.css           # Main stylesheet
 │   └── images/             # Website images
-├── image-filter-web/       # Flask backend for GPX processing
-│   ├── app.py              # Main Flask application
+├── image-filter-web/       # Python Blender script for image color filtering
+│   ├── app.py              # Image filter application
 │   ├── templates/          # Image filter app templates
-│   └── static/             # Backend static files
+│   └── static/             # Image filter static files
 ├── sample_trail.gpx        # Sample GPX file for testing
 ├── test_gpx_upload.py      # Setup script for testing
 ├── test_gpx_functionality.py # GPX functionality tests
@@ -48,11 +48,6 @@ Elevon/
 cd Website
 python -m http.server 8080
 # Visit: http://localhost:8080
-
-# Start Flask backend (for GPX processing)
-cd image-filter-web
-python app.py
-# Backend runs on: http://localhost:5000
 ```
 
 ### 2. Test GPX Upload
@@ -92,14 +87,14 @@ python test_gpx_functionality.py
 - Three.js for 3D visualization
 - No build process required
 
-### Backend
+### Backend (Optional - for image filtering utility)
 - Python 3.8+
 - Flask
 - PIL (Python Imaging Library)
 - NumPy
 - xml.etree.ElementTree
 
-Install backend dependencies:
+Install image filter dependencies (if needed):
 ```bash
 pip install -r image-filter-web/requirements.txt
 ```
