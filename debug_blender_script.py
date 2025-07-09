@@ -1,51 +1,4 @@
-#!/usr/bin/env python3
-"""
-Blender GPX Preview Generator
-Generates high-quality 3D preview images from GPX files using Blender
-"""
 
-import os
-import sys
-import subprocess
-import json
-import tempfile
-import shutil
-from pathlib import Path
-
-class BlenderGPXPreview:
-    def __init__(self, blender_executable=None):
-        """Initialize the Blender GPX preview generator"""
-        self.blender_executable = blender_executable or self.find_blender()
-        
-    def find_blender(self):
-        """Find Blender executable on the system"""
-        possible_paths = [
-            r"C:\Program Files\Blender Foundation\Blender 4.4\blender.exe",
-            r"C:\Program Files\Blender Foundation\Blender 4.3\blender.exe", 
-            r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe",
-            # Steam version
-            os.path.expanduser(r"~\AppData\Local\Steam\steamapps\common\Blender\blender.exe"),
-        ]
-        
-        for path in possible_paths:
-            if os.path.exists(path):
-                return path
-                
-        # Try to find in PATH
-        try:
-            result = subprocess.run(['where', 'blender'], capture_output=True, text=True)
-            if result.returncode == 0:
-                return result.stdout.strip().split('\n')[0]
-        except:
-            pass
-            
-        raise FileNotFoundError("Blender executable not found. Please install Blender or specify the path.")
-    
-    def generate_preview_script(self, gpx_file, output_image, settings=None):
-        """Generate a Blender Python script for creating GPX previews"""
-        settings = settings or {}
-        
-        script = f'''
 import bpy
 import bmesh
 import xml.etree.ElementTree as ET
@@ -77,13 +30,13 @@ bpy.ops.object.delete(use_global=False)
 # GPX parsing function
 def parse_gpx(filepath):
     """Parse GPX file and extract coordinates"""
-    print(f"Parsing GPX file: {{filepath}}")
+    print(f"Parsing GPX file: {filepath}")
     
     tree = ET.parse(filepath)
     root = tree.getroot()
     
     # Handle different GPX namespaces
-    ns = {{'default': 'http://www.topografix.com/GPX/1/1'}}
+    ns = {'default': 'http://www.topografix.com/GPX/1/1'}
     
     coordinates = []
     
@@ -95,9 +48,9 @@ def parse_gpx(filepath):
     
     if not points:
         # Try without namespace prefix but with full namespace
-        points = root.findall('.//{{http://www.topografix.com/GPX/1/1}}trkpt')
+        points = root.findall('.//{http://www.topografix.com/GPX/1/1}trkpt')
         if not points:
-            points = root.findall('.//{{http://www.topografix.com/GPX/1/1}}rtept')
+            points = root.findall('.//{http://www.topografix.com/GPX/1/1}rtept')
     
     if not points:
         # Try completely without namespace (some GPX files don't use it)
@@ -105,7 +58,7 @@ def parse_gpx(filepath):
         if not points:
             points = root.findall('.//rtept')
     
-    print(f"Found {{len(points)}} points")
+    print(f"Found {len(points)} points")
     
     for pt in points:
         lat = float(pt.get('lat'))
@@ -116,12 +69,12 @@ def parse_gpx(filepath):
         if ele_elem is None:
             ele_elem = pt.find('default:ele', ns)
         if ele_elem is None:
-            ele_elem = pt.find('{{http://www.topografix.com/GPX/1/1}}ele')
+            ele_elem = pt.find('{http://www.topografix.com/GPX/1/1}ele')
         ele = float(ele_elem.text) if ele_elem is not None else 0
         
         coordinates.append((lat, lon, ele))
     
-    print(f"Extracted {{len(coordinates)}} coordinates")
+    print(f"Extracted {len(coordinates)} coordinates")
     return coordinates
 
 def lat_lon_to_meters(lat, lon, center_lat, center_lon):
@@ -146,8 +99,8 @@ def create_trail_from_gpx(gpx_file, trail_thickness=0.2, elevation_scale=0.001):
     center_lon = sum(coord[1] for coord in coordinates) / len(coordinates)
     min_ele = min(coord[2] for coord in coordinates)
     
-    print(f"Center: {{center_lat:.6f}}, {{center_lon:.6f}}")
-    print(f"Min elevation: {{min_ele:.1f}}m")
+    print(f"Center: {center_lat:.6f}, {center_lon:.6f}")
+    print(f"Min elevation: {min_ele:.1f}m")
     
     # Convert to 3D points
     trail_points = []
@@ -181,7 +134,7 @@ def create_trail_from_gpx(gpx_file, trail_thickness=0.2, elevation_scale=0.001):
     trail_obj.select_set(True)
     bpy.ops.object.convert(target='MESH')
     
-    print(f"Trail created with {{len(trail_points)}} points")
+    print(f"Trail created with {len(trail_points)} points")
     return trail_obj, trail_points
 
 def create_base_terrain(trail_points, base_size=50, base_thickness=2):
@@ -227,7 +180,7 @@ def setup_materials():
     trail_mat.node_tree.links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
     
     # Set trail color (bright orange/red)
-    bsdf.inputs['Base Color'].default_value = ({settings.get('trail_color', [0.9, 0.3, 0.1, 1.0])})
+    bsdf.inputs['Base Color'].default_value = ([0.9, 0.3, 0.1, 1.0])
     bsdf.inputs['Metallic'].default_value = 0.2
     bsdf.inputs['Roughness'].default_value = 0.3
     
@@ -241,7 +194,7 @@ def setup_materials():
     base_mat.node_tree.links.new(bsdf_base.outputs['BSDF'], output_base.inputs['Surface'])
     
     # Set base color (earth tone)
-    bsdf_base.inputs['Base Color'].default_value = ({settings.get('base_color', [0.4, 0.3, 0.2, 1.0])})
+    bsdf_base.inputs['Base Color'].default_value = ([0.4, 0.3, 0.2, 1.0])
     bsdf_base.inputs['Roughness'].default_value = 0.8
     
     return trail_mat, base_mat
@@ -308,11 +261,11 @@ def setup_camera(trail_obj, trail_points):
 
 # Main execution
 def main():
-    gpx_file = r"{gpx_file}"
-    output_file = r"{output_image}"
+    gpx_file = r"sample_trail.gpx"
+    output_file = r"C:\Elevon\debug_preview.png"
     
-    print(f"Processing GPX file: {{gpx_file}}")
-    print(f"Output file: {{output_file}}")
+    print(f"Processing GPX file: {gpx_file}")
+    print(f"Output file: {output_file}")
     
     # Make sure output directory exists
     output_dir = os.path.dirname(output_file)
@@ -322,8 +275,8 @@ def main():
     # Create trail from GPX
     trail_obj, trail_points = create_trail_from_gpx(
         gpx_file,
-        trail_thickness={settings.get('trail_thickness', 0.3)},
-        elevation_scale={settings.get('elevation_scale', 0.001)}
+        trail_thickness=0.3,
+        elevation_scale=0.001
     )
     
     if not trail_obj:
@@ -331,7 +284,7 @@ def main():
         return
     
     # Create base terrain
-    base_obj = create_base_terrain(trail_points, base_size={settings.get('base_size', 50)})
+    base_obj = create_base_terrain(trail_points, base_size=50)
     
     # Setup materials
     trail_mat, base_mat = setup_materials()
@@ -349,18 +302,18 @@ def main():
     # Render settings
     scene = bpy.context.scene
     scene.render.engine = 'CYCLES'
-    scene.render.resolution_x = {settings.get('width', 1920)}
-    scene.render.resolution_y = {settings.get('height', 1080)}
+    scene.render.resolution_x = 1920
+    scene.render.resolution_y = 1080
     scene.render.filepath = output_file
     scene.render.image_settings.file_format = 'PNG'
     
     # Cycles settings for quality
-    scene.cycles.samples = {settings.get('samples', 64)}
+    scene.cycles.samples = 64
     scene.cycles.use_denoising = True
     
-    print(f"Rendering to: {{output_file}}")
-    print(f"Resolution: {{scene.render.resolution_x}}x{{scene.render.resolution_y}}")
-    print(f"Samples: {{scene.cycles.samples}}")
+    print(f"Rendering to: {output_file}")
+    print(f"Resolution: {scene.render.resolution_x}x{scene.render.resolution_y}")
+    print(f"Samples: {scene.cycles.samples}")
     
     # Render
     bpy.ops.render.render(write_still=True)
@@ -371,87 +324,6 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print(f"Error in main execution: {{e}}")
+        print(f"Error in main execution: {e}")
         import traceback
         traceback.print_exc()
-'''
-        return script
-    
-    def generate_preview(self, gpx_file, output_image, settings=None):
-        """Generate a preview image from a GPX file using Blender"""
-        if not os.path.exists(gpx_file):
-            raise FileNotFoundError(f"GPX file not found: {gpx_file}")
-        
-        # Create temporary script file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as script_file:
-            script_content = self.generate_preview_script(gpx_file, output_image, settings)
-            script_file.write(script_content)
-            script_path = script_file.name
-        
-        try:
-            # Run Blender in background mode
-            cmd = [
-                self.blender_executable,
-                '--background',
-                '--python', script_path
-            ]
-            
-            print(f"Running Blender command: {' '.join(cmd)}")
-            
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=300  # 5 minute timeout
-            )
-            
-            if result.returncode != 0:
-                raise RuntimeError(f"Blender execution failed: {result.stderr}")
-            
-            if not os.path.exists(output_image):
-                raise RuntimeError("Output image was not created")
-            
-            return {
-                'success': True,
-                'output_file': output_image,
-                'stdout': result.stdout,
-                'stderr': result.stderr
-            }
-            
-        finally:
-            # Clean up temporary script
-            try:
-                os.unlink(script_path)
-            except:
-                pass
-
-def main():
-    """CLI interface for testing"""
-    import argparse
-    
-    parser = argparse.ArgumentParser(description='Generate GPX preview using Blender')
-    parser.add_argument('gpx_file', help='Path to GPX file')
-    parser.add_argument('output_image', help='Output image path')
-    parser.add_argument('--width', type=int, default=1920, help='Image width')
-    parser.add_argument('--height', type=int, default=1080, help='Image height')
-    parser.add_argument('--samples', type=int, default=64, help='Render samples')
-    parser.add_argument('--blender', help='Path to Blender executable')
-    
-    args = parser.parse_args()
-    
-    settings = {
-        'width': args.width,
-        'height': args.height,
-        'samples': args.samples
-    }
-    
-    generator = BlenderGPXPreview(args.blender)
-    result = generator.generate_preview(args.gpx_file, args.output_image, settings)
-    
-    if result['success']:
-        print(f"✅ Preview generated successfully: {result['output_file']}")
-    else:
-        print(f"❌ Failed to generate preview")
-
-if __name__ == "__main__":
-    main()

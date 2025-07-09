@@ -49,22 +49,40 @@ def parse_gpx_stats(gpx_file):
         
         coordinates = []
         
-        # Try track points first
+        # Try track points first with namespace
         points = root.findall('.//default:trkpt', ns)
         if not points:
-            # Try route points
+            # Try route points with namespace
             points = root.findall('.//default:rtept', ns)
+        
+        if not points:
+            # Try without namespace (some GPX files don't use explicit prefixes)
+            points = root.findall('.//{http://www.topografix.com/GPX/1/1}trkpt')
+            if not points:
+                points = root.findall('.//{http://www.topografix.com/GPX/1/1}rtept')
+        
+        if not points:
+            # Try completely without namespace
+            points = root.findall('.//trkpt')
+            if not points:
+                points = root.findall('.//rtept')
+        
+        print(f"Found {len(points)} points in GPX file")
         
         for pt in points:
             lat = float(pt.get('lat'))
             lon = float(pt.get('lon'))
             
             # Get elevation if available
-            ele_elem = pt.find('default:ele', ns)
+            ele_elem = pt.find('ele')
+            if ele_elem is None:
+                ele_elem = pt.find('default:ele', ns)
+            if ele_elem is None:
+                ele_elem = pt.find('{http://www.topografix.com/GPX/1/1}ele')
             ele = float(ele_elem.text) if ele_elem is not None else 0
             
             # Get timestamp if available
-            time_elem = pt.find('default:time', ns)
+            time_elem = pt.find('time') or pt.find('default:time', ns) or pt.find('{http://www.topografix.com/GPX/1/1}time')
             timestamp = time_elem.text if time_elem is not None else None
             
             coordinates.append((lat, lon, ele, timestamp))
@@ -156,7 +174,7 @@ def upload_gpx():
         # Generate unique filename
         file_id = str(uuid.uuid4())
         gpx_filename = f"{file_id}.gpx"
-        gpx_path = os.path.join(UPLOAD_FOLDER, gpx_filename)
+        gpx_path = os.path.abspath(os.path.join(UPLOAD_FOLDER, gpx_filename))
         
         # Save uploaded file
         file.save(gpx_path)
@@ -177,7 +195,7 @@ def upload_gpx():
         if blender_generator:
             try:
                 preview_filename = f"{file_id}_preview.png"
-                preview_path = os.path.join(PREVIEW_FOLDER, preview_filename)
+                preview_path = os.path.abspath(os.path.join(PREVIEW_FOLDER, preview_filename))
                 
                 # Get render settings from request
                 settings = {
@@ -189,12 +207,20 @@ def upload_gpx():
                 }
                 
                 print(f"Generating Blender preview for {gpx_filename}...")
+                print(f"GPX path: {gpx_path}")
+                print(f"Preview path: {preview_path}")
+                print(f"Settings: {settings}")
+                
                 result = blender_generator.generate_preview(gpx_path, preview_path, settings)
+                print(f"Blender result: {result}")
                 
                 if result['success']:
                     response_data['preview_url'] = f"/api/preview/{file_id}"
                     response_data['blender_output'] = result.get('stdout', '')
                     print(f"✅ Preview generated: {preview_path}")
+                    print(f"Preview file exists: {os.path.exists(preview_path)}")
+                    if os.path.exists(preview_path):
+                        print(f"Preview file size: {os.path.getsize(preview_path)} bytes")
                 else:
                     response_data['preview_error'] = "Failed to generate Blender preview"
                     print(f"❌ Preview generation failed")
@@ -213,7 +239,7 @@ def upload_gpx():
 def get_preview(file_id):
     """Serve generated preview image"""
     preview_filename = f"{file_id}_preview.png"
-    preview_path = os.path.join(PREVIEW_FOLDER, preview_filename)
+    preview_path = os.path.abspath(os.path.join(PREVIEW_FOLDER, preview_filename))
     
     if not os.path.exists(preview_path):
         return jsonify({'error': 'Preview not found'}), 404
@@ -227,7 +253,7 @@ def regenerate_preview(file_id):
     if not blender_generator:
         return jsonify({'error': 'Blender not available'}), 503
     
-    gpx_path = os.path.join(UPLOAD_FOLDER, f"{file_id}.gpx")
+    gpx_path = os.path.abspath(os.path.join(UPLOAD_FOLDER, f"{file_id}.gpx"))
     if not os.path.exists(gpx_path):
         return jsonify({'error': 'GPX file not found'}), 404
     
@@ -245,7 +271,7 @@ def regenerate_preview(file_id):
         }
         
         preview_filename = f"{file_id}_preview.png"
-        preview_path = os.path.join(PREVIEW_FOLDER, preview_filename)
+        preview_path = os.path.abspath(os.path.join(PREVIEW_FOLDER, preview_filename))
         
         print(f"Regenerating preview with settings: {settings}")
         result = blender_generator.generate_preview(gpx_path, preview_path, settings)
@@ -267,8 +293,8 @@ def regenerate_preview(file_id):
 def cleanup_files(file_id):
     """Clean up uploaded files and previews"""
     try:
-        gpx_path = os.path.join(UPLOAD_FOLDER, f"{file_id}.gpx")
-        preview_path = os.path.join(PREVIEW_FOLDER, f"{file_id}_preview.png")
+        gpx_path = os.path.abspath(os.path.join(UPLOAD_FOLDER, f"{file_id}.gpx"))
+        preview_path = os.path.abspath(os.path.join(PREVIEW_FOLDER, f"{file_id}_preview.png"))
         
         files_removed = []
         if os.path.exists(gpx_path):

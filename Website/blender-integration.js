@@ -410,17 +410,137 @@ class EnhancedGPXUpload {
 
     // Existing Three.js methods would go here...
     extractCoordinatesFromGPX(xmlDoc) {
-        // Implementation from existing code
-        return [];
+        const coordinates = [];
+        
+        // Try to find track points with namespace
+        const namespaceURI = 'http://www.topografix.com/GPX/1/1';
+        let trkpts = xmlDoc.getElementsByTagNameNS(namespaceURI, 'trkpt');
+        
+        // If no namespaced elements found, try without namespace
+        if (trkpts.length === 0) {
+            trkpts = xmlDoc.getElementsByTagName('trkpt');
+        }
+        
+        // Convert NodeList to Array and extract coordinates
+        Array.from(trkpts).forEach(trkpt => {
+            const lat = parseFloat(trkpt.getAttribute('lat'));
+            const lon = parseFloat(trkpt.getAttribute('lon'));
+            
+            // Try to get elevation
+            let ele = 0;
+            let eleElem = trkpt.getElementsByTagNameNS(namespaceURI, 'ele')[0];
+            if (!eleElem) {
+                eleElem = trkpt.getElementsByTagName('ele')[0];
+            }
+            if (eleElem) {
+                ele = parseFloat(eleElem.textContent) || 0;
+            }
+            
+            coordinates.push({ lat, lon, ele });
+        });
+        
+        // If no track points found, try route points
+        if (coordinates.length === 0) {
+            let rtepts = xmlDoc.getElementsByTagNameNS(namespaceURI, 'rtept');
+            if (rtepts.length === 0) {
+                rtepts = xmlDoc.getElementsByTagName('rtept');
+            }
+            
+            Array.from(rtepts).forEach(rtept => {
+                const lat = parseFloat(rtept.getAttribute('lat'));
+                const lon = parseFloat(rtept.getAttribute('lon'));
+                
+                let ele = 0;
+                let eleElem = rtept.getElementsByTagNameNS(namespaceURI, 'ele')[0];
+                if (!eleElem) {
+                    eleElem = rtept.getElementsByTagName('ele')[0];
+                }
+                if (eleElem) {
+                    ele = parseFloat(eleElem.textContent) || 0;
+                }
+                
+                coordinates.push({ lat, lon, ele });
+            });
+        }
+        
+        console.log(`Extracted ${coordinates.length} coordinates from GPX`);
+        return coordinates;
     }
 
     calculateStats(coordinates) {
-        // Implementation from existing code
-        return {};
+        if (coordinates.length === 0) {
+            return {};
+        }
+        
+        let minLat = coordinates[0].lat;
+        let maxLat = coordinates[0].lat;
+        let minLon = coordinates[0].lon;
+        let maxLon = coordinates[0].lon;
+        let minEle = coordinates[0].ele;
+        let maxEle = coordinates[0].ele;
+        let totalDistance = 0;
+        
+        // Calculate bounds and elevation stats
+        coordinates.forEach((coord, index) => {
+            minLat = Math.min(minLat, coord.lat);
+            maxLat = Math.max(maxLat, coord.lat);
+            minLon = Math.min(minLon, coord.lon);
+            maxLon = Math.max(maxLon, coord.lon);
+            minEle = Math.min(minEle, coord.ele);
+            maxEle = Math.max(maxEle, coord.ele);
+            
+            // Calculate distance between consecutive points
+            if (index > 0) {
+                const prev = coordinates[index - 1];
+                const distance = this.calculateDistance(prev.lat, prev.lon, coord.lat, coord.lon);
+                totalDistance += distance;
+            }
+        });
+        
+        return {
+            total_points: coordinates.length,
+            total_distance: totalDistance.toFixed(2),
+            elevation_gain: (maxEle - minEle).toFixed(2),
+            min_elevation: minEle.toFixed(2),
+            max_elevation: maxEle.toFixed(2),
+            bounds: {
+                min_lat: minLat,
+                max_lat: maxLat,
+                min_lon: minLon,
+                max_lon: maxLon
+            }
+        };
+    }
+    
+    calculateDistance(lat1, lon1, lat2, lon2) {
+        // Haversine formula for calculating distance between two points
+        const R = 6371; // Earth's radius in kilometers
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
     }
 
     createThreeJSVisualization(coordinates) {
-        // Implementation from existing code
+        // Create a simple Three.js visualization
+        const previewContainer = document.getElementById('preview-container');
+        if (!previewContainer) return;
+        
+        previewContainer.innerHTML = `
+            <div class="threejs-preview">
+                <div class="preview-placeholder">
+                    <h3>🌄 3D Trail Preview</h3>
+                    <p>${coordinates.length} track points loaded</p>
+                    <p><em>Three.js visualization coming soon...</em></p>
+                    <div class="fallback-info">
+                        <p>This is the fallback mode. For high-quality 3D renders, ensure Blender backend is running.</p>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 }
 
