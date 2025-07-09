@@ -38,7 +38,7 @@ def parse_gpx(gpx_file):
         
         points = []
         
-        # Try to find track points
+        # Try to find track points with namespaces
         for ns_prefix, ns_uri in namespaces.items():
             tracks = root.findall(f'.//{{{ns_uri}}}trkpt')
             if tracks:
@@ -53,8 +53,22 @@ def parse_gpx(gpx_file):
                     points.append({'lat': lat, 'lon': lon, 'ele': ele})
                 break
         
+        # If no namespaced track points found, try without namespace
         if not points:
-            # Try waypoints if no track points found
+            tracks = root.findall('.//trkpt')
+            if tracks:
+                for trkpt in tracks:
+                    lat = float(trkpt.get('lat'))
+                    lon = float(trkpt.get('lon'))
+                    
+                    # Try to get elevation
+                    ele_elem = trkpt.find('ele')
+                    ele = float(ele_elem.text) if ele_elem is not None else 0
+                    
+                    points.append({'lat': lat, 'lon': lon, 'ele': ele})
+        
+        # Try waypoints if no track points found
+        if not points:
             for ns_prefix, ns_uri in namespaces.items():
                 waypoints = root.findall(f'.//{{{ns_uri}}}wpt')
                 if waypoints:
@@ -67,6 +81,19 @@ def parse_gpx(gpx_file):
                         
                         points.append({'lat': lat, 'lon': lon, 'ele': ele})
                     break
+            
+            # Try waypoints without namespace
+            if not points:
+                waypoints = root.findall('.//wpt')
+                if waypoints:
+                    for wpt in waypoints:
+                        lat = float(wpt.get('lat'))
+                        lon = float(wpt.get('lon'))
+                        
+                        ele_elem = wpt.find('ele')
+                        ele = float(ele_elem.text) if ele_elem is not None else 0
+                        
+                        points.append({'lat': lat, 'lon': lon, 'ele': ele})
         
         return points
     except Exception as e:
@@ -168,8 +195,15 @@ def upload_gpx():
     
     if file and allowed_file(file.filename):
         try:
+            # Reset file pointer to beginning
+            file.stream.seek(0)
+            
             # Parse the GPX file directly from memory
             points = parse_gpx(file.stream)
+            
+            print(f"Debug: Found {len(points)} points in GPX file")
+            if points:
+                print(f"Debug: Sample point: {points[0]}")
             
             if not points:
                 return jsonify({'error': 'No valid track data found in GPX file'}), 400
@@ -187,6 +221,7 @@ def upload_gpx():
             })
             
         except Exception as e:
+            print(f"Debug: Error processing GPX file: {str(e)}")
             return jsonify({'error': f'Failed to process GPX file: {str(e)}'}), 500
     
     return jsonify({'error': 'Invalid file type. Please upload a .gpx file'}), 400
