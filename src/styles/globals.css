@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #F4F1ED;
+    color: #0F1923;
+    font-family: var(--font-inter), Inter, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: #C8372D;
+    color: #F4F1ED;
+  }
+}
+
+@layer utilities {
+  .label-eyebrow {
+    font-family: var(--font-inter), Inter, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #8C8880;
+  }
+
+  .label-nav {
+    font-family: var(--font-inter), Inter, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 11px;
+  }
+
+  /* Bebas Neue sits low in its em box; nudge baseline for tight headline blocks */
+  .font-bebas {
+    line-height: 0.92;
+  }
+}
+
+/* Custom thin scrollbar for the search dropdown */
+.dropdown-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.dropdown-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(15, 25, 35, 0.2);
+}
+.dropdown-scroll::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Minimal custom range slider — thin stone track, square slate thumb.
+   No border-radius / shadow / gradient, matching the site's flat aesthetic. */
+.elevon-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1px;
+  background-color: #8C8880;
+  cursor: pointer;
+  outline: none;
+}
+.elevon-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background-color: #0F1923;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top: -6px; /* center the 12px thumb on the 1px track */
+}
+.elevon-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background-color: #0F1923;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+.elevon-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background-color: #8C8880;
+}
+.elevon-range::-moz-range-track {
+  height: 1px;
+  background-color: #8C8880;
+}
+.elevon-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #2C4A6E;
+  outline-offset: 2px;
+}
+.elevon-range:focus-visible::-moz-range-thumb {
+  outline: 2px solid #2C4A6E;
+  outline-offset: 2px;
+}
