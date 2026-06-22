@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import TrailPreview, { type DifficultyStats } from './TrailPreview'
 import {
@@ -9,6 +9,7 @@ import {
   type LiftLine,
   CATEGORY_COLOR,
   DEFAULT_CATEGORIES,
+  difficultyCategory,
 } from '@/lib/mapCategories'
 
 // WebGL must not render on the server.
@@ -54,6 +55,24 @@ const DEFAULT_HEIGHT_EXAG = 2.0
 
 const M_TO_FT = 3.28084
 const toFt = (m: number) => Math.round(m * M_TO_FT)
+
+// Derive trail difficulty counts from the terrain response's trail array so we
+// don't need the 2D TrailPreview to render before stats are available.
+function computeStatsFromTrails(
+  trails: TrailLine[] | null,
+): DifficultyStats | null {
+  if (!trails || trails.length === 0) return null
+  const s = { easy: 0, intermediate: 0, advanced: 0, other: 0, total: 0 }
+  for (const t of trails) {
+    const cat = difficultyCategory(t.difficulty)
+    if (cat === 'green') s.easy++
+    else if (cat === 'blue') s.intermediate++
+    else if (cat === 'black') s.advanced++
+    else s.other++
+    s.total++
+  }
+  return s
+}
 
 // Difficulty swatches — colors match the 2D/3D trail palette exactly.
 const DIFFICULTY_META: {
@@ -295,9 +314,40 @@ export default function MapPreview({
     currentIdRef.current = mountainId
   }, [mountainId])
 
-  // Reset to the 2D default whenever the mountain changes.
+  const fetchTerrain = useCallback(async () => {
+    if (!mountainId) return
+    const id = mountainId
+    setMode('loading3d')
+    setTerrain(null)
+    try {
+      const params = new URLSearchParams({ mountainId: id })
+      if (lat !== null) params.set('lat', String(lat))
+      if (lng !== null) params.set('lng', String(lng))
+
+      const res = await fetch(`/api/terrain-mesh?${params.toString()}`)
+      if (!res.ok) throw new Error('terrain unavailable')
+      const json = (await res.json()) as TerrainData
+
+      if (currentIdRef.current !== id) return
+      setTerrain(json)
+      setMode('3d')
+
+      // Derive stats directly from the terrain response so the stats section
+      // populates without needing the 2D TrailPreview to render first.
+      if (json.trails) {
+        setTrailsAvailable(true)
+        const derived = computeStatsFromTrails(json.trails)
+        if (derived) setStats(derived)
+      }
+    } catch {
+      if (currentIdRef.current === id) setMode('error3d')
+    }
+  }, [mountainId, lat, lng])
+
+  // Auto-start 3D fetch whenever a mountain is selected. Pre-load the Three.js
+  // bundle in parallel with the data so both arrive together.
   useEffect(() => {
-    setMode('2d')
+    setMode('loading3d')
     setTrailsAvailable(false)
     setTerrain(null)
     setStats(null)
@@ -305,6 +355,15 @@ export default function MapPreview({
     setActiveCategories(DEFAULT_CATEGORIES)
     setLifts(null)
     liftStatusRef.current = 'idle'
+
+    if (mountainId) {
+      // Fire-and-forget import warms the JS chunk in parallel with the fetch.
+      import('./TerrainMesh').catch(() => {/* ignore */})
+      fetchTerrain()
+    }
+  // fetchTerrain is stable for this mountainId; listing it would re-run on
+  // every lat/lng change which is not desired here.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mountainId])
 
   // Activate a category, dropping the longest-active one (FIFO) so exactly 3
@@ -349,31 +408,6 @@ export default function MapPreview({
     return () => cancelAnimationFrame(raf)
   }, [mode])
 
-  const fetchTerrain = async () => {
-    if (!mountainId) return
-    const id = mountainId
-    setMode('loading3d')
-    setTerrain(null)
-    try {
-      // Pass lat/lng so the route can still render terrain-only when a mountain
-      // has a center point but no detailed trail file. No padding param -> the
-      // route uses its default and can serve the pre-generated cache.
-      const params = new URLSearchParams({ mountainId: id })
-      if (lat !== null) params.set('lat', String(lat))
-      if (lng !== null) params.set('lng', String(lng))
-
-      const res = await fetch(`/api/terrain-mesh?${params.toString()}`)
-      if (!res.ok) throw new Error('terrain unavailable')
-      const json = (await res.json()) as TerrainData
-
-      if (currentIdRef.current !== id) return // mountain changed mid-flight
-      setTerrain(json)
-      setMode('3d')
-    } catch {
-      if (currentIdRef.current === id) setMode('error3d')
-    }
-  }
-
   if (!mountainId) return null
 
   const fade = `transition-opacity duration-[250ms] ${
@@ -392,15 +426,24 @@ export default function MapPreview({
             We couldn&rsquo;t load terrain data for this mountain right now. The
             2D preview above still shows your trails.
           </p>
-          <button
-            type="button"
-            onClick={() => setMode('2d')}
-            className="group mt-6 inline-flex items-center border-2 border-slate bg-transparent px-6 py-3 transition-colors duration-200 hover:bg-slate"
-          >
-            <span className="label-nav text-slate transition-colors duration-200 group-hover:text-snow">
-              Back to 2D
-            </span>
-          </button>
+          <div className="mt-6 flex gap-4">
+            <button
+              type="button"
+              onClick={fetchTerrain}
+              className="group inline-flex items-center border-2 border-slate bg-transparent px-6 py-3 transition-colors duration-200 hover:bg-slate"
+            >
+              <span className="label-nav text-slate transition-colors duration-200 group-hover:text-snow">
+                Retry
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('2d')}
+              className="font-inter text-[12px] text-stone underline-offset-4 transition-colors duration-200 hover:text-slate hover:underline"
+            >
+              View in 2D instead
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -452,7 +495,7 @@ export default function MapPreview({
       </>
     )
   } else {
-    // Default 2D preview with an optional "View in 3D" affordance.
+    // 2D fallback — shown when the user taps "Back to 2D" from the 3D view.
     preview = (
       <>
         <TrailPreview
