@@ -28,7 +28,8 @@
     letter-spacing: 0.18em;
     font-size: 11px;
     line-height: 1.4;
-    color: #8C8880;
+    /* Matches the darkened `stone` token for WCAG AA contrast on snow. */
+    color: #6B6862;
   }
 
   .label-nav {
@@ -62,7 +63,7 @@
   appearance: none;
   width: 100%;
   height: 1px;
-  background-color: #8C8880;
+  background-color: #6B6862;
   cursor: pointer;
   outline: none;
 }
@@ -87,11 +88,11 @@
 }
 .elevon-range::-webkit-slider-runnable-track {
   height: 1px;
-  background-color: #8C8880;
+  background-color: #6B6862;
 }
 .elevon-range::-moz-range-track {
   height: 1px;
-  background-color: #8C8880;
+  background-color: #6B6862;
 }
 .elevon-range:focus-visible::-webkit-slider-thumb {
   outline: 2px solid #2C4A6E;

@@ -26,6 +26,7 @@ const MAX_RESULTS = 8
 export default function MountainSearch({ onSelect, value }: MountainSearchProps) {
   const [areas, setAreas] = useState<SkiArea[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [query, setQuery] = useState(value)
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
@@ -38,16 +39,23 @@ export default function MountainSearch({ onSelect, value }: MountainSearchProps)
 
   useEffect(() => {
     let cancelled = false
+    setLoading(true)
+    setLoadError(false)
     fetch('/data/ski-areas.json')
-      .then((res) => res.json())
-      .then((data: SkiArea[]) => {
-        if (!cancelled) {
-          setAreas(data)
-          setLoading(false)
-        }
+      .then((res) => {
+        if (!res.ok) throw new Error(`ski-areas ${res.status}`)
+        return res.json() as Promise<SkiArea[]>
+      })
+      .then((data) => {
+        if (cancelled) return
+        if (!Array.isArray(data)) throw new Error('malformed ski-areas data')
+        setAreas(data)
+        setLoading(false)
       })
       .catch(() => {
-        if (!cancelled) setLoading(false)
+        if (cancelled) return
+        setLoadError(true)
+        setLoading(false)
       })
     return () => {
       cancelled = true
@@ -123,6 +131,18 @@ export default function MountainSearch({ onSelect, value }: MountainSearchProps)
       {loading ? (
         <p className="mt-3 py-2 font-inter text-[16px] italic text-stone">
           Loading mountains&hellip;
+        </p>
+      ) : loadError ? (
+        <p className="mt-3 py-2 font-inter text-[14px] leading-relaxed text-stone">
+          We couldn&rsquo;t load the mountain list right now. Please refresh the
+          page &mdash; or email{' '}
+          <a
+            href="mailto:westley.kleinman@duke.edu"
+            className="text-stone underline-offset-2 transition-colors duration-200 hover:text-slate hover:underline"
+          >
+            westley.kleinman@duke.edu
+          </a>{' '}
+          and we&rsquo;ll map your mountain by hand.
         </p>
       ) : (
         <input

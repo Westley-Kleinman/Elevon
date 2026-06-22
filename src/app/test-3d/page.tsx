@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 // WebGL must not render on the server.
@@ -42,7 +43,15 @@ interface TerrainData {
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
+// Dev-only harness — not part of the shipped product. NODE_ENV is statically
+// inlined at build, so this route 404s in production bundles. The guard lives in
+// a wrapper (below) so the inner component's hooks stay unconditional.
 export default function Test3DPage() {
+  if (process.env.NODE_ENV === 'production') notFound()
+  return <Test3DHarness />
+}
+
+function Test3DHarness() {
   const [status, setStatus] = useState<Status>('idle')
   const [data, setData] = useState<TerrainData | null>(null)
   const [errorMsg, setErrorMsg] = useState('')

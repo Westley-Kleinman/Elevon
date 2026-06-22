@@ -14,7 +14,6 @@
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "@stripe/stripe-js": "^9.8.0",
-    "d3-contour": "^4.0.2",
     "fuse.js": "^7.4.2",
     "geotiff": "^3.0.5",
     "next": "^14.2.0",
