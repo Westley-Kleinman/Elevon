@@ -134,16 +134,6 @@ export async function GET(request: Request) {
     const maxLng = Number(searchParams.get('maxLng'))
     const mountainId = searchParams.get('mountainId')
 
-    if (getOpenTopoKeys().length === 0) {
-      console.error(
-        'terrain-mesh: no OpenTopography API keys configured (set OPENTOPO_API_KEYS)',
-      )
-      return NextResponse.json(
-        { error: 'Elevation service is not configured.' },
-        { status: 500 },
-      )
-    }
-
     // Optional frontend-tunable padding around the trail footprint. Clamp to a
     // sane [0, 1] range; fall back to the default when missing/invalid.
     const paddingParam = Number(searchParams.get('padding'))
@@ -157,9 +147,11 @@ export async function GET(request: Request) {
     const trails = mountainId ? await loadTrails(origin, mountainId) : null
     const trailBounds = boundsFromTrails(trails, padding)
 
-    // Fast path: pre-generated cache. Only for the trail-footprint box at the
-    // DEFAULT padding (a custom padding slider value changes the requested area,
-    // so it must re-fetch live). Trails are merged back in from the trail file.
+    // Fast path: pre-generated cache. Checked BEFORE the API-key guard so that
+    // cached mountains (485 pre-generated resorts) work even when all keys are
+    // exhausted or not yet configured. Only applies at DEFAULT padding — a
+    // custom value changes the requested area, so it must re-fetch live.
+    // Trails are merged back in from the trail file.
     const usingDefaultPadding =
       searchParams.get('padding') === null ||
       Math.abs(padding - TRAIL_BBOX_PADDING) < 1e-9
@@ -168,6 +160,17 @@ export async function GET(request: Request) {
       if (cached) {
         return NextResponse.json({ ...cached, trails })
       }
+    }
+
+    // Only needed past this point (live OpenTopography fetch for uncached mountains).
+    if (getOpenTopoKeys().length === 0) {
+      console.error(
+        'terrain-mesh: no OpenTopography API keys configured (set OPENTOPO_API_KEYS)',
+      )
+      return NextResponse.json(
+        { error: 'Elevation service is not configured.' },
+        { status: 500 },
+      )
     }
 
     const lat = Number(searchParams.get('lat'))
