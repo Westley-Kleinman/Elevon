@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { readFile } from 'fs/promises'
-import path from 'path'
 import { fromArrayBuffer } from 'geotiff'
 import { squareBounds } from '@/lib/geoBounds'
+import { getOpenTopoKeys, fetchDemWithKeyFallback } from '@/lib/opentopo'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -68,72 +67,77 @@ function boundsFromTrails(
   return squareBounds(minLat, maxLat, minLng, maxLng, padding)
 }
 
-// Read a pre-generated terrain cache file for a mountain, if present. Shape
-// matches the live response minus `trails` (those come from the trail file).
-async function loadTerrainCache(
-  mountainId: string,
-): Promise<Omit<TerrainResponse, 'trails'> | null> {
-  if (!/^[a-zA-Z0-9_-]+$/.test(mountainId)) return null
+// Fetch a static JSON asset from public/ over HTTP against the current
+// deployment origin. We deliberately avoid `fs` here: on Vercel the public/
+// directory is served as CDN assets and is NOT present on the serverless
+// function's filesystem, and dynamically-named files are never bundled. Going
+// through the asset URL works identically in local dev and on Vercel.
+async function fetchPublicJson<T>(origin: string, assetPath: string): Promise<T | null> {
   try {
-    const filePath = path.join(
-      process.cwd(),
-      'public',
-      'data',
-      'terrain',
-      `${mountainId}.json`,
-    )
-    const raw = await readFile(filePath, 'utf-8')
-    const parsed = JSON.parse(raw) as Omit<TerrainResponse, 'trails'>
-    if (!Array.isArray(parsed.elevations) || !parsed.usedBounds) return null
-    return parsed
+    const res = await fetch(`${origin}${assetPath}`)
+    if (!res.ok) return null
+    return (await res.json()) as T
   } catch {
     return null
   }
+}
+
+// Read a pre-generated terrain cache file for a mountain, if present. Shape
+// matches the live response minus `trails` (those come from the trail file).
+async function loadTerrainCache(
+  origin: string,
+  mountainId: string,
+): Promise<Omit<TerrainResponse, 'trails'> | null> {
+  if (!/^[a-zA-Z0-9_-]+$/.test(mountainId)) return null
+  const parsed = await fetchPublicJson<Omit<TerrainResponse, 'trails'>>(
+    origin,
+    `/data/terrain/${mountainId}.json`,
+  )
+  if (!parsed || !Array.isArray(parsed.elevations) || !parsed.usedBounds) return null
+  return parsed
 }
 
 // Load raw [lng, lat] trail geometry for a mountain, if its trail file exists.
 // Returns null when the file is missing or unreadable. mountainId is validated
 // against a strict charset to prevent path traversal.
-async function loadTrails(mountainId: string): Promise<TrailLine[] | null> {
+async function loadTrails(
+  origin: string,
+  mountainId: string,
+): Promise<TrailLine[] | null> {
   if (!/^[a-zA-Z0-9_-]+$/.test(mountainId)) return null
-  try {
-    const filePath = path.join(
-      process.cwd(),
-      'public',
-      'data',
-      'trails',
-      `${mountainId}.json`,
+  const parsed = await fetchPublicJson<{
+    runs?: { difficulty: string; rawCoordinates?: number[][] }[]
+  }>(origin, `/data/trails/${mountainId}.json`)
+  if (!parsed?.runs) return null
+  return parsed.runs
+    .filter(
+      (run) => Array.isArray(run.rawCoordinates) && run.rawCoordinates.length > 1,
     )
-    const raw = await readFile(filePath, 'utf-8')
-    const parsed = JSON.parse(raw) as {
-      runs?: { difficulty: string; rawCoordinates?: number[][] }[]
-    }
-    if (!parsed.runs) return null
-    return parsed.runs
-      .filter(
-        (run) => Array.isArray(run.rawCoordinates) && run.rawCoordinates.length > 1,
-      )
-      .map((run) => ({
-        difficulty: run.difficulty,
-        rawCoordinates: run.rawCoordinates as number[][],
-      }))
-  } catch {
-    return null
-  }
+    .map((run) => ({
+      difficulty: run.difficulty,
+      rawCoordinates: run.rawCoordinates as number[][],
+    }))
 }
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
+    const reqUrl = new URL(request.url)
+    const { searchParams } = reqUrl
+    // Origin for fetching our own static assets. Prefer the proxy-forwarded host
+    // (correct on Vercel behind its edge) and fall back to the request URL.
+    const forwardedHost = request.headers.get('x-forwarded-host') ?? request.headers.get('host')
+    const forwardedProto = request.headers.get('x-forwarded-proto') ?? reqUrl.protocol.replace(':', '')
+    const origin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : reqUrl.origin
     const minLat = Number(searchParams.get('minLat'))
     const maxLat = Number(searchParams.get('maxLat'))
     const minLng = Number(searchParams.get('minLng'))
     const maxLng = Number(searchParams.get('maxLng'))
     const mountainId = searchParams.get('mountainId')
 
-    const apiKey = process.env.OPENTOPO_API_KEY
-    if (!apiKey) {
-      console.error('terrain-mesh: OPENTOPO_API_KEY is not set')
+    if (getOpenTopoKeys().length === 0) {
+      console.error(
+        'terrain-mesh: no OpenTopography API keys configured (set OPENTOPO_API_KEYS)',
+      )
       return NextResponse.json(
         { error: 'Elevation service is not configured.' },
         { status: 500 },
@@ -150,7 +154,7 @@ export async function GET(request: Request) {
 
     // Load trails so we can derive the real bounding box from the resort's
     // actual footprint when a trail file exists.
-    const trails = mountainId ? await loadTrails(mountainId) : null
+    const trails = mountainId ? await loadTrails(origin, mountainId) : null
     const trailBounds = boundsFromTrails(trails, padding)
 
     // Fast path: pre-generated cache. Only for the trail-footprint box at the
@@ -160,7 +164,7 @@ export async function GET(request: Request) {
       searchParams.get('padding') === null ||
       Math.abs(padding - TRAIL_BBOX_PADDING) < 1e-9
     if (mountainId && trailBounds && usingDefaultPadding) {
-      const cached = await loadTerrainCache(mountainId)
+      const cached = await loadTerrainCache(origin, mountainId)
       if (cached) {
         return NextResponse.json({ ...cached, trails })
       }
@@ -214,22 +218,30 @@ export async function GET(request: Request) {
     // the center/param fallbacks have no trail geometry to drape.
     const responseTrails = trailBounds ? trails : null
 
-    const url =
-      `https://portal.opentopography.org/API/globaldem?demtype=SRTMGL3` +
-      `&south=${usedBounds.minLat}&north=${usedBounds.maxLat}` +
-      `&west=${usedBounds.minLng}&east=${usedBounds.maxLng}` +
-      `&outputFormat=GTiff&API_Key=${apiKey}`
+    const demResult = await fetchDemWithKeyFallback(
+      (key) =>
+        `https://portal.opentopography.org/API/globaldem?demtype=SRTMGL3` +
+        `&south=${usedBounds.minLat}&north=${usedBounds.maxLat}` +
+        `&west=${usedBounds.minLng}&east=${usedBounds.maxLng}` +
+        `&outputFormat=GTiff&API_Key=${key}`,
+    )
 
-    const demRes = await fetch(url)
-    if (!demRes.ok) {
-      const body = await demRes.text().catch(() => '<unreadable>')
-      console.error(`terrain-mesh: OpenTopography request failed (${demRes.status}):`, body)
+    if (!demResult || !demResult.res.ok) {
+      const status = demResult?.res.status ?? 'no-keys'
+      const body = demResult
+        ? await demResult.res.text().catch(() => '<unreadable>')
+        : ''
+      console.error(
+        `terrain-mesh: OpenTopography request failed after ${demResult?.attempts ?? 0} key attempt(s) (${status}):`,
+        body,
+      )
       return NextResponse.json(
         { error: 'Failed to retrieve elevation data.' },
         { status: 502 },
       )
     }
 
+    const demRes = demResult.res
     const arrayBuffer = await demRes.arrayBuffer()
 
     // Guard against non-GeoTIFF payloads (OpenTopography occasionally returns a

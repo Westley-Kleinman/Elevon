@@ -4,7 +4,7 @@
 //
 // Manual / occasional maintenance task — NOT part of dev or build.
 //   Usage:  npm run generate-terrain-cache
-//   Needs:  OPENTOPO_API_KEY (read from the environment, or .env.local)
+//   Needs:  OPENTOPO_API_KEYS (read from the environment, or .env.local, comma-separated)
 import { readFileSync, existsSync } from 'fs'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import path from 'path'
@@ -22,21 +22,33 @@ const NODATA_MAX = 9000
 const TOP_N = 500
 const DELAY_MS = 1500
 
-// Load OPENTOPO_API_KEY from the environment, falling back to a minimal parse of
+// Load OPENTOPO_API_KEYS from the environment, falling back to a minimal parse of
 // .env.local (the live Next.js route gets this auto-loaded; a bare node script
-// does not).
-function resolveApiKey() {
-  if (process.env.OPENTOPO_API_KEY) return process.env.OPENTOPO_API_KEY
+// does not). Expects a comma-separated list of keys.
+function resolveApiKeys() {
+  let keysString = process.env.OPENTOPO_API_KEYS;
+  
   try {
-    const envFile = readFileSync(path.resolve('.env.local'), 'utf-8')
-    for (const line of envFile.split(/\r?\n/)) {
-      const m = line.match(/^\s*OPENTOPO_API_KEY\s*=\s*(.*)\s*$/)
-      if (m) return m[1].replace(/^["']|["']$/g, '').trim()
+    if (!keysString) {
+      const envFile = readFileSync(path.resolve('.env.local'), 'utf-8')
+      for (const line of envFile.split(/\r?\n/)) {
+        const m = line.match(/^\s*OPENTOPO_API_KEYS\s*=\s*(.*)\s*$/)
+        if (m) {
+          keysString = m[1].replace(/^["']|["']$/g, '').trim();
+          break;
+        }
+      }
     }
   } catch {
     /* no .env.local — fall through */
   }
-  return null
+
+  if (keysString) {
+    // Split by comma, remove whitespace, and filter out any empties
+    return keysString.split(',').map(k => k.trim()).filter(Boolean);
+  }
+  
+  return [];
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -136,13 +148,16 @@ async function generateTerrain(bounds, apiKey) {
 async function main() {
   const start = Date.now()
 
-  const apiKey = resolveApiKey()
-  if (!apiKey) {
+  const apiKeys = resolveApiKeys()
+  if (apiKeys.length === 0) {
     console.error(
-      'OPENTOPO_API_KEY is not set (checked process.env and .env.local). Aborting.',
+      'OPENTOPO_API_KEYS is not set (checked process.env and .env.local). Aborting.',
     )
     process.exit(1)
   }
+
+  let currentKeyIndex = 0;
+  console.log(`Loaded ${apiKeys.length} API keys for fallback rotation.`);
 
   const skiAreas = JSON.parse(readFileSync(SKI_AREAS_PATH, 'utf-8'))
 
@@ -178,9 +193,18 @@ async function main() {
 
   let succeeded = 0
   let failed = 0
+  let skipped = 0
 
   for (let i = 0; i < batch.length; i++) {
     const { mountain, runCount } = batch[i]
+    const outPath = path.join(OUTPUT_DIR, `${mountain.id}.json`)
+
+    // 1. Skip if already cached
+    if (existsSync(outPath)) {
+      skipped++
+      continue 
+    }
+
     try {
       const trailData = JSON.parse(
         await readFile(path.join(TRAILS_DIR, `${mountain.id}.json`), 'utf-8'),
@@ -188,13 +212,32 @@ async function main() {
       const bounds = boundsFromTrailData(trailData)
       if (!bounds) throw new Error('could not derive bounds from trail data')
 
-      const terrain = await generateTerrain(bounds, apiKey)
-      await writeFile(
-        path.join(OUTPUT_DIR, `${mountain.id}.json`),
-        JSON.stringify(terrain),
-      )
+      // Use the currently active API key
+      const terrain = await generateTerrain(bounds, apiKeys[currentKeyIndex])
+      await writeFile(outPath, JSON.stringify(terrain))
+      
       succeeded++
+      console.log(`  + Cached ${mountain.name} (${mountain.id})`)
+      
     } catch (err) {
+      // 2. Handle Rate Limits by rotating keys
+      if (err.message.includes('API maximum rate limit reached') || err.message.includes('401')) {
+        console.log(`\n⚠️ OpenTopography limit hit on Key ${currentKeyIndex + 1}.`);
+        currentKeyIndex++;
+
+        if (currentKeyIndex < apiKeys.length) {
+          console.log(`🔄 Switching to Key ${currentKeyIndex + 1} and retrying ${mountain.name}...`);
+          // Decrement 'i' so the loop repeats this exact mountain on the next pass
+          i--; 
+          await sleep(DELAY_MS); // Be polite before retrying
+          continue; 
+        } else {
+          console.log('\n🛑 All provided API keys are exhausted. Aborting remaining fetches.')
+          break // Break the loop so the summary prints and the script exits
+        }
+      }
+
+      // If it's a regular error, log it and move to the next mountain
       failed++
       console.error(
         `  ! ${mountain.name} (${mountain.id}, ${runCount} runs): ${err.message}`,
@@ -211,10 +254,13 @@ async function main() {
 
   const elapsed = ((Date.now() - start) / 1000).toFixed(1)
   console.log('\n--- Summary ---')
-  console.log(`Succeeded: ${succeeded}`)
-  console.log(`Failed:    ${failed}`)
-  console.log(`Attempted: ${batch.length} of ${eligible.length} eligible`)
-  console.log(`Total time: ${elapsed}s`)
+  console.log(`Already Cached: ${skipped}`)
+  console.log(`Newly Cached:   ${succeeded}`)
+  console.log(`Failed:         ${failed}`)
+  console.log(`Attempted:      ${batch.length} of ${eligible.length} eligible`)
+  console.log(`Total time:     ${elapsed}s`)
+  
+  process.exit(0)
 }
 
 main().catch((err) => {
