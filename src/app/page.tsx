@@ -1,6 +1,8 @@
 import Nav from '@/components/Nav'
 import Hero from '@/components/Hero'
+import EvolutionStrip from '@/components/EvolutionStrip'
 import WhatIsThis from '@/components/WhatIsThis'
+import PreviewSection from '@/components/PreviewSection'
 import HowItWorks from '@/components/HowItWorks'
 import Footer from '@/components/Footer'
 
@@ -24,7 +26,9 @@ export default function Home() {
     <main>
       <Nav />
       <Hero />
+      <EvolutionStrip />
       <WhatIsThis />
+      <PreviewSection />
       <HowItWorks />
       <PhotoStrip />
       <Footer />

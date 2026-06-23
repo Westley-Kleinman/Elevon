@@ -4,10 +4,26 @@ import { useState } from 'react'
 import MountainSearch from './MountainSearch'
 import MapPreview from './MapPreview'
 
-export default function OrderForm() {
-  const [mountain, setMountain] = useState('')
-  const [mountainId, setMountainId] = useState<string | null>(null)
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
+interface OrderFormProps {
+  initialId?: string | null
+  initialName?: string
+  initialLat?: number | null
+  initialLng?: number | null
+}
+
+export default function OrderForm({
+  initialId = null,
+  initialName = '',
+  initialLat = null,
+  initialLng = null,
+}: OrderFormProps) {
+  const [mountain, setMountain] = useState(initialName)
+  const [mountainId, setMountainId] = useState<string | null>(initialId)
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    initialLat !== null && initialLng !== null
+      ? { lat: initialLat, lng: initialLng }
+      : null,
+  )
   const [quantity, setQuantity] = useState(1)
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)

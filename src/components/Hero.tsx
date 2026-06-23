@@ -1,5 +1,3 @@
-import Link from 'next/link'
-
 export default function Hero() {
   return (
     <section className="relative min-h-screen w-full bg-snow">
@@ -31,14 +29,14 @@ export default function Hero() {
               printed in the exact colors you know on the mountain.
             </p>
 
-            <Link
-              href="/order"
+            <a
+              href="#preview"
               className="group mt-10 inline-flex items-center border-2 border-slate bg-transparent px-8 py-4 transition-colors duration-200 hover:bg-slate"
             >
               <span className="label-nav text-slate transition-colors duration-200 group-hover:text-snow">
-                Order Your Map&nbsp;&rarr;
+                Preview Your Mountain&nbsp;&rarr;
               </span>
-            </Link>
+            </a>
           </div>
         </div>
       </div>
