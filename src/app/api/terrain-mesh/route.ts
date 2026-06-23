@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { fromArrayBuffer } from 'geotiff'
 import { squareBounds } from '@/lib/geoBounds'
-import { getOpenTopoKeys, fetchDemWithKeyFallback } from '@/lib/opentopo'
+import { getOpenTopoKeys, fetchDem } from '@/lib/opentopo'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -221,46 +221,17 @@ export async function GET(request: Request) {
     // the center/param fallbacks have no trail geometry to drape.
     const responseTrails = trailBounds ? trails : null
 
-    const demResult = await fetchDemWithKeyFallback(
-      (key) =>
-        `https://portal.opentopography.org/API/globaldem?demtype=SRTMGL3` +
-        `&south=${usedBounds.minLat}&north=${usedBounds.maxLat}` +
-        `&west=${usedBounds.minLng}&east=${usedBounds.maxLng}` +
-        `&outputFormat=GTiff&API_Key=${key}`,
-    )
-
-    if (!demResult || !demResult.res.ok) {
-      const status = demResult?.res.status ?? 'no-keys'
-      const body = demResult
-        ? await demResult.res.text().catch(() => '<unreadable>')
-        : ''
-      console.error(
-        `terrain-mesh: OpenTopography request failed after ${demResult?.attempts ?? 0} key attempt(s) (${status}):`,
-        body,
-      )
+    let arrayBuffer: ArrayBuffer
+    try {
+      const demResult = await fetchDem(usedBounds)
+      arrayBuffer = demResult.arrayBuffer
+      if (demResult.dataset !== 'SRTMGL3') {
+        console.log(`terrain-mesh: used fallback dataset ${demResult.dataset} for mountainId=${mountainId ?? 'n/a'}`)
+      }
+    } catch (err) {
+      console.error('terrain-mesh: elevation fetch failed:', err)
       return NextResponse.json(
         { error: 'Failed to retrieve elevation data.' },
-        { status: 502 },
-      )
-    }
-
-    const demRes = demResult.res
-    const arrayBuffer = await demRes.arrayBuffer()
-
-    // Guard against non-GeoTIFF payloads (OpenTopography occasionally returns a
-    // 200/204 with an empty or text body, e.g. outside SRTM's 60N/60S coverage).
-    const head = new Uint8Array(arrayBuffer.slice(0, 2))
-    const isTiff =
-      (head[0] === 0x49 && head[1] === 0x49) ||
-      (head[0] === 0x4d && head[1] === 0x4d)
-    if (!isTiff) {
-      const text = new TextDecoder().decode(arrayBuffer.slice(0, 600))
-      console.error(
-        `terrain-mesh: non-GeoTIFF response (${demRes.status}, ${arrayBuffer.byteLength} bytes):`,
-        text,
-      )
-      return NextResponse.json(
-        { error: 'No elevation data available for this area.' },
         { status: 502 },
       )
     }

@@ -73,28 +73,63 @@ function boundsFromTrailData(trailData) {
   return squareBounds(minLat, maxLat, minLng, maxLng, BBOX_PADDING)
 }
 
-// Fetch + parse + downsample, mirroring the live terrain-mesh route exactly.
-async function generateTerrain(bounds, apiKey) {
-  const url =
-    `https://portal.opentopography.org/API/globaldem?demtype=SRTMGL3` +
-    `&south=${bounds.minLat}&north=${bounds.maxLat}` +
-    `&west=${bounds.minLng}&east=${bounds.maxLng}` +
-    `&outputFormat=GTiff&API_Key=${apiKey}`
+// Ordered DEM datasets to try. SRTMGL3 covers 60S-60N; COP30 is global and
+// handles Alaska + other high-latitude resorts that SRTMGL3 misses.
+const DEM_DATASETS = ['SRTMGL3', 'COP30']
 
-  const res = await fetch(url)
-  if (!res.ok) {
-    const body = await res.text().catch(() => '<unreadable>')
-    throw new Error(`OpenTopography ${res.status}: ${body.slice(0, 200)}`)
+function isTiff(arrayBuffer) {
+  const h = new Uint8Array(arrayBuffer.slice(0, 2))
+  return (h[0] === 0x49 && h[1] === 0x49) || (h[0] === 0x4d && h[1] === 0x4d)
+}
+
+// Fetch + parse + downsample, mirroring the live terrain-mesh route exactly.
+// Tries SRTMGL3 first; falls back to COP30 for areas outside SRTM coverage.
+async function generateTerrain(bounds, apiKeys) {
+  // currentKeyIndex is shared across calls by the caller and passed as an
+  // object so we can mutate it here on exhaustion.
+  let arrayBuffer = null
+  let usedDataset = null
+
+  for (const dataset of DEM_DATASETS) {
+    // Try every key for this dataset.
+    let gotCoverage = false
+    for (let ki = 0; ki < apiKeys.length; ki++) {
+      const url =
+        `https://portal.opentopography.org/API/globaldem?demtype=${dataset}` +
+        `&south=${bounds.minLat}&north=${bounds.maxLat}` +
+        `&west=${bounds.minLng}&east=${bounds.maxLng}` +
+        `&outputFormat=GTiff&API_Key=${apiKeys[ki]}`
+
+      const res = await fetch(url)
+      if (!res.ok) {
+        const body = await res.text().catch(() => '<unreadable>')
+        // Rate-limit errors bubble up so the outer loop can rotate keys.
+        throw new Error(`OpenTopography ${res.status}: ${body.slice(0, 200)}`)
+      }
+
+      const buf = await res.arrayBuffer()
+      if (!isTiff(buf)) {
+        // Outside dataset coverage — try next dataset.
+        const text = new TextDecoder().decode(buf.slice(0, 100))
+        console.warn(`  [${dataset}] non-TIFF (${buf.byteLength}B), trying next dataset. Snippet: ${text}`)
+        break
+      }
+
+      arrayBuffer = buf
+      usedDataset = dataset
+      gotCoverage = true
+      break
+    }
+
+    if (gotCoverage) break
   }
 
-  const arrayBuffer = await res.arrayBuffer()
-  const head = new Uint8Array(arrayBuffer.slice(0, 2))
-  const isTiff =
-    (head[0] === 0x49 && head[1] === 0x49) ||
-    (head[0] === 0x4d && head[1] === 0x4d)
-  if (!isTiff) {
-    const text = new TextDecoder().decode(arrayBuffer.slice(0, 200))
-    throw new Error(`non-GeoTIFF response (${arrayBuffer.byteLength}B): ${text}`)
+  if (!arrayBuffer) {
+    throw new Error(`non-GeoTIFF response (0B): no coverage in any dataset`)
+  }
+
+  if (usedDataset !== 'SRTMGL3') {
+    console.log(`  [fallback: ${usedDataset}]`)
   }
 
   const tiff = await fromArrayBuffer(arrayBuffer)
@@ -212,28 +247,28 @@ async function main() {
       const bounds = boundsFromTrailData(trailData)
       if (!bounds) throw new Error('could not derive bounds from trail data')
 
-      // Use the currently active API key
-      const terrain = await generateTerrain(bounds, apiKeys[currentKeyIndex])
+      // Pass keys from current index onward so generateTerrain can rotate
+      // internally on per-key rate limits within a dataset attempt.
+      const terrain = await generateTerrain(bounds, apiKeys.slice(currentKeyIndex))
       await writeFile(outPath, JSON.stringify(terrain))
       
       succeeded++
       console.log(`  + Cached ${mountain.name} (${mountain.id})`)
       
     } catch (err) {
-      // 2. Handle Rate Limits by rotating keys
+      // Handle Rate Limits by rotating keys
       if (err.message.includes('API maximum rate limit reached') || err.message.includes('401')) {
-        console.log(`\n⚠️ OpenTopography limit hit on Key ${currentKeyIndex + 1}.`);
-        currentKeyIndex++;
+        console.log(`\n⚠️ OpenTopography limit hit on Key ${currentKeyIndex + 1}.`)
+        currentKeyIndex++
 
         if (currentKeyIndex < apiKeys.length) {
-          console.log(`🔄 Switching to Key ${currentKeyIndex + 1} and retrying ${mountain.name}...`);
-          // Decrement 'i' so the loop repeats this exact mountain on the next pass
-          i--; 
-          await sleep(DELAY_MS); // Be polite before retrying
-          continue; 
+          console.log(`🔄 Switching to Key ${currentKeyIndex + 1} and retrying ${mountain.name}...`)
+          i-- // retry this mountain
+          await sleep(DELAY_MS)
+          continue
         } else {
           console.log('\n🛑 All provided API keys are exhausted. Aborting remaining fetches.')
-          break // Break the loop so the summary prints and the script exits
+          break
         }
       }
 
