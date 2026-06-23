@@ -196,11 +196,34 @@ async function main() {
 
   const skiAreas = JSON.parse(readFileSync(SKI_AREAS_PATH, 'utf-8'))
 
-  // US mountains that also have a trail file, with their run count as a
-  // popularity proxy.
+  // Region filter: pass --europe, --us, --all, or --countries=FR,CH,AT etc.
+  // Default (no flag) is US-only for backwards compatibility.
+  const EUROPE_COUNTRIES = new Set([
+    'FR','CH','AT','DE','IT','NO','SE','FI','ES','PL','CZ','SK','RO',
+    'SI','HR','BG','GB','IE','NL','BE','LU','LI','AD','BA','RS','MK',
+    'ME','AL','GR','PT','IS','EE','LV','LT','BY','UA','MD',
+  ])
+  const arg = process.argv.find(a => a.startsWith('--'))
+  let countryFilter = null // null = all countries
+  let regionLabel = 'all countries'
+  if (!arg || arg === '--us') {
+    countryFilter = new Set(['US'])
+    regionLabel = 'US'
+  } else if (arg === '--europe') {
+    countryFilter = EUROPE_COUNTRIES
+    regionLabel = 'Europe'
+  } else if (arg === '--all') {
+    countryFilter = null
+    regionLabel = 'all countries'
+  } else if (arg.startsWith('--countries=')) {
+    countryFilter = new Set(arg.replace('--countries=', '').split(','))
+    regionLabel = arg.replace('--countries=', '')
+  }
+
+  // Mountains that have a trail file, filtered by region, sorted by run count.
   const eligible = []
   for (const m of skiAreas) {
-    if (m.country !== 'US') continue
+    if (countryFilter && !countryFilter.has(m.country)) continue
     const trailPath = path.join(TRAILS_DIR, `${m.id}.json`)
     if (!existsSync(trailPath)) continue
     let trailData
@@ -215,7 +238,7 @@ async function main() {
   }
 
   console.log(
-    `Eligible pool (country === 'US' AND has trail data): ${eligible.length}`,
+    `Eligible pool (${regionLabel}, has trail data): ${eligible.length}`,
   )
 
   eligible.sort((a, b) => b.runCount - a.runCount)
